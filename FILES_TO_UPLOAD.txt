@@ -1,0 +1,50 @@
+📦 FILES TO UPLOAD TO GITHUB
+=============================
+
+✅ UPLOAD THESE:
+----------------
+📁 Root Files:
+  ✅ App.tsx
+  ✅ index.html
+  ✅ index.tsx
+  ✅ index.css
+  ✅ package.json
+  ✅ package-lock.json
+  ✅ tsconfig.json
+  ✅ vite.config.ts
+  ✅ types.ts
+  ✅ README.md
+  ✅ LICENSE
+  ✅ .gitignore
+  ✅ DEPLOY_INSTRUCTIONS.md
+  ✅ DEPLOY_NOW.md
+
+📁 Folders (upload entire folders):
+  ✅ components/
+     - ChatTab.tsx
+     - ImageTab.tsx
+     - ProjectCard.tsx
+     - SearchBar.tsx
+     - VideoTab.tsx
+  
+  ✅ services/
+     - apiService.ts
+  
+  ✅ .github/
+     - workflows/
+       - deploy.yml
+
+❌ DO NOT UPLOAD:
+-----------------
+  ❌ node_modules/ (too large, will be installed automatically)
+  ❌ dist/ (will be built automatically by GitHub Actions)
+  ❌ GITHUB_SETUP.md (just a guide, optional)
+  ❌ FILES_TO_UPLOAD.txt (this file, optional)
+
+📝 QUICK STEPS:
+---------------
+1. Create repository on GitHub.com
+2. Upload files listed above (✅)
+3. Go to Settings → Pages → Source: GitHub Actions
+4. Wait 2-3 minutes for deployment
+5. Your site is live! 🎉
