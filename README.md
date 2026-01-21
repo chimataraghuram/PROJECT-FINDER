@@ -11,7 +11,7 @@
 
 **Project Finder** is a powerful research & discovery engine designed for developers, data scientists, and students. It aggregates and filters projects from multiple open-source platforms to verify their existence and relevance.
 
-> **Created and developed by [Chimata Raghuram](https://chimataraghuram.github.io/My-Portfolio-Website/)**
+> **Created and developed by [Chimata Raghuram](https://chimataraghuram.github.io/PORTFOLIO/)**
 
 **Features:**
 - 🔍 **Unified Search**: simultaneously searches **GitHub**, **Hugging Face**, and **Kaggle** using free public APIs.
@@ -57,5 +57,5 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 <p align="center">
-  Developed by <a href="https://chimataraghuram.github.io/My-Portfolio-Website/">Chimata Raghuram</a>
+  Developed by <a href="https://chimataraghuram.github.io/PORTFOLIO/">Chimata Raghuram</a>
 </p>

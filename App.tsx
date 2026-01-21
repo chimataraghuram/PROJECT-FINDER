@@ -88,7 +88,7 @@ const App: React.FC = () => {
             <div className="w-px h-4 md:h-5 bg-gray-700 mx-1 shrink-0"></div>
 
             <a
-              href="https://chimataraghuram.github.io/My-Portfolio-Website/"
+              href="https://chimataraghuram.github.io/PORTFOLIO/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 md:px-6 py-2 rounded-full text-xs md:text-sm font-medium transition-all focus:outline-none flex items-center gap-2 whitespace-nowrap text-gray-400 hover:text-white hover:bg-gray-700/50"
@@ -302,7 +302,7 @@ const App: React.FC = () => {
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
               <a
-                href="https://chimataraghuram.github.io/My-Portfolio-Website/"
+                href="https://chimataraghuram.github.io/PORTFOLIO/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative bg-gray-900 border border-gray-700 hover:border-purple-500/50 rounded-3xl p-10 md:p-16 flex flex-col items-center transition-all hover:scale-[1.02]"
