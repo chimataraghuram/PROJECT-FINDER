@@ -1,0 +1,563 @@
+/* Additional custom styles if needed */
+/* Tailwind CSS is loaded via CDN in index.html */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    background: #020617;
+}
+
+.parallax-bg-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.parallax-bg-image {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    background-image: url('/bg-ai.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.22;
+    filter: contrast(1.1) brightness(0.9) saturate(1.2);
+}
+
+.parallax-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, #020617 85%);
+    z-index: 10;
+}
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-0.5%, -1.2%) scale(1.02); }
+    66% { transform: translate(0.8%, -0.4%) scale(1.01); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-drift {
+    animation: drift 40s ease-in-out infinite;
+}
+
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(2deg);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+}
+
+@keyframes liquid {
+
+    0%,
+    100% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+
+    33% {
+        border-radius: 40% 60% 50% 50% / 40% 50% 50% 60%;
+    }
+
+    66% {
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+}
+
+@keyframes liquid-morph {
+    0% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+
+    25% {
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+    }
+
+    50% {
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+    }
+
+    75% {
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+    }
+
+    100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+}
+
+@keyframes liquid-text {
+
+    0%,
+    100% {
+        clip-path: polygon(0% 45%, 16% 44%, 33% 50%, 54% 60%, 70% 61%, 84% 59%, 100% 52%, 100% 100%, 0% 100%);
+    }
+
+    50% {
+        clip-path: polygon(0% 60%, 15% 65%, 34% 66%, 51% 62%, 67% 50%, 84% 45%, 100% 46%, 100% 100%, 0% 100%);
+    }
+}
+
+@keyframes liquid-fill {
+    0% {
+        transform: translateY(100%) scale(0.5);
+    }
+
+    100% {
+        transform: translateY(0) scale(1.2);
+    }
+}
+
+@keyframes jelly {
+
+    0%,
+    100% {
+        transform: scale(1, 1);
+    }
+
+    25% {
+        transform: scale(0.9, 1.1);
+    }
+
+    50% {
+        transform: scale(1.1, 0.9);
+    }
+
+    75% {
+        transform: scale(0.95, 1.05);
+    }
+}
+
+@keyframes liquid-drop {
+    0% {
+        transform: translateY(-50px) scale(0.8);
+        filter: blur(20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(249, 115, 22, 0.4);
+    }
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translate(100%, 0);
+    }
+}
+
+.animate-gradient {
+    animation: gradient 8s ease infinite;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-liquid {
+    animation: liquid 4s ease-in-out infinite;
+}
+
+.animate-liquid-morph {
+    animation: liquid-morph 8s ease-in-out infinite;
+}
+
+.animate-liquid-text {
+    position: relative;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+}
+
+.animate-liquid-text::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    -webkit-text-stroke: 0px transparent;
+    animation: liquid-text 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.liquid-container {
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+.liquid-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.liquid-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    transform: translate(-100%, -100%);
+    transition: transform 0.6s ease-out;
+}
+
+.liquid-button:hover::after {
+    transform: translate(0, 0);
+}
+
+.gelly-button {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gelly-button:hover {
+    animation: jelly 0.6s ease-in-out;
+}
+
+.animate-liquid-drop {
+    animation: liquid-drop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.gelly-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: rgba(15, 23, 42, 0.3);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gelly-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.05),
+            transparent);
+    transition: 0.5s;
+}
+
+.glass:hover::before {
+    left: 100%;
+}
+
+.glass-card {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.08) 0%,
+            rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        0 8px 32px 0 rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+@keyframes liquid-glass-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-liquid-glass {
+    background: linear-gradient(120deg,
+            rgba(255, 255, 255, 0) 30%,
+            rgba(255, 255, 255, 0.1) 40%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.1) 60%,
+            rgba(255, 255, 255, 0) 70%);
+    background-size: 200% 100%;
+    animation: liquid-glass-shimmer 8s infinite linear, liquid 6s ease-in-out infinite;
+}
+
+.liquid-glass-border {
+    position: relative;
+}
+
+.liquid-glass-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(var(--angle, 0deg),
+            transparent 20%,
+            rgba(249, 115, 22, 0.3),
+            rgba(239, 68, 68, 0.3),
+            transparent 80%);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    animation: rotate-gradient 6s linear infinite;
+}
+
+@keyframes rotate-gradient {
+    to {
+        --angle: 360deg;
+    }
+}
+
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes liquid-pulse {
+    0% {
+        transform: scale(1);
+        filter: blur(0px);
+    }
+
+    50% {
+        transform: scale(1.1);
+        filter: blur(4px);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: blur(0px);
+    }
+}
+
+.animate-liquid-loader {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #f97316, #ef4444);
+    animation: liquid 4s ease-in-out infinite, liquid-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.4));
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #f97316, #ef4444);
+    border-radius: 20px;
+    border: 3px solid #0f172a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #fb923c, #f87171);
+}
+
+::selection {
+    background: rgba(249, 115, 22, 0.3);
+    color: #fff;
+}
+
+/* Mobile Responsive Updates */
+@media (max-width: 768px) {
+
+    /* Both logo pill and navbar are sticky on mobile */
+
+    .home-content-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        padding-top: 20px !important;
+        /* Minimal padding at top */
+        overflow: visible !important;
+        /* Required for sticky positioning */
+    }
+
+    .home-section {
+        padding-top: 15px !important;
+        overflow: visible !important;
+        /* Required for sticky positioning */
+    }
+
+    .logo-container {
+        position: sticky !important;
+        top: 0 !important;
+        /* Stick to very top */
+        z-index: 1001 !important;
+        margin-top: 0 !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        animation: none !important;
+        transform: none !important;
+        will-change: auto !important;
+    }
+
+    /* Make navbar sticky below the logo pill */
+    .fixed.top-20.md\:top-4.left-1\/2.-translate-x-1\/2 {
+        position: sticky !important;
+        top: 56px !important;
+        /* Position below logo pill (logo pill height ~48px + padding) */
+        left: 0 !important;
+        width: 100% !important;
+        transform: none !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        justify-content: center !important;
+        padding: 8px !important;
+        margin: 0 !important;
+    }
+
+    .logo-container>div {
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .logo-container * {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+
+    .logo-container:hover,
+    .logo-container:active,
+    .logo-container *:hover,
+    .logo-container *:active {
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .home-title {
+        margin-top: 20px !important;
+        text-align: center;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .animate-liquid-drop {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        filter: none !important;
+    }
+}
