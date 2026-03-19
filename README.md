@@ -1,55 +1,94 @@
-# 🚀 Project Finder
-A powerful research & discovery engine for finding projects, datasets, and models across GitHub, Hugging Face, Kaggle, and LinkedIn.
+# Project Finder 🚀
+
+<div align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+</div>
+
+**Project Finder** is a powerful research & discovery engine designed for developers, data scientists, and students. It provides a unified search experience, allowing users to find projects, datasets, and models across **GitHub, Hugging Face, Kaggle, and LinkedIn**.
 
 ## 🌐 Live Demo
-👉 [View Live](https://chimataraghuram.github.io/PROJECT-FINDER/)
+👉 **[Open Project Finder - Live Demo](https://chimataraghuram.github.io/PROJECT-FINDER/)**
 
 ## 📸 Preview
+Experience the high-fidelity interface of Project Finder v2.0:
+
+### 1. Modern Unified Search
+The homepage features an **Animated AI Blueprint** background with parallax scrolling and interactive click-pulses.
 <p align="center">
   <img src="public/hero_v2.png" alt="Home Search v2" width="100%" />
 </p>
 
+### 2. Search Results & Action Protocol
+Enhanced project cards include a primary **Live Demo** button for instant interaction.
+<p align="center">
+  <img src="public/results_v2.png" alt="Search Results v2" width="100%" />
+</p>
+
+### 3. Rebranded TECHBOY AI Summary
+The analytical engine integrates consolidated reference sources directly into the summary.
+<p align="center">
+  <img src="public/ai_summary_v2.png" alt="Techboy AI View v2" width="100%" />
+</p>
+
+---
+
 ## ✨ Features
-🔹 **Unified Search**: Explore GitHub, Hugging Face, Kaggle, and LinkedIn simultaneously.  
-🔹 **Smart Filtering**: Drill down into Code, Models, or Datasets with one click.  
-🔹 **Visual Library**: Save your favorite resources to a local persistent library.  
-🔹 **README Discovery**: Find and sync with creative GitHub Profile README inspirations.  
+🔹 **Unified Platform Discovery**: Search GitHub, Hugging Face, Kaggle, and LinkedIn simultaneously.  
+🔹 **Smart Filtering**: Drill down specifically into Code, Models, or Datasets with intuitive tags.  
+🔹 **Visual Library (Favorites)**: Click the heart icon on any card to save it to your local persistent library.  
+🔹 **README Discovery**: Explore and sync with elite GitHub Profile README inspirations in real-time.  
+🔹 **Interactive UI/UX**: Built with Framer Motion for smooth animations and a premium glassmorphism feel.  
 
 ## 🧠 Problem It Solves
-Developers and students often waste significant time jumping between fragmented platforms to find relevant code, models, and datasets for their research and development.
+Developers often struggle with "platform fragmentation"—the need to jump between multiple sites to find the right code, data, and models. This disjointed process wastes time and hinders cross-platform research.
 
 ## 💡 Solution
-Project Finder aggregates these major platforms into a single, high-fidelity interface, offering a holistic view of available resources and streamlining the discovery process.
+Project Finder centralizes the entire discovery phase. By aggregating top-tier resources into a single dashboard, it provides a holistic view of the innovation landscape, enabling faster and more efficient project architecting.
 
 ## 🛠️ Tech Stack
-**Frontend**: React 19, TypeScript, Tailwind CSS, Framer Motion, Lucide React  
-**Backend**: Firebase (Authentication & Cloud Sync)  
-**Database**: Cloud Firestore  
-**Tools**: Vite, Git, npm, Platform APIs  
+- **Frontend**: `React 19`, `TypeScript`, `Tailwind CSS`, `Framer Motion`
+- **Backend & Auth**: `Firebase` (Authentication & Cloud Firestore)
+- **Architecture**: Component-based modular design
+- **Deployment**: `GitHub Pages` / `Vite`
 
 ## 📂 Project Structure
 ```text
 PROJECT-FINDER/
-├── public/                 # Assets (Hero images, intro video)
+├── public/                 # High-res assets (Hero images, intro video)
 ├── src/                    
-│   ├── components/         # UI Elements (SearchBar, ProjectCard, etc.)
-│   ├── services/           # API Handlers (GitHub, HF, Kaggle)
-│   ├── types.ts            # Type Definitions
-│   ├── App.tsx             # Main Logic & Routing
-│   └── index.css           # Global Styles
-└── README.md               # Documentation
+│   ├── components/         # Modular UI (SearchBar, ProjectCard, Particles, etc.)
+│   ├── services/           # API Handlers for GitHub, HF, Kaggle
+│   ├── types.ts            # Centralized Type Definitions
+│   ├── services/           # Firebase configuration and auth logic
+│   ├── App.tsx             # Application Core & State Management
+│   └── index.css           # Global Tailwind and Aurora Styles
+└── README.md               # You are here!
 ```
 
+## 🚀 Getting Started with Cloud Features
+To enable **Cloud Sync** and **Authentication** locally:
+1.  **Install Dependencies**: `npm install firebase`
+2.  **Firebase Setup**: Create a project at [Firebase Console](https://console.firebase.google.com/), enable Google Auth and Firestore.
+3.  **Config**: Apply your keys to `src/services/firebase.ts`.
+
 ## 🚀 Future Improvements
-🔸 Add support for StackOverflow and Reddit insights.  
-🔸 Implement AI-driven recommendations based on search behavior.  
-🔸 Enhance mobile responsiveness and offline support.  
+🔸 **Multi-Social Integration**: Adding support for StackOverflow and Reddit insights.  
+🔸 **AI Recommendations**: Implementing behavior-based discovery engines.  
+🔸 **Mobile Performance**: Optimizing for extreme low-latency on mobile devices.  
 
 ## 🤝 Contributing
 Pull requests are welcome! Feel free to fork and improve.
 
-## 📜 License
-Copyright (c) 2026 Chimata Raghuram. All Rights Reserved. MIT License (or your choice).
+## 📜 License & Copyright
+> [!IMPORTANT]
+> **Copyright (c) 2026 Chimata Raghuram. All Rights Reserved.**
+> 
+> COMMERCIAL AND PERSONAL USE OF THIS SOFTWARE, CONTENT, OR SOURCE CODE IS STRICTLY PROHIBITED WITHOUT THE PRIOR WRITTEN CONSENT OF THE OWNER (CHIMATA RAGHURAM).
+> 
+> Any unauthorized copying, modification, distribution, transmission, or other use of this material is strictly prohibited. The developer (Chimata Raghuram) reserves all rights to this software and its intellectual property.
 
 ## 📬 Contact
 GitHub: [chimataraghuram](https://github.com/chimataraghuram)  
