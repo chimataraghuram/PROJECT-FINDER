@@ -1,25 +1,36 @@
 import React from 'react';
 import { auth, googleProvider } from '../services/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { User, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
+import { User as UserIcon, LogOut, ShieldCheck, Sparkles } from 'lucide-react';
+
 
 export const AuthButton: React.FC = () => {
-    const [user, setUser] = React.useState(auth.currentUser);
+    const [user, setUser] = React.useState(auth?.currentUser || null);
 
     React.useEffect(() => {
+        if (!auth) return;
         const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
         return () => unsubscribe();
     }, []);
 
     const handleLogin = async () => {
+        if (!auth) {
+            alert("Firebase not initialized. Check your config!");
+            return;
+        }
         try {
             await signInWithPopup(auth, googleProvider);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Login failed:", error);
+            if (error.code === 'auth/invalid-api-key') {
+                alert("Invalid Firebase API Key. Please update services/firebase.ts with your actual project keys!");
+            }
         }
     };
 
-    const handleLogout = () => signOut(auth);
+    const handleLogout = () => auth && signOut(auth);
+
+
 
     if (user) {
         return (
@@ -28,6 +39,7 @@ export const AuthButton: React.FC = () => {
                     <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] group-hover:text-orange-400/60 transition-colors">Verified</span>
                     <span className="text-[10px] font-bold text-white truncate max-w-[80px]">{user.displayName}</span>
                 </div>
+
                 
                 <div className="relative">
                     <img 
@@ -52,10 +64,9 @@ export const AuthButton: React.FC = () => {
     return (
         <button
             onClick={handleLogin}
-            className="flex items-center gap-2.5 px-5 py-2 rounded-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-orange-600/20 hover:shadow-orange-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
+            className="flex items-center gap-2.5 px-6 py-2 rounded-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-orange-600/20 hover:shadow-orange-600/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group"
         >
-            <Sparkles className="w-3.5 h-3.5 group-hover:rotate-12 transition-transform" />
-            Sign In
+            Sign Up
         </button>
     );
 };

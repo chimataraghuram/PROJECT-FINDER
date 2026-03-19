@@ -94,6 +94,73 @@ const searchGitHub = async (query: string): Promise<Project[]> => {
   }
 };
 
+// Search GitHub Profile READMEs in real-time
+
+export const searchGitHubReadmes = async (category: string = 'All'): Promise<Project[]> => {
+  try {
+    const PUBLISHER_USERNAME = 'chimataraghuram';
+    let query = 'topic:github-profile-readme';
+    
+    if (category !== 'All') {
+      const categoryMap: Record<string, string> = {
+        'Github Actions': 'actions',
+        'Game Mode': 'game OR interactive',
+        'Code Mode': 'developer OR code',
+        'Dynamic Realtime': 'dynamic OR stats',
+        'Minimalistic': 'minimal OR simple',
+        'GIFS': 'gif OR animated',
+        'Anime': 'anime OR otaku',
+        'Retro': 'retro OR 8bit',
+        'Just Images': 'images OR photo'
+      };
+      const subQuery = categoryMap[category] || category;
+      query += `+${subQuery}`;
+    }
+
+    const response = await fetch(
+      `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=12`,
+      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+    );
+
+    if (!response.ok) return [];
+
+    const data = await response.json();
+    const items = data.items || [];
+
+    return items.map((repo: any) => ({
+      name: repo.owner.login,
+      description: repo.description || `A creative GitHub Profile README by ${repo.owner.login}`,
+      platform: 'GitHub' as const,
+      url: repo.html_url,
+      liveUrl: `https://github.com/${repo.owner.login}`,
+      tags: [...(repo.topics || []), 'Profile', 'README'],
+      stars: repo.stargazers_count,
+      isPublisher: repo.owner.login.toLowerCase() === PUBLISHER_USERNAME.toLowerCase()
+    }));
+  } catch (error) {
+    console.error('README search error:', error);
+    return [];
+  }
+};
+
+// Fetch a single GitHub user profile in real-time
+export const fetchGitHubUserProfile = async (username: string): Promise<any> => {
+  try {
+    const response = await fetch(
+      `https://api.github.com/users/${username}`,
+      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error('Fetch user error:', error);
+    return null;
+  }
+};
+
+
+
+
 // Search Hugging Face models and datasets
 // Note: Hugging Face API is completely public - no authentication needed!
 const searchHuggingFace = async (query: string): Promise<Project[]> => {

@@ -14,11 +14,11 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "firebase": "^11.10.0",
     "framer-motion": "^12.35.0",
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "firebase": "^11.4.0"
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

@@ -4,19 +4,23 @@ import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
 import { searchProjects } from './services/apiService';
 import { Project, SearchResult, SearchState } from './types';
-import { Search, Sparkles, Github, ExternalLink, Linkedin, Send, User, Globe, MessageCircle, Heart, Flame, Bot, Loader2 } from 'lucide-react';
+import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket } from 'lucide-react';
 import { Footer } from './components/Footer';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
-import { TechboyAI } from './components/TechboyAI';
+import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
-// import { auth, db } from './services/firebase';
-// import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-// import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { ReadmeDiscovery } from './components/ReadmeDiscovery';
+
+
+import { auth, db } from './services/firebase';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 
 
-type View = 'search' | 'favorites';
+
+type ViewType = 'search' | 'favorites' | 'readme';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
 
 const TRENDING_PROJECTS: Project[] = [
@@ -49,11 +53,61 @@ const TRENDING_PROJECTS: Project[] = [
   }
 ];
 
+const DEFAULT_FAVORITES: Project[] = [
+  {
+    id: 'def-1',
+    name: "Project Finder",
+    description: "The ultimate project discovery engine for students and data scientists. Modern UI, AI-powered summaries, and multi-platform search.",
+    platform: 'GitHub',
+    url: "https://github.com/chimataraghuram/PROJECT-FINDER",
+    tags: ["React", "Vite", "Tailwind", "Firebase"],
+    stars: "1.2k",
+    isPublisher: true,
+    type: 'project'
+  },
+  {
+    ...TRENDING_PROJECTS[0],
+    id: 'def-2',
+    type: 'project'
+  },
+  {
+    ...TRENDING_PROJECTS[1],
+    id: 'def-3',
+    type: 'project'
+  },
+  {
+    ...TRENDING_PROJECTS[2],
+    id: 'def-4',
+    type: 'project'
+  },
+  {
+    id: 'def-5',
+    name: "Auto-GPT",
+    description: "An experimental open-source attempt to make GPT-4 fully autonomous. Auto-GPT pushes the boundaries of what is possible with AI.",
+    platform: 'GitHub',
+    url: "https://github.com/Significant-Gravitas/Auto-GPT",
+    tags: ["Autonomous", "GPT-4", "Python"],
+    stars: "160k",
+    type: 'project'
+  },
+  {
+    id: 'def-6',
+    name: "chimataraghuram",
+    description: "Featured developer profile for Raghuram Chimata. Full-stack architect and creator of Project Finder.",
+    platform: 'GitHub',
+    url: "https://github.com/chimataraghuram",
+    tags: ["Developer", "Founder", "UI/UX"],
+    stars: "500",
+    type: 'readme'
+  }
+];
+
 import { IntroVideo } from './components/IntroVideo';
+
 
 const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
-  const [currentView, setCurrentView] = useState<View>('search');
+  const [currentView, setCurrentView] = useState<ViewType>('search');
   
   // Parallax Background Logic
   const { scrollY } = useScroll();
@@ -71,17 +125,21 @@ const App: React.FC = () => {
 
   const [favorites, setFavorites] = useState<Project[]>(() => {
     const saved = localStorage.getItem('project-finder-favorites');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    return DEFAULT_FAVORITES;
   });
 
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isAIOpen, setIsAIOpen] = useState(false);
+
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Auth & Cloud Sync (DISABLED UNTIL FIREBASE INSTALLED)
-  /*
+
+
+  // Auth & Cloud Sync
   useEffect(() => {
+    if (!auth || !db) return;
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       if (user) {
@@ -90,7 +148,7 @@ const App: React.FC = () => {
         const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const cloudFavs = docSnap.data().favorites || [];
-            setFavorites(cloudFavs);
+            if (cloudFavs.length > 0) setFavorites(cloudFavs);
           }
         });
         return () => unsubscribeSnap();
@@ -99,21 +157,19 @@ const App: React.FC = () => {
 
     return () => unsubscribeAuth();
   }, []);
-  */
 
   // Sync to Cloud (and Local fallback)
   useEffect(() => {
     localStorage.setItem('project-finder-favorites', JSON.stringify(favorites));
     
-    /*
-    if (currentUser) {
+    if (currentUser && db) {
       const userDocRef = doc(db, 'users', currentUser.uid);
       setDoc(userDocRef, { favorites }, { merge: true }).catch(err => {
         console.error("Cloud sync failed:", err);
       });
     }
-    */
   }, [favorites, currentUser]);
+
 
 
 
@@ -123,9 +179,10 @@ const App: React.FC = () => {
       if (isFav) {
         return prev.filter(p => p.url !== project.url);
       }
-      return [...prev, project];
+      return [...prev, { ...project, type: project.type || 'project' }];
     });
   };
+
 
   const triggerComingSoon = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -218,7 +275,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Middle: Navigation Pill */}
-            <div className="flex-shrink-0 flex justify-center pointer-events-none w-full max-w-max">
+            <div className="flex-shrink-0 flex justify-center pointer-events-auto">
               <nav className="p-0.5 md:p-1.5 bg-[#0f172a]/80 backdrop-blur-3xl rounded-full shadow-2xl border border-white/10 flex items-center gap-0.5 md:gap-1.5 pointer-events-auto">
                 <button
                   onClick={() => {
@@ -236,6 +293,20 @@ const App: React.FC = () => {
 
                 <button
                   onClick={() => {
+                    setCurrentView('readme');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`px-2.5 sm:px-4 md:px-7 py-1.5 md:py-2 rounded-full border transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap font-black text-[8.5px] sm:text-[10px] md:text-xs flex-shrink-0 ${currentView === 'readme'
+                    ? 'bg-[#f97316] text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]'
+                    : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
+                    }`}
+                >
+                  <FileCode className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 transition-transform ${currentView === 'readme' ? 'scale-110' : ''}`} />
+                  <span className="tracking-wide">READMEs</span>
+                </button>
+
+                <button
+                  onClick={() => {
                     setCurrentView('favorites');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
@@ -248,36 +319,43 @@ const App: React.FC = () => {
                   <span className="tracking-wide">Favs ({favorites.length})</span>
                 </button>
 
-                {/* TECHBOY AI — inside the nav pill */}
-                <button
-                  onClick={() => setIsAIOpen(prev => !prev)}
-                  className={`px-2.5 sm:px-4 md:px-7 py-1.5 md:py-2 rounded-full border transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap font-black text-[8.5px] sm:text-[10px] md:text-xs flex-shrink-0 group ${
-                    isAIOpen
-                      ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white border-orange-400 shadow-[0_0_18px_rgba(239,68,68,0.7)]'
-                      : 'text-gray-400 border-transparent hover:text-orange-300 hover:bg-white/5'
-                  }`}
-                  title="Techboy AI"
-                >
-                  <Bot className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 transition-transform ${isAIOpen ? 'scale-110 rotate-12' : ''}`} />
-                  <span className="tracking-wide">
-                    <span className="text-[#f97316] group-hover:text-orange-300 transition-colors">TECHBOY</span>
-                    <span className={`ml-0.5 ${isAIOpen ? 'text-white' : 'text-[#eab308] group-hover:text-yellow-300'} transition-colors`}> AI</span>
-                  </span>
-                </button>
               </nav>
             </div>
 
-            {/* Right: Auth only */}
-            <div className="flex items-center gap-2 md:gap-4 pointer-events-auto flex-shrink-0">
-              <AuthButton />
+            {/* In-Between: TECHBOY AI Pill */}
+            <div className="flex-shrink-0 hidden lg:block pointer-events-auto">
+              <motion.button
+                onClick={() => setIsAIAssistantOpen(true)}
+                className="h-10 md:h-12 px-4 md:px-6 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-3 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_25px_rgba(249,115,22,0.3)] hover:border-orange-500/60 transition-all duration-500"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="text-[9px] md:text-[11px] font-black tracking-[0.2em] uppercase text-[#f97316]">Techboy AI</span>
+                <div className="w-5 h-5 md:w-7 md:h-7 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover/aipill:border-orange-500/50 transition-colors">
+                  <Bot className="w-3 h-3 md:w-4 md:h-4 text-[#f97316]" />
+                </div>
+              </motion.button>
             </div>
 
-
+            {/* Right: Auth */}
+            <div className="flex-shrink-0 pointer-events-auto">
+              <AuthButton />
+            </div>
           </header>
 
 
+
           <main className="relative z-10">
+            {currentView === 'readme' && (
+              <ReadmeDiscovery 
+                favorites={favorites}
+                onToggleFavorite={toggleFavorite}
+              />
+            )}
+
+
             {currentView === 'search' && (
+
               /* SEARCH VIEW */
               <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'min-h-screen flex flex-col justify-center' : 'pt-28 pb-20 md:pt-40'}`}>
                 {/* Hero Section */}
@@ -522,8 +600,15 @@ const App: React.FC = () => {
             )}
 
             <Footer onComingSoonClick={triggerComingSoon} />
-            <TechboyAI isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} />
+
+            {/* Controlled autonomous TECHBOY AI Assistant */}
+            <TechboyAssistant 
+              projects={filteredProjects} 
+              isOpen={isAIAssistantOpen} 
+              setIsOpen={setIsAIAssistantOpen} 
+            />
           </main>
+
         </>
       )}
     </div >

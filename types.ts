@@ -9,7 +9,9 @@ export interface Project {
   isPublisher?: boolean;
   liveUrl?: string;
   demoUrl?: string;
+  type?: 'project' | 'readme';
 }
+
 
 export interface GroundingSource {
   title?: string;
