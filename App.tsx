@@ -9,6 +9,11 @@ import { Footer } from './components/Footer';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
 import { TechboyAI } from './components/TechboyAI';
+import { AuthButton } from './components/AuthButton';
+import { auth, db } from './services/firebase';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+
 
 type View = 'search' | 'favorites';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
@@ -63,20 +68,48 @@ const App: React.FC = () => {
   // Filtering State
   const [filterPlatform, setFilterPlatform] = useState<PlatformFilter>('All');
 
-  // Favorites State
   const [favorites, setFavorites] = useState<Project[]>(() => {
     const saved = localStorage.getItem('project-finder-favorites');
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Save favorites to localStorage on change
+  // Auth & Cloud Sync
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (user) {
+        // Sync from Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const cloudFavs = docSnap.data().favorites || [];
+            setFavorites(cloudFavs);
+          }
+        });
+        return () => unsubscribeSnap();
+      }
+    });
+
+    return () => unsubscribeAuth();
+  }, []);
+
+  // Sync to Cloud (and Local fallback)
   useEffect(() => {
     localStorage.setItem('project-finder-favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    
+    if (currentUser) {
+      const userDocRef = doc(db, 'users', currentUser.uid);
+      setDoc(userDocRef, { favorites }, { merge: true }).catch(err => {
+        console.error("Cloud sync failed:", err);
+      });
+    }
+  }, [favorites, currentUser]);
+
 
   const toggleFavorite = (project: Project) => {
     setFavorites(prev => {
@@ -229,7 +262,8 @@ const App: React.FC = () => {
             </div>
 
             {/* Right: Portfolio only */}
-            <div className="flex items-center gap-2 md:gap-6 pointer-events-auto flex-shrink-0">
+            <div className="flex items-center gap-2 md:gap-4 pointer-events-auto flex-shrink-0">
+              <AuthButton />
               {/* Portfolio Link - Circular icon on mobile, full text on larger screens */}
               <a
                 href="https://chimataraghuram.github.io/PORTFOLIO/"
@@ -240,10 +274,11 @@ const App: React.FC = () => {
               >
                 <User size={12} className="text-orange-500 group-hover:text-white transition-colors md:w-3.5 md:h-3.5" />
                 <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-orange-400 via-white to-orange-400 text-transparent bg-clip-text">
-                  Developer Portfolio
+                  Portfolio
                 </span>
               </a>
             </div>
+
           </header>
 
 

@@ -101,12 +101,43 @@ PROJECT-FINDER/
 
 This project heavily leverages the following technologies to offer a seamless, fast, and responsive user experience:
 
+- **Platform**: `Firebase` ☁️ (Authentication & Firestore)
 - **Library**: `React 19` ⚛️
 - **Language**: `TypeScript` 📘
 - **Build Tool**: `Vite` ⚡
 - **Styling**: `Tailwind CSS` 🎨
 - **Icons**: `Lucide React` ✨
+- **Animations**: `Framer Motion` 🎭
 - **Package Management**: `npm`
+
+---
+
+## 🚀 Getting Started with Cloud Features (v2.1)
+
+To enable the new **Cloud Sync** and **Authentication** features, follow these steps:
+
+1.  **Install Dependencies**:
+    ```bash
+    npm install firebase
+    ```
+
+2.  **Firebase Setup**:
+    - Create a project at [Firebase Console](https://console.firebase.google.com/).
+    - Enable **Authentication** (Google Login).
+    - Enable **Cloud Firestore** in test mode or with the following rules:
+      ```javascript
+      rules_version = '2';
+      service cloud.firestore {
+        match /databases/{database}/documents {
+          match /users/{userId} {
+            allow read, write: if request.auth != null && request.auth.uid == userId;
+          }
+        }
+      }
+      ```
+
+3.  **Config**:
+    - Copy your Firebase config keys into `src/services/firebase.ts`.
 
 ---
 
