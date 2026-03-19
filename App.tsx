@@ -10,9 +10,10 @@ import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'fra
 import { SkeletonCard } from './components/SkeletonCard';
 import { TechboyAI } from './components/TechboyAI';
 import { AuthButton } from './components/AuthButton';
-import { auth, db } from './services/firebase';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+// import { auth, db } from './services/firebase';
+// import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+// import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+
 
 
 type View = 'search' | 'favorites';
@@ -73,12 +74,13 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Auth & Cloud Sync
+  // Auth & Cloud Sync (DISABLED UNTIL FIREBASE INSTALLED)
+  /*
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -97,18 +99,22 @@ const App: React.FC = () => {
 
     return () => unsubscribeAuth();
   }, []);
+  */
 
   // Sync to Cloud (and Local fallback)
   useEffect(() => {
     localStorage.setItem('project-finder-favorites', JSON.stringify(favorites));
     
+    /*
     if (currentUser) {
       const userDocRef = doc(db, 'users', currentUser.uid);
       setDoc(userDocRef, { favorites }, { merge: true }).catch(err => {
         console.error("Cloud sync failed:", err);
       });
     }
+    */
   }, [favorites, currentUser]);
+
 
 
   const toggleFavorite = (project: Project) => {
@@ -261,23 +267,11 @@ const App: React.FC = () => {
               </nav>
             </div>
 
-            {/* Right: Portfolio only */}
+            {/* Right: Auth only */}
             <div className="flex items-center gap-2 md:gap-4 pointer-events-auto flex-shrink-0">
               <AuthButton />
-              {/* Portfolio Link - Circular icon on mobile, full text on larger screens */}
-              <a
-                href="https://chimataraghuram.github.io/PORTFOLIO/"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Developer Portfolio"
-                className="flex items-center justify-center gap-2 w-8 h-8 md:w-auto md:h-9 md:px-4 rounded-full border border-orange-500/60 bg-[#0f172a]/40 backdrop-blur-2xl shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all duration-300 flex-shrink-0 group gelly-button"
-              >
-                <User size={12} className="text-orange-500 group-hover:text-white transition-colors md:w-3.5 md:h-3.5" />
-                <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.2em] bg-gradient-to-r from-orange-400 via-white to-orange-400 text-transparent bg-clip-text">
-                  Portfolio
-                </span>
-              </a>
             </div>
+
 
           </header>
 
