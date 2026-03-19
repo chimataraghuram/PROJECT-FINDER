@@ -74,7 +74,7 @@ Project Finder centralizes the entire discovery phase. By aggregating top-tier r
 - **Frontend**: `React 19`, `TypeScript`, `Tailwind CSS`, `Framer Motion`
 - **Backend & Auth**: `Firebase` (Authentication & Cloud Firestore)
 - **Architecture**: Component-based modular design
-- **Deployment**: `GitHub Pages` / `Vite`
+- **Deployment**: `GitHub Actions` (Automated CI/CD)
 
 ## 📂 Project Structure
 ```text
