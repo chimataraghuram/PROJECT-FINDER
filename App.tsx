@@ -15,11 +15,6 @@ import { UserDashboard } from './components/UserDashboard';
 import { CollectionManager } from './components/CollectionManager';
 import { ComparisonStudio } from './components/ComparisonStudio';
 
-export interface Collection {
-  id: string;
-  name: string;
-  projectIds: string[];
-}
 
 
 import { auth, db, isFirebaseConfigured } from './services/firebase';
@@ -167,12 +162,6 @@ const App: React.FC = () => {
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const [collections, setCollections] = useState<Collection[]>(() => {
-    const saved = localStorage.getItem('project-finder-collections');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [isCollectionManagerOpen, setIsCollectionManagerOpen] = useState(false);
-  const [selectedProjectForCollection, setSelectedProjectForCollection] = useState<Project | null>(null);
   
   const [comparisonQueue, setComparisonQueue] = useState<Project[]>([]);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
@@ -186,42 +175,6 @@ const App: React.FC = () => {
     });
   };
 
-  const handleCreateCollection = (name: string) => {
-    const newCollection: Collection = {
-      id: `col-${Date.now()}`,
-      name,
-      projectIds: []
-    };
-    const updated = [...collections, newCollection];
-    setCollections(updated);
-    localStorage.setItem('project-finder-collections', JSON.stringify(updated));
-  };
-
-  const handleDeleteCollection = (id: string) => {
-    const updated = collections.filter(c => c.id !== id);
-    setCollections(updated);
-    localStorage.setItem('project-finder-collections', JSON.stringify(updated));
-  };
-
-  const handleRenameCollection = (id: string, newName: string) => {
-    const updated = collections.map(c => c.id === id ? { ...c, name: newName } : c);
-    setCollections(updated);
-    localStorage.setItem('project-finder-collections', JSON.stringify(updated));
-  };
-
-  const handleAddToCollection = (collectionId: string) => {
-    if (!selectedProjectForCollection) return;
-    const updated = collections.map(c => {
-      if (c.id === collectionId && !c.projectIds.includes(selectedProjectForCollection.id)) {
-        return { ...c, projectIds: [...c.projectIds, selectedProjectForCollection.id] };
-      }
-      return c;
-    });
-    setCollections(updated);
-    localStorage.setItem('project-finder-collections', JSON.stringify(updated));
-    setIsCollectionManagerOpen(false);
-    setSelectedProjectForCollection(null);
-  };
 
 
 
@@ -240,9 +193,6 @@ const App: React.FC = () => {
               const data = docSnap.data();
               const cloudFavs = data.favorites || [];
               if (cloudFavs.length > 0) setFavorites(cloudFavs);
-              
-              const cloudCols = data.collections || [];
-              if (cloudCols.length > 0) setCollections(cloudCols);
             }
           });
           return () => unsubscribeSnap();
@@ -616,10 +566,6 @@ const App: React.FC = () => {
                               project={project}
                               isFavorite={favorites.some((f) => f.id === project.id)}
                               onToggleFavorite={toggleFavorite}
-                              onAddToCollection={(p) => {
-                                setSelectedProjectForCollection(p);
-                                setIsCollectionManagerOpen(true);
-                              }}
                               onToggleCompare={toggleComparison}
                               isComparing={comparisonQueue.some(p => p.id === project.id)}
                             />
@@ -667,10 +613,6 @@ const App: React.FC = () => {
                                   project={project}
                                   isFavorite={favorites.some(f => f.url === project.url)}
                                   onToggleFavorite={toggleFavorite}
-                                  onAddToCollection={(p) => {
-                                    setSelectedProjectForCollection(p);
-                                    setIsCollectionManagerOpen(true);
-                                  }}
                                 />
                               ))}
                             </div>
@@ -781,10 +723,6 @@ const App: React.FC = () => {
                         project={project}
                         isFavorite={true}
                         onToggleFavorite={toggleFavorite}
-                        onAddToCollection={(p) => {
-                          setSelectedProjectForCollection(p);
-                          setIsCollectionManagerOpen(true);
-                        }}
                       />
                     ))}
                   </div>
@@ -832,23 +770,6 @@ const App: React.FC = () => {
               setIsOpen={setIsAIAssistantOpen} 
             />
 
-            <CollectionManager
-              isOpen={isCollectionManagerOpen}
-              onClose={() => {
-                setIsCollectionManagerOpen(false);
-                setSelectedProjectForCollection(null);
-              }}
-              collections={collections.map(c => ({
-                id: c.id,
-                name: c.name,
-                projectCount: c.projectIds.length
-              }))}
-              projectName={selectedProjectForCollection?.name}
-              onCreateCollection={handleCreateCollection}
-              onDeleteCollection={handleDeleteCollection}
-              onRenameCollection={handleRenameCollection}
-              onAddToCollection={handleAddToCollection}
-            />
           </main>
 
           {/* Comparison Studio Modal */}

@@ -39,13 +39,12 @@ interface ProjectCardProps {
   project: Project;
   isFavorite?: boolean;
   onToggleFavorite?: (project: Project) => void;
-  onAddToCollection?: (project: Project) => void;
   onToggleCompare?: (project: Project) => void;
   isComparing?: boolean;
   index?: number;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onAddToCollection, onToggleCompare, isComparing, index = 0 }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0 }) => {
   const [copied, setCopied] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
@@ -244,16 +243,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
 
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  onAddToCollection?.(project);
-                }}
-                className="p-2 rounded-full bg-white/5 text-gray-500 hover:text-orange-400 hover:bg-white/10 transition-all duration-500"
-                title="Add to Collection"
-              >
-                <FolderPlus className="w-5 h-5" />
-              </button>
 
               <button
                 onClick={(e) => {
