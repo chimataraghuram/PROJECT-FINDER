@@ -405,21 +405,70 @@ export const searchProjects = async (query: string): Promise<SearchResult> => {
   }
 };
 
-// Placeholder functions for other features (if needed)
-export async function* createChatStream(
-  history: { role: string; parts: { text: string }[] }[],
-  message: string,
-  isFastMode: boolean
-) {
-  // This feature would require an AI API
-  // For now, return a message indicating it's not available
-  yield "Chat feature requires an AI API key. This is a search-only version.";
-}
 
-export const generateImage = async (prompt: string, size: '1K' | '2K' | '4K'): Promise<string> => {
-  throw new Error("Image generation requires an AI API key. This feature is not available in the free version.");
+// Fetch README content from GitHub
+export const fetchProjectReadme = async (url: string): Promise<string> => {
+  try {
+    // Extract owner and repo from URL (https://github.com/owner/repo)
+    const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return '';
+    
+    const owner = match[1];
+    const repo = match[2];
+    
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/readme`,
+      { headers: { 'Accept': 'application/vnd.github.v3.raw' } }
+    );
+    
+    if (!response.ok) return '';
+    return await response.text();
+  } catch (error) {
+    console.error('Fetch README error:', error);
+    return '';
+  }
 };
 
-export const generateVideo = async (imageSrc: string, prompt: string, aspectRatio: '16:9' | '9:16'): Promise<string> => {
-  throw new Error("Video generation requires an AI API key. This feature is not available in the free version.");
+// Advanced Heuristic Summarizer (Smart Extraction)
+export const summarizeProject = (name: string, description: string, readme: string): any => {
+  // 1. Extract Overview (First paragraph or first 200 chars)
+  let overview = description;
+  if (readme) {
+    const lines = readme.split('\n').filter(l => l.trim() && !l.startsWith('#') && !l.startsWith('!'));
+    if (lines.length > 0) {
+      overview = lines[0].replace(/\[.*?\]\(.*?\)/g, '').replace(/[*_~`]/g, '').trim();
+      if (overview.length < 50 && lines.length > 1) {
+        overview += ' ' + lines[1].trim();
+      }
+    }
+  }
+
+  // 2. Extract Tech Stack
+  const techKeywords = [
+    'React', 'Vue', 'Angular', 'Svelte', 'Node', 'Python', 'Java', 'Django', 'Flask', 'FastAPI',
+    'TypeScript', 'JavaScript', 'Rust', 'Go', 'Docker', 'Kubernetes', 'AWS', 'Firebase', 'Supabase',
+    'Tailwind', 'Next.js', 'Vite', 'GraphQL', 'MongoDB', 'PostgreSQL', 'Redis', 'PyTorch', 'TensorFlow',
+    'Scikit-learn', 'OpenCV', 'NLP', 'LLM', 'Transformers'
+  ];
+  
+  const foundTech = techKeywords.filter(tech => 
+    readme.toLowerCase().includes(tech.toLowerCase()) || 
+    description.toLowerCase().includes(tech.toLowerCase())
+  );
+
+  // 3. Extract Use Case (Look for "Usage", "Why", "Features")
+  let useCase = "General purpose development or research.";
+  if (readme.toLowerCase().includes('usage')) {
+    useCase = "Specifically designed for production-ready implementations and rapid prototyping.";
+  } else if (readme.toLowerCase().includes('dataset')) {
+    useCase = "Data analysis, machine learning research, and model training.";
+  } else if (readme.toLowerCase().includes('api')) {
+    useCase = "Backend integration and building programmatic services.";
+  }
+
+  return {
+    overview: overview.length > 150 ? overview.substring(0, 147) + '...' : overview,
+    useCase: useCase,
+    techStack: foundTech.slice(0, 5)
+  };
 };

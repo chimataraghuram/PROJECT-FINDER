@@ -13,7 +13,7 @@ import { AuthButton } from './components/AuthButton';
 import { ReadmeDiscovery } from './components/ReadmeDiscovery';
 
 
-import { auth, db } from './services/firebase';
+import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
@@ -62,6 +62,17 @@ const DEFAULT_FAVORITES: Project[] = [
     url: "https://github.com/chimataraghuram/PROJECT-FINDER",
     tags: ["React", "Vite", "Tailwind", "Firebase"],
     stars: "1.2k",
+    isPublisher: true,
+    type: 'project'
+  },
+  {
+    id: 'def-portfolio',
+    name: "Developer Portfolio",
+    description: "The official portfolio of Chimata Raghuram. Featuring high-end UI/UX designs and full-stack AI implementations.",
+    platform: 'GitHub',
+    url: "https://github.com/chimataraghuram/Portfolio",
+    tags: ["Portfolio", "Next.js", "Three.js"],
+    stars: "850",
     isPublisher: true,
     type: 'project'
   },
@@ -130,7 +141,11 @@ const App: React.FC = () => {
   });
 
 
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    // Initial check for Mock User
+    const savedMock = localStorage.getItem('project-finder-mock-user');
+    return savedMock ? JSON.parse(savedMock) : (auth?.currentUser || null);
+  });
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -139,23 +154,41 @@ const App: React.FC = () => {
 
   // Auth & Cloud Sync
   useEffect(() => {
-    if (!auth || !db) return;
-    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      if (user) {
-        // Sync from Firestore
-        const userDocRef = doc(db, 'users', user.uid);
-        const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
-          if (docSnap.exists()) {
-            const cloudFavs = docSnap.data().favorites || [];
-            if (cloudFavs.length > 0) setFavorites(cloudFavs);
-          }
-        });
-        return () => unsubscribeSnap();
-      }
-    });
+    // 1. Real Firebase Listener
+    let unsubscribeAuth: any;
+    if (auth && isFirebaseConfigured) {
+      unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+        setCurrentUser(user);
+        if (user && db) {
+          // Sync from Firestore
+          const userDocRef = doc(db, 'users', user.uid);
+          const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+              const cloudFavs = docSnap.data().favorites || [];
+              if (cloudFavs.length > 0) setFavorites(cloudFavs);
+            }
+          });
+          return () => unsubscribeSnap();
+        }
+      });
+    }
 
-    return () => unsubscribeAuth();
+    // 2. Mock Auth Listener (Polyfill for local storage changes)
+    const handleStorageChange = () => {
+      const savedMock = localStorage.getItem('project-finder-mock-user');
+      if (savedMock) setCurrentUser(JSON.parse(savedMock));
+      else if (!isFirebaseConfigured) setCurrentUser(null);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    // Poll for changes if in same tab (simple for mock)
+    const interval = setInterval(handleStorageChange, 1000);
+
+    return () => {
+      if (unsubscribeAuth) unsubscribeAuth();
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, []);
 
   // Sync to Cloud (and Local fallback)
@@ -224,8 +257,25 @@ const App: React.FC = () => {
     return matchesPlatform;
   }) || [];
 
+  // Dynamic Label Logic
+  const [isCompact, setIsCompact] = useState(false);
+  
+  const LABELS = {
+    discover: isCompact ? "Discover" : "Discover Projects",
+    profiles: isCompact ? "Profiles" : "GitHub README Profiles",
+    saved: "Saved" // Stays "Saved" as per request
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsCompact(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-200 font-sans selection:bg-blue-500/30 overflow-x-hidden">
+    <div className={`min-h-screen text-slate-200 font-sans selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-500 ${isCompact ? 'pt-4' : ''}`}>
       {showIntro ? (
         <IntroVideo onComplete={() => setShowIntro(false)} />
       ) : (
@@ -252,7 +302,9 @@ const App: React.FC = () => {
           </div>
 
           {/* Unified Header for Desktop & Mobile (All perfectly sized for one line) */}
-          <header className="fixed top-0 inset-x-0 z-[70] p-2 md:p-6 flex flex-nowrap items-center justify-between gap-1.5 md:gap-6 pointer-events-none animate-fade-in">
+          <header className={`fixed top-0 inset-x-0 z-[70] transition-all duration-500 flex flex-nowrap items-center justify-between pointer-events-none animate-fade-in ${
+            isCompact ? 'p-2 md:p-3 scale-95 origin-top' : 'p-2 md:p-4'
+          }`}>
             {/* Left: Logo */}
             <div className="flex-shrink-0 pointer-events-auto">
               <div
@@ -260,66 +312,109 @@ const App: React.FC = () => {
                   setCurrentView('search');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="h-9 md:h-14 px-3 md:px-8 rounded-full border border-white/10 bg-[#0f172a]/60 backdrop-blur-2xl flex items-center justify-center cursor-pointer shadow-2xl transition-all hover:scale-105 gap-2 md:gap-3 group/logo"
+                className={`transition-all duration-500 rounded-full border border-white/10 bg-[#0f172a]/60 backdrop-blur-2xl flex items-center justify-center cursor-pointer shadow-2xl hover:scale-105 gap-2 md:gap-3 group/logo ${
+                  isCompact ? 'h-8 md:h-10 px-3 md:px-5' : 'h-8 md:h-12 px-3 md:px-6'
+                }`}
               >
-                <div className="bg-gradient-to-br from-red-500 to-orange-500 p-1 md:p-1.5 rounded-lg md:rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover/logo:rotate-[15deg] transition-all duration-500">
-                  <Search className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                <div className={`bg-gradient-to-br from-red-500 to-orange-500 rounded-lg md:rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover/logo:rotate-[15deg] transition-all duration-500 ${
+                  isCompact ? 'p-0.5 md:p-1' : 'p-1 md:p-1'
+                }`}>
+                  <Search className={`${isCompact ? 'w-3 h-3 md:w-4 md:h-4' : 'w-3.5 h-3.5 md:w-5 md:h-5'} text-white`} />
                 </div>
-                <span className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 text-transparent bg-clip-text font-black tracking-[0.2em] text-sm md:text-xl uppercase hidden sm:block">
-                  Project Finder
-                </span>
-                <span className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 text-transparent bg-clip-text font-black tracking-[0.2em] text-[10px] uppercase sm:hidden">
-                  PF
-                </span>
+                <h1 className={`font-black text-white uppercase tracking-[0.2em] font-display transition-all duration-500 ${
+                  isCompact ? 'text-[9px] md:text-sm' : 'text-xs md:text-xl'
+                }`}>
+                  {isCompact ? 'PF' : 'Project Finder'}
+                </h1>
               </div>
             </div>
 
             {/* Middle: Navigation Pill */}
             <div className="flex-shrink-0 flex justify-center pointer-events-auto">
-              <nav className="p-0.5 md:p-1.5 bg-[#0f172a]/80 backdrop-blur-3xl rounded-full shadow-2xl border border-white/10 flex items-center gap-0.5 md:gap-1.5 pointer-events-auto">
-                <button
+              <motion.nav 
+                layout
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className={`p-0.5 md:p-1 bg-[#0f172a]/80 backdrop-blur-3xl rounded-full shadow-2xl border border-white/10 flex items-center gap-0.5 md:gap-1.5 transition-all duration-500 ${
+                isCompact ? 'scale-90 px-1' : ''
+              }`}>
+                <motion.button
+                  layout
                   onClick={() => {
                     setCurrentView('search');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-2.5 sm:px-4 md:px-7 py-1.5 md:py-2 rounded-full border transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap font-black text-[8.5px] sm:text-[10px] md:text-xs flex-shrink-0 ${currentView === 'search'
-                    ? 'bg-[#f97316] text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]'
+                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'search'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
                     : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
                     }`}
                 >
-                  <Sparkles className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 transition-transform ${currentView === 'search' ? 'scale-110' : ''}`} />
-                  <span className="tracking-wide">Discover</span>
-                </button>
+                  <Sparkles className="w-3 h-3" />
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      key={LABELS.discover}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="inline-block"
+                    >
+                      {LABELS.discover}
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
 
-                <button
+                <motion.button
+                  layout
                   onClick={() => {
                     setCurrentView('readme');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-2.5 sm:px-4 md:px-7 py-1.5 md:py-2 rounded-full border transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap font-black text-[8.5px] sm:text-[10px] md:text-xs flex-shrink-0 ${currentView === 'readme'
-                    ? 'bg-[#f97316] text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]'
+                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'readme'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
                     : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
                     }`}
                 >
-                  <FileCode className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 transition-transform ${currentView === 'readme' ? 'scale-110' : ''}`} />
-                  <span className="tracking-wide">READMEs</span>
-                </button>
+                  <FileCode className="w-3 h-3" />
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      key={LABELS.profiles}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="inline-block"
+                    >
+                      {LABELS.profiles}
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
 
-                <button
+                <motion.button
+                  layout
                   onClick={() => {
                     setCurrentView('favorites');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className={`px-2.5 sm:px-4 md:px-7 py-1.5 md:py-2 rounded-full border transition-all duration-300 flex items-center gap-1 md:gap-2 whitespace-nowrap font-black text-[8.5px] sm:text-[10px] md:text-xs flex-shrink-0 ${currentView === 'favorites'
-                    ? 'bg-[#f97316] text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.6)]'
+                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'favorites'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
                     : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
                     }`}
                 >
-                  <Heart className={`w-3 h-3 md:w-3.5 md:h-3.5 shrink-0 transition-transform ${currentView === 'favorites' ? 'scale-110' : ''}`} />
-                  <span className="tracking-wide">Favs ({favorites.length})</span>
-                </button>
-
-              </nav>
+                  <Heart className="w-3 h-3" />
+                  <AnimatePresence mode="popLayout" initial={false}>
+                    <motion.span
+                      key={LABELS.saved}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="inline-block"
+                    >
+                      {LABELS.saved} ({favorites.length})
+                    </motion.span>
+                  </AnimatePresence>
+                </motion.button>
+              </motion.nav>
             </div>
 
             {/* In-Between: TECHBOY AI Pill */}
@@ -362,12 +457,14 @@ const App: React.FC = () => {
                 <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-24 md:pt-32 pb-16 md:pb-20'}`}>
                   <div className="text-center mb-8 md:mb-16 space-y-4 md:space-y-8 relative z-10 max-w-6xl mx-auto">
                     <h1 className="flex flex-col items-center font-black tracking-tighter mb-4 md:mb-8 leading-tight animate-liquid-drop home-title gap-1 md:gap-2">
-                      <span className="text-white text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[5rem] drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] animate-liquid-text" data-text="Explore">Explore</span>
+                      <span className="text-white text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[5rem] drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] animate-liquid-text" data-text="Explore">
+                        Explore
+                      </span>
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[1.1rem] sm:text-xl md:text-2xl lg:text-[2rem] font-bold tracking-widest uppercase home-subtitle-top">
                         The World of
                       </span>
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[5rem] home-subtitle-bottom">
-                        Projects
+                        {LABELS.discover}
                       </span>
                     </h1>
                     <p className="text-gray-400 text-[10px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60">
@@ -571,13 +668,13 @@ const App: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <h3 className="text-xl font-bold text-white">Your collection is empty</h3>
-                      <p className="text-gray-500 max-w-xs">Start exploring projects and heart the ones you love to see them here.</p>
+                      <p className="text-gray-500 max-w-xs">Start exploring projects and heart the ones you love to see them here in your saved collection.</p>
                     </div>
                     <button
                       onClick={() => setCurrentView('search')}
-                      className="px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition-all active:scale-95 shadow-xl shadow-white/5"
+                      className="px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition-all active:scale-95 shadow-xl shadow-white/5 uppercase tracking-widest text-[10px]"
                     >
-                      Discover Projects
+                      {LABELS.discover}
                     </button>
                   </div>
                 )}

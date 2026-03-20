@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, MessageSquare, Flame, Trash2 } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
+import { auth, db, isFirebaseConfigured } from '../services/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface Message {
-    role: 'user' | 'bot';
-    text: string;
-    timestamp: Date;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
 }
 
 interface TechboyAssistantProps {
@@ -22,30 +24,60 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
 }) => {
     const [messages, setMessages] = useState<Message[]>([
         { 
-            role: 'bot', 
-            text: "Namaste! I'm Techboy AI, your personalized project brain. I've analyzed our current discovery results. What would you like to know?",
-            timestamp: new Date()
+            role: 'assistant', 
+            content: "I'm Techboy AI, your advanced project research partner. Ask me anything about these projects or what you should build next!",
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    // 🔄 Load Chat History
+    useEffect(() => {
+        const user = auth?.currentUser;
+        if (!user || !isFirebaseConfigured || !db) return;
+
+        const loadHistory = async () => {
+            const chatRef = doc(db, 'chats', user.uid);
+            const docSnap = await getDoc(chatRef);
+            if (docSnap.exists()) {
+                setMessages(docSnap.data().messages);
+            }
+        };
+
+        loadHistory();
+    }, [isOpen, auth?.currentUser]); // Reload when opened or user changes
+
+    // 💾 Save Chat History
+    useEffect(() => {
+        if (messages.length <= 1) return;
+        const user = auth?.currentUser;
+        if (!user || !isFirebaseConfigured || !db) return;
+
+        const saveHistory = async () => {
+            setIsSyncing(true);
+            try {
+                const chatRef = doc(db, 'chats', user.uid);
+                await setDoc(chatRef, { messages, lastUpdated: new Date().toISOString() }, { merge: true });
+            } catch (err) {
+                console.error("Firestore save error:", err);
+            } finally {
+                setTimeout(() => setIsSyncing(false), 800);
+            }
+        };
+
+        const timeout = setTimeout(saveHistory, 1500); // 1.5s Debounce
+        return () => clearTimeout(timeout);
+    }, [messages, auth?.currentUser]);
+
+    // Auto-scroll
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages, isTyping]);
-
-
-    const findProjectsByTopic = (topic: string) => {
-        const query = topic.toLowerCase();
-        return projects.filter(p => 
-            p.name.toLowerCase().includes(query) || 
-            p.description.toLowerCase().includes(query) ||
-            p.tags?.some(t => t.toLowerCase().includes(query))
-        ).slice(0, 3);
-    };
 
     const parseStars = (stars?: string | number): number => {
         if (!stars) return 0;
@@ -60,64 +92,50 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         if (!input.trim()) return;
 
         const userMsg = input;
-        setMessages(prev => [...prev, { role: 'user', text: userMsg, timestamp: new Date() }]);
+        const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        setMessages(prev => [...prev, { role: 'user', content: userMsg, timestamp }]);
         setInput('');
         setIsTyping(true);
 
         setTimeout(() => {
             const lowInput = userMsg.toLowerCase();
-            let botResponse = "I'm analyzing our discovery database... ";
+            let botResponse = "I'm processing your inquiry through my discovery neural net...";
 
-            // 🧠 Massive Knowledge Logic
-            if (lowInput.includes('best') || lowInput.includes('recommend') || lowInput.includes('top')) {
-                const top = [...projects].sort((a, b) => parseStars(b.stars) - parseStars(a.stars))[0];
-                if (top) {
-                    botResponse = `Based on my current analysis of the trending results, the definitive top project is **${top.name}** with **${top.stars}** stars on ${top.platform}. \n\nDirect Insight: "${top.description.substring(0, 120)}..."`;
+            // 🧠 Contextual Intelligence
+            const matchedProject = projects.find(p => 
+                lowInput.includes(p.name.toLowerCase()) || 
+                (p.tags?.some(t => lowInput.includes(t.toLowerCase())))
+            );
+
+            if (lowInput.includes('about') && matchedProject) {
+                botResponse = `**${matchedProject.name}** is a standout project on ${matchedProject.platform}. \n\n**Insight:** ${matchedProject.description}\n\n**Tech:** ${matchedProject.tags?.join(', ') || 'Various'}. It has **${matchedProject.stars}** stars.`;
+            } else if (lowInput.includes('compare')) {
+                if (projects.length >= 2) {
+                    botResponse = `Comparing **${projects[0].name}** vs **${projects[1].name}**. ${projects[0].name} is great for ${projects[0].tags?.[0] || 'core features'}, while ${projects[1].name} excels in ${projects[1].tags?.[0] || 'alternatives'}.`;
                 } else {
-                    botResponse = "To give you a definitive recommendation, try searching for a topic like 'React', 'AI', or 'Python' in the main search bar first!";
+                    botResponse = "I need more projects in view to compare! Try a broader search.";
                 }
-            } else if (lowInput.includes('python') || lowInput.includes('react') || lowInput.includes('machine learning') || lowInput.includes('ai') || lowInput.includes('ml')) {
-                const topic = lowInput.match(/(python|react|machine learning|ai|ml|go|rust|dataset)/)?.[0] || 'projects';
-                const related = findProjectsByTopic(topic);
-                if (related.length > 0) {
-                    botResponse = `I found **${related.length}** high-fidelity projects specifically for "${topic}". \n\nThe most prominent is **${related[0].name}** (${related[0].stars} stars). It's an elite choice for your research.`;
-                } else {
-                    botResponse = `I don't see any "${topic}" specific projects in the current live set. Try a broader search above, and I'll analyze the new results!`;
-                }
-            } else if (lowInput.includes('who are you') || lowInput.includes('creator') || lowInput.includes('name')) {
-                botResponse = "I am **TECHBOY AI**, the autonomous intelligence of the Project Finder ecosystem. I was crafted by **Raghu** to simplify complex project discovery for students and developers.";
-            } else if (lowInput.includes('hugging face') || lowInput.includes('kaggle') || lowInput.includes('github')) {
-                const plat = lowInput.includes('hugging') ? 'Hugging Face' : lowInput.includes('kaggle') ? 'Kaggle' : 'GitHub';
-                const platProjects = projects.filter(p => p.platform === plat);
-                botResponse = `In our current view, there are **${platProjects.length}** projects from **${plat}**. \n\n${platProjects.length > 0 ? `The top ${plat} project is **${platProjects[0].name}**.` : `Try searching for something else to see ${plat} results!`}`;
-            } else if (lowInput.includes('stars') || lowInput.includes('popular') || lowInput.includes('trending')) {
-                const sorted = [...projects].sort((a,b) => parseStars(b.stars) - parseStars(a.stars)).slice(0, 3);
-                if (sorted.length > 0) {
-                    botResponse = "Here are the top trending projects currently in my view:\n\n" + 
-                        sorted.map((p, i) => `${i+1}. **${p.name}** (${p.stars} stars)`).join('\n');
-                } else {
-                    botResponse = "Start a discovery search above, and I'll rank the best projects for you!";
-                }
-            } else if (lowInput.includes('how many') || lowInput.includes('total')) {
-                botResponse = `We are currently tracking **${projects.length}** elite projects across our integrated platforms.`;
-            } else if (lowInput.includes('help') || lowInput.includes('what can you do')) {
-                botResponse = "I can help you navigate the world of open-source! Try asking me:\n\n- 'Which project is the most popular?'\n- 'Recommend a Python project.'\n- 'Show me Kaggle datasets.'\n- 'Who created this tool?'";
+            } else if (lowInput.includes('who are you') || lowInput.includes('creator') || lowInput.includes('raghu')) {
+                botResponse = "I am **TECHBOY AI**, engineered by **Raghu Chimata** to be your ultimate companion in project discovery. My mission is to simplify the complex world of open source.";
             } else {
-                botResponse = "That's a great question! I'm constantly learning from our search results. Ask me to recommend a project or find a specific tech stack!";
+                botResponse = "I've analyzed the current results. Ask me to compare projects, recommend a stack, or tell you more about any repository you see!";
             }
 
-            setMessages(prev => [...prev, { role: 'bot', text: botResponse, timestamp: new Date() }]);
+            setMessages(prev => [...prev, { 
+                role: 'assistant', 
+                content: botResponse, 
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+            }]);
             setIsTyping(false);
         }, 1200);
     };
 
-
-
     const clearChat = () => {
         setMessages([{ 
-            role: 'bot', 
-            text: "Chat cleared. What's next on our research agenda?",
-            timestamp: new Date()
+            role: 'assistant', 
+            content: "Chat history cleared. What's our next objective?",
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }]);
     };
 
@@ -129,7 +147,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-3rem)] max-w-[420px] h-[600px] bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7),0_0_40px_rgba(249,115,22,0.1)] flex flex-col overflow-hidden pointer-events-auto"
+                        className="w-[calc(100vw-3rem)] max-w-[420px] h-[600px] bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
                         <div className="p-6 bg-gradient-to-r from-orange-600/10 to-transparent border-b border-white/10 flex items-center justify-between">
@@ -137,13 +155,22 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg border border-white/20 animate-pulse">
                                     <Bot className="w-6 h-6 text-white" />
                                 </div>
-                                <div>
-                                    <h3 className="text-sm font-black text-white uppercase tracking-widest leading-none">TECHBOY AI</h3>
-                                    <span className="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter mt-1 block">Autonomous Assistant</span>
+                                <div className="flex flex-col">
+                                    <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2 font-display">
+                                        Techboy AI
+                                        {isSyncing && (
+                                            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}>
+                                                <Sparkles className="w-3 h-3 text-orange-400" />
+                                            </motion.div>
+                                        )}
+                                    </h3>
+                                    <span className="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">
+                                        {isSyncing ? 'Cloud Syncing...' : 'Autonomous Assistant'}
+                                    </span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={clearChat} className="p-2 text-white/20 hover:text-red-400 transition-colors" title="Clear Chat">
+                                <button onClick={clearChat} className="p-2 text-white/20 hover:text-red-400 transition-colors">
                                     <Trash2 size={16} />
                                 </button>
                                 <button onClick={() => setIsOpen(false)} className="p-2 text-white/20 hover:text-white transition-colors">
@@ -166,9 +193,9 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                             ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white rounded-tr-none'
                                              : 'bg-white/5 text-gray-200 border border-white/10 rounded-tl-none backdrop-blur-md'
                                     }`}>
-                                        {msg.text}
+                                        {msg.content}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-                                            {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {msg.timestamp}
                                         </div>
                                     </div>
                                 </motion.div>
@@ -193,7 +220,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     onChange={(e) => setInput(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                                     placeholder="Ask about projects, stars, or tech..."
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-600"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-600 font-display"
                                 />
                                 <button
                                     onClick={handleSend}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Project } from '../types';
-import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Project, SummaryData } from '../types';
+import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { fetchProjectReadme, summarizeProject } from '../services/apiService';
 
 // Custom SVG for Hugging Face logo
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
@@ -42,6 +43,30 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, index = 0 }) => {
   const [copied, setCopied] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(project.aiSummary || null);
+
+  const handleSummarize = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (summaryData) {
+      setShowSummary(true);
+      return;
+    }
+
+    setIsSummarizing(true);
+    try {
+      const readme = await fetchProjectReadme(project.url);
+      const summary = summarizeProject(project.name, project.description, readme);
+      setSummaryData(summary);
+      setShowSummary(true);
+    } catch (err) {
+      console.error('Summarization failed:', err);
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
 
   const isGithub = project.platform === 'GitHub';
   const isHF = project.platform === 'Hugging Face';
@@ -80,21 +105,56 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { 
+        duration: 0.6, 
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: (index % 10) * 0.1, ease: "easeOut" }}
-      className="group relative glass-card p-5 md:p-6 transition-all duration-700 flex flex-col h-full hover:shadow-2xl hover:shadow-orange-500/20 hover:-translate-y-2 rounded-[2.5rem] hover:animate-liquid-glass overflow-hidden"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      whileHover={{ 
+        y: -12,
+        transition: { duration: 0.4, ease: "easeOut" }
+      }}
+      className="group relative glass-card p-5 md:p-6 transition-all duration-700 flex flex-col h-full hover:shadow-2xl hover:shadow-orange-500/20 rounded-[2.5rem] overflow-hidden"
     >
 
+      {/* Floating Sparkle Elements (Animated Background) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ 
+            x: [0, 20, 0], 
+            y: [0, 30, 0],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/10 blur-[60px] rounded-full"
+        />
+      </div>
+
       {/* Glow Effect */}
-      <div className="absolute -inset-px bg-gradient-to-br from-orange-500/10 to-red-600/10 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute -inset-px bg-gradient-to-br from-orange-500/20 to-red-600/10 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full">
         {/* Header with Platform Badge and Favorite toggle */}
-        <div className="mb-4">
+        <motion.div variants={itemVariants} className="mb-4">
           <div className="flex items-start justify-between mb-4">
             <div className="flex flex-wrap gap-2">
               <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold border uppercase tracking-wider ${badgeClasses}`}>
@@ -111,6 +171,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
             </div>
 
             <div className="flex items-center gap-2">
+              <button
+                onClick={handleSummarize}
+                disabled={isSummarizing || !isGithub}
+                className={`p-2 rounded-full transition-all duration-500 ${isSummarizing
+                  ? 'bg-orange-500/20 text-orange-500 animate-pulse'
+                  : !isGithub 
+                    ? 'hidden' 
+                    : 'bg-white/5 text-gray-500 hover:text-orange-400 hover:bg-white/10'}`}
+                title="AI Summary"
+              >
+                {isSummarizing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Brain className="w-5 h-5" />}
+              </button>
               <button
                 onClick={handleShare}
                 className={`p-2 rounded-full transition-all duration-500 ${copied
@@ -136,16 +208,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
             </div>
           </div>
 
-          <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-orange-400 transition-colors leading-tight line-clamp-2">
+          <h3 className="text-lg md:text-xl font-black text-white leading-tight font-display mb-2 group-hover:text-orange-400 transition-colors">
             {project.name}
           </h3>
-        </div>
+        </motion.div>
 
-        <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed line-clamp-3 md:line-clamp-4">
+        <motion.p variants={itemVariants} className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed line-clamp-3 md:line-clamp-4">
           {project.description}
-        </p>
+        </motion.p>
 
-        <div className="mt-auto space-y-4">
+        <motion.div variants={itemVariants} className="mt-auto space-y-4">
           <div className="flex flex-wrap gap-2">
             {project.tags.slice(0, 3).map((tag, idx) => (
               <span
@@ -183,8 +255,80 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               </a>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
+
+      {/* AI Summary Overlay */}
+      <AnimatePresence>
+        {showSummary && summaryData && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="absolute inset-0 z-50 bg-[#0f172a]/95 backdrop-blur-xl p-6 flex flex-col rounded-[2.5rem] border border-orange-500/30"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-orange-600/20 rounded-lg">
+                  <Sparkles className="w-4 h-4 text-orange-500" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">Techboy AI Summary</span>
+              </div>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowSummary(false);
+                }}
+                className="p-2 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-6 overflow-y-auto no-scrollbar pr-2">
+              <section>
+                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
+                  <Lightbulb className="w-3.5 h-3.5 text-yellow-500" />
+                  Overview
+                </div>
+                <p className="text-gray-300 text-xs leading-relaxed italic">
+                  "{summaryData.overview}"
+                </p>
+              </section>
+
+              <section>
+                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
+                  <Terminal className="w-3.5 h-3.5 text-blue-500" />
+                  Primary Use Case
+                </div>
+                <p className="text-gray-400 text-xs leading-relaxed">
+                  {summaryData.useCase}
+                </p>
+              </section>
+
+              <section>
+                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
+                  <Cpu className="w-3.5 h-3.5 text-purple-500" />
+                  Tech Stack
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {summaryData.techStack.map((tech, i) => (
+                    <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[9px] font-bold text-gray-300">
+                      {tech}
+                    </span>
+                  ))}
+                  {summaryData.techStack.length === 0 && <span className="text-[10px] text-gray-600">General stack detected</span>}
+                </div>
+              </section>
+            </div>
+
+            <div className="mt-auto pt-4 border-t border-white/5 text-center">
+              <p className="text-[9px] text-gray-600 font-bold uppercase tracking-widest">Powered by Techboy heuristic engine</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

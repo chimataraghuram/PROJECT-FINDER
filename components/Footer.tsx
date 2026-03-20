@@ -4,10 +4,13 @@ import { motion } from 'framer-motion';
 
 interface FooterProps {
     onComingSoonClick: (e: React.MouseEvent) => void;
+    isCompact?: boolean;
+    labels?: any;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onComingSoonClick }) => {
+export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, labels }) => {
     const currentYear = new Date().getFullYear();
+    const activeLabels = labels || { discover: "Discover Projects", profiles: "GitHub README Profiles", saved: "Saved" };
 
     return (
         <footer className="relative mt-32 pb-16 overflow-hidden border-t border-white/5 bg-transparent backdrop-blur-sm">
@@ -33,7 +36,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick }) => {
                             </div>
                             <div className="flex flex-col select-none">
                                 <span className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-200 via-white to-orange-400 tracking-tighter">
-                                    Project Finder
+                                    {isCompact ? 'PF' : 'Project Finder'}
                                 </span>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="h-[2px] w-8 bg-orange-500 rounded-full" />
@@ -48,11 +51,11 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick }) => {
                                 About the Platform
                             </h4>
                             <div className="space-y-4">
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium">
-                                    Project Finder is an advanced innovation engine. Our <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">Discover</span> section provides a global gateway to high-quality projects across GitHub, Hugging Face, and Kaggle.
+                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium transition-all duration-500">
+                                    Project Finder is an advanced innovation engine. Our <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> section provides a global gateway to high-quality projects.
                                 </p>
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium">
-                                    The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4">README</span> hub offers real-time synchronization with elite GitHub profile inspirations, helping you architect a definitively premium presence.
+                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium transition-all duration-500">
+                                    The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.profiles}</span> hub offers real-time synchronization with elite GitHub profiles.
                                 </p>
                             </div>
                             <a
@@ -79,8 +82,8 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick }) => {
 
                         <div className="space-y-6">
                             {[
-                                { title: 'Discover', desc: 'Find high-quality projects across GitHub, Hugging Face, or Kaggle using the global search bar.' },
-                                { title: 'README', desc: 'Real-time synchronization with elite GitHub profile inspirations to architect a premium presence.' }
+                                { title: activeLabels.discover, desc: 'Find high-quality projects across multi-platform registries.' },
+                                { title: activeLabels.profiles, desc: 'Architect a premium presence with real-time profile inspirations.' }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
                                     <div className="relative flex-shrink-0">

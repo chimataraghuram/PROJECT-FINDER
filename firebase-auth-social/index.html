@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techboy Project Finder - Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-6">
+
+    <div id="auth-container" class="glass p-10 rounded-[2.5rem] shadow-2xl w-full max-w-lg border border-white/30 fade-in hidden">
+        <!-- 🔓 Login Section -->
+        <div id="login-view" class="text-center">
+            <h1 class="text-4xl font-extrabold text-white mb-2 tracking-tighter">Techboy Project Finder</h1>
+            <p class="text-white/80 mb-10 font-medium">Connect your account to discover elite projects.</p>
+            
+            <div class="space-y-4">
+                <button id="btn-google" class="w-full bg-white hover:bg-gray-50 text-gray-800 font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-4 transition-all shadow-lg active:scale-95 group">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" class="w-6 h-6 group-hover:rotate-12 transition-transform">
+                    Continue with Google
+                </button>
+                
+                <button id="btn-github" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-4 transition-all shadow-lg active:scale-95 group">
+                    <svg class="w-6 h-6 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.298 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    Continue with GitHub
+                </button>
+            </div>
+        </div>
+
+        <!-- 🏢 Dashboard View -->
+        <div id="dashboard-view" class="hidden text-center">
+            <div class="relative inline-block mb-6">
+                <img id="user-photo" src="" class="w-32 h-32 rounded-full border-4 border-white shadow-2xl transition-transform hover:scale-105 mx-auto">
+                <div class="absolute bottom-2 right-2 w-8 h-8 bg-green-500 border-4 border-white rounded-full"></div>
+            </div>
+            
+            <h2 id="user-name" class="text-3xl font-extrabold text-white mb-1 tracking-tight"></h2>
+            <p id="user-email" class="text-white/70 font-medium mb-10"></p>
+            
+            <button id="btn-logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-10 rounded-2xl transition-all shadow-xl active:scale-95">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { signInWithGoogle, signInWithGithub, logout, observeAuthState } from './auth.js';
+
+        const container = document.getElementById('auth-container');
+        const loginView = document.getElementById('login-view');
+        const dashboardView = document.getElementById('dashboard-view');
+        
+        const photo = document.getElementById('user-photo');
+        const name = document.getElementById('user-name');
+        const email = document.getElementById('user-email');
+
+        // 🔄 Observe State
+        observeAuthState((user) => {
+            container.classList.remove('hidden');
+            if (user) {
+                // Show Dashboard
+                loginView.classList.add('hidden');
+                dashboardView.classList.remove('hidden');
+                
+                photo.src = user.photoURL || 'https://via.placeholder.com/150';
+                name.textContent = user.displayName;
+                email.textContent = user.email;
+            } else {
+                // Show Login
+                loginView.classList.remove('hidden');
+                dashboardView.classList.add('hidden');
+            }
+        });
+
+        // 🖱️ Event Listeners
+        document.getElementById('btn-google').onclick = async () => {
+            const { error } = await signInWithGoogle();
+            if (error) alert("Error: " + error);
+        };
+
+        document.getElementById('btn-github').onclick = async () => {
+            const { error } = await signInWithGithub();
+            if (error) alert("Error: " + error);
+        };
+
+        document.getElementById('btn-logout').onclick = async () => {
+            await logout();
+        };
+    </script>
+</body>
+</html>

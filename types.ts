@@ -1,3 +1,9 @@
+export interface SummaryData {
+  overview: string;
+  useCase: string;
+  techStack: string[];
+}
+
 export interface Project {
   id?: string;
   name: string;
@@ -10,6 +16,7 @@ export interface Project {
   liveUrl?: string;
   demoUrl?: string;
   type?: 'project' | 'readme';
+  aiSummary?: SummaryData;
 }
 
 

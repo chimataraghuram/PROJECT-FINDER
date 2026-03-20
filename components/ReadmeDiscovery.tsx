@@ -7,6 +7,8 @@ import { searchGitHubReadmes, fetchGitHubUserProfile } from '../services/apiServ
 interface ReadmeDiscoveryProps {
     favorites: Project[];
     onToggleFavorite: (project: Project) => void;
+    isCompact?: boolean;
+    labels?: any;
 }
 
 const CATEGORIES = [
@@ -143,7 +145,7 @@ const ReadmeCard: React.FC<{ profile: any; index: number; isFeatured?: boolean; 
     );
 };
 
-export const ReadmeDiscovery: React.FC<ReadmeDiscoveryProps> = ({ favorites, onToggleFavorite }) => {
+export const ReadmeDiscovery: React.FC<ReadmeDiscoveryProps> = ({ favorites, onToggleFavorite, isCompact, labels }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [profiles, setProfiles] = useState<Project[]>([]);
@@ -201,9 +203,10 @@ export const ReadmeDiscovery: React.FC<ReadmeDiscoveryProps> = ({ favorites, onT
                 <motion.h1 
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl md:text-7xl font-black mb-6 bg-gradient-to-r from-orange-400 via-white to-red-500 text-transparent bg-clip-text tracking-tighter"
+                    key={labels?.profiles}
+                    className="text-4xl md:text-7xl font-black mb-6 bg-gradient-to-r from-orange-400 via-white to-red-500 text-transparent bg-clip-text tracking-tighter transition-all duration-500"
                 >
-                    Real-Time README Discovery
+                    {labels?.profiles || 'GitHub README Profiles'}
                 </motion.h1>
                 <div className="flex items-center justify-center gap-2 mb-6">
                     <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
