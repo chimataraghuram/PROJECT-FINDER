@@ -17,6 +17,10 @@ export interface Project {
   demoUrl?: string;
   type?: 'project' | 'readme';
   aiSummary?: SummaryData;
+  homepage?: string;
+  license?: string;
+  stargazers_count?: number;
+  forks_count?: number;
 }
 
 

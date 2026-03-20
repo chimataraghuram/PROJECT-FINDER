@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { auth, googleProvider, githubProvider, isFirebaseConfigured } from '../services/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { User as UserIcon, LogOut, ShieldCheck, Sparkles, Github, Chrome, ChevronDown } from 'lucide-react';
+import { User as UserIcon, LogOut, ShieldCheck, Sparkles, Github, Chrome, ChevronDown, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const AuthButton: React.FC = () => {
+interface AuthButtonProps {
+    onViewDashboard?: () => void;
+}
+
+export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard }) => {
     const [user, setUser] = useState<any>(null);
     const [showOptions, setShowOptions] = useState(false);
 
+    useEffect(() => {
         if (isFirebaseConfigured && auth) {
             const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
             return () => unsubscribe();
         }
+    }, []);
 
     const handleLogin = async (providerType: 'google' | 'github') => {
         setShowOptions(false);
@@ -41,21 +47,34 @@ export const AuthButton: React.FC = () => {
     if (user) {
         return (
             <div className="flex items-center gap-3 pl-3 pr-1 py-1 rounded-full bg-[#0f172a]/80 border border-white/10 backdrop-blur-3xl group shadow-2xl hover:border-orange-500/30 transition-all duration-500">
-                <div className="flex flex-col items-end pr-2 hidden sm:flex">
+                <button 
+                    onClick={onViewDashboard}
+                    className="flex flex-col items-end pr-2 hidden sm:flex cursor-pointer hover:opacity-80 transition-opacity"
+                >
                     <span className="text-[9px] font-black text-green-400 uppercase tracking-[0.2em] transition-colors">
                         Verified User
                     </span>
                     <span className="text-[10px] font-bold text-white truncate max-w-[100px]">{user.displayName}</span>
-                </div>
+                </button>
                 
-                <div className="relative">
+                <button onClick={onViewDashboard} className="relative cursor-pointer hover:scale-105 transition-transform">
                     <img 
-                        src={user.photoURL || ''} 
+                        src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}&background=f97316&color=fff`} 
                         alt="Profile" 
                         className="w-8 h-8 rounded-full border-2 border-orange-500/20 group-hover:border-orange-500 transition-colors shadow-lg"
                     />
                     <div className="absolute -right-1 -top-1 bg-green-500 w-2.5 h-2.5 rounded-full border-2 border-[#0f172a]" />
-                </div>
+                </button>
+
+                <div className="w-px h-6 bg-white/10 mx-1" />
+
+                <button 
+                    onClick={onViewDashboard}
+                    className="p-2 rounded-full hover:bg-orange-500/10 text-gray-500 hover:text-orange-400 transition-all"
+                    title="Dashboard"
+                >
+                    <LayoutDashboard className="w-4 h-4" />
+                </button>
 
                 <button 
                     onClick={handleLogout}
@@ -74,7 +93,6 @@ export const AuthButton: React.FC = () => {
                 onClick={() => setShowOptions(!showOptions)}
                 className="flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-indigo-600/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group border border-white/20"
             >
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
                 Connect
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-500 ${showOptions ? 'rotate-180' : ''}`} />
             </button>

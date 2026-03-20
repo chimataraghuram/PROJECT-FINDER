@@ -534,94 +534,37 @@ h1, h2, h3, h4, .font-display {
 
 /* Mobile Responsive Updates */
 @media (max-width: 768px) {
-
-    /* Both logo pill and navbar are sticky on mobile */
-
-    .home-content-wrapper {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        padding-top: 20px !important;
-        /* Minimal padding at top */
+    /* Ensure parent containers don't break sticky/fixed positioning */
+    .home-content-wrapper, .home-section, main {
         overflow: visible !important;
-        /* Required for sticky positioning */
+        height: auto !important;
     }
 
-    .home-section {
-        padding-top: 15px !important;
-        overflow: visible !important;
-        /* Required for sticky positioning */
-    }
-
+    /* Vertical Spacing: Navbar -> Buttons -> Title -> SearchBar */
     .logo-container {
-        position: sticky !important;
-        top: 0 !important;
-        /* Stick to very top */
-        z-index: 1001 !important;
-        margin-top: 0 !important;
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-        animation: none !important;
-        transform: none !important;
-        will-change: auto !important;
-    }
-
-    /* Make navbar sticky below the logo pill */
-    .fixed.top-20.md\:top-4.left-1\/2.-translate-x-1\/2 {
-        position: sticky !important;
-        top: 56px !important;
-        /* Position below logo pill (logo pill height ~48px + padding) */
-        left: 0 !important;
-        width: 100% !important;
-        transform: none !important;
-        z-index: 1000 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        transition: none !important;
         display: flex !important;
         justify-content: center !important;
-        padding: 8px !important;
-        margin: 0 !important;
-    }
-
-    .logo-container>div {
-        backdrop-filter: blur(24px) !important;
-        -webkit-backdrop-filter: blur(24px) !important;
-        background: rgba(15, 23, 42, 0.95) !important;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    .logo-container * {
-        animation: none !important;
-        transition: none !important;
-        transform: none !important;
-    }
-
-    .logo-container:hover,
-    .logo-container:active,
-    .logo-container *:hover,
-    .logo-container *:active {
-        transform: none !important;
-        animation: none !important;
-        transition: none !important;
     }
 
     .home-title {
-        margin-top: 20px !important;
-        text-align: center;
+        margin-top: 40px !important;
+        margin-bottom: 24px !important;
+    }
+
+    /* Centering Fixes */
+    .home-section {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-        animation: none !important;
-        transform: none !important;
+        text-align: center !important;
+        padding-top: 20px !important;
     }
 
-    .animate-liquid-drop {
-        animation: none !important;
-        transform: none !important;
-        opacity: 1 !important;
-        filter: none !important;
+    /* UX Polish */
+    * {
+        -webkit-tap-highlight-color: transparent;
     }
 }

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Project, SummaryData } from '../types';
-import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb } from 'lucide-react';
+import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProjectReadme, summarizeProject } from '../services/apiService';
+import { analyzeProject, ProjectAnalysis } from '../services/aiService';
 
 // Custom SVG for Hugging Face logo
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
@@ -38,14 +39,21 @@ interface ProjectCardProps {
   project: Project;
   isFavorite?: boolean;
   onToggleFavorite?: (project: Project) => void;
+  onAddToCollection?: (project: Project) => void;
+  onToggleCompare?: (project: Project) => void;
+  isComparing?: boolean;
   index?: number;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, index = 0 }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onAddToCollection, onToggleCompare, isComparing, index = 0 }) => {
   const [copied, setCopied] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summaryData, setSummaryData] = useState<SummaryData | null>(project.aiSummary || null);
+
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisData, setAnalysisData] = useState<ProjectAnalysis | null>(null);
 
   const handleSummarize = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,6 +73,26 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
       console.error('Summarization failed:', err);
     } finally {
       setIsSummarizing(false);
+    }
+  };
+
+  const handleAnalyze = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (analysisData) {
+      setShowAnalysis(true);
+      return;
+    }
+
+    setIsAnalyzing(true);
+    try {
+      const analysis = await analyzeProject(project);
+      setAnalysisData(analysis);
+      setShowAnalysis(true);
+    } catch (err) {
+      console.error('Analysis failed:', err);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -172,6 +200,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
 
             <div className="flex items-center gap-2">
               <button
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+                className={`p-2 rounded-full transition-all duration-500 ${isAnalyzing
+                  ? 'bg-red-500/20 text-red-500 animate-pulse'
+                  : 'bg-white/5 text-gray-500 hover:text-red-400 hover:bg-white/10'}`}
+                title="Pro-Grade AI Review"
+              >
+                {isAnalyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
+              </button>
+              <button
                 onClick={handleSummarize}
                 disabled={isSummarizing || !isGithub}
                 className={`p-2 rounded-full transition-all duration-500 ${isSummarizing
@@ -204,6 +242,32 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                   }`}
               >
                 <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  onAddToCollection?.(project);
+                }}
+                className="p-2 rounded-full bg-white/5 text-gray-500 hover:text-orange-400 hover:bg-white/10 transition-all duration-500"
+                title="Add to Collection"
+              >
+                <FolderPlus className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  onToggleCompare?.(project);
+                }}
+                className={`p-2 rounded-full transition-all duration-500 border ${
+                  isComparing 
+                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)]' 
+                    : 'bg-white/5 text-gray-500 border-transparent hover:text-blue-400 hover:bg-white/10'
+                }`}
+                title="Add to Compare"
+              >
+                <BarChart3 className={`w-5 h-5 ${isComparing ? 'animate-pulse' : ''}`} />
               </button>
             </div>
           </div>
@@ -257,6 +321,108 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
           </div>
         </motion.div>
       </div>
+
+      {/* AI Analysis Overlay */}
+      <AnimatePresence>
+        {showAnalysis && analysisData && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: 20 }}
+            className="absolute inset-0 z-[60] bg-[#020617]/98 backdrop-blur-2xl p-6 flex flex-col rounded-[2.5rem] border border-red-500/30 overflow-hidden shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-red-600/20 rounded-xl">
+                  <ShieldCheck className="w-5 h-5 text-red-500" />
+                </div>
+                <div>
+                  <span className="block text-[10px] font-black uppercase tracking-[0.25em] text-red-500">Pro-Grade Review</span>
+                  <span className="block text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Technboy Advanced Heuristics</span>
+                </div>
+              </div>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowAnalysis(false);
+                }}
+                className="p-2 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center mb-10">
+              <div className="relative flex items-center justify-center">
+                <svg className="w-32 h-32 md:w-40 md:h-40 rotate-[-90deg]">
+                  <circle
+                    cx="50%" cy="50%" r="45%"
+                    className="stroke-gray-800 fill-none"
+                    strokeWidth="10"
+                  />
+                  <motion.circle
+                    cx="50%" cy="50%" r="45%"
+                    initial={{ strokeDasharray: "0, 1000" }}
+                    animate={{ strokeDasharray: `${analysisData.overallScore * 10 * 2.82}, 1000` }}
+                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                    className="stroke-red-500 fill-none"
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <motion.span 
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1 }}
+                    className="text-4xl md:text-5xl font-black text-white"
+                  >
+                    {analysisData.overallScore}
+                  </motion.span>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Overall Rank</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
+                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Doc</span>
+                  <span className="text-sm font-black text-white">{analysisData.documentation}/10</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
+                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Maint</span>
+                  <span className="text-sm font-black text-white">{analysisData.maintenance}/10</span>
+                </div>
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
+                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Stars</span>
+                  <span className="text-sm font-black text-white">{analysisData.popularity}/10</span>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Activity className="w-3.5 h-3.5 text-red-500" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-red-500">AI Verdict</span>
+                </div>
+                <p className="text-xs text-gray-400 leading-relaxed italic">
+                  "{analysisData.verdict}"
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {analysisData.tags.map((tag, i) => (
+                  <span key={i} className="px-2.5 py-1 bg-red-600/10 text-red-400 text-[9px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5">
+                    <Zap className="w-2.5 h-2.5" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* AI Summary Overlay */}
       <AnimatePresence>

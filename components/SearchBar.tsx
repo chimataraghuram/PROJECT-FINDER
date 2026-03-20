@@ -1,10 +1,13 @@
 import React, { useState, FormEvent } from 'react';
-import { Search, Loader2, Sparkles, Zap } from 'lucide-react';
+import { Search, Loader2, Sparkles, Zap, Smartphone, Globe, Brain, Terminal, Layout } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   isLoading: boolean;
+  onCategoryChange?: (category: string) => void;
+  selectedCategory?: string;
+  onSurpriseMe?: () => void;
 }
 
 const QUICK_TAGS = [
@@ -22,14 +25,21 @@ const QUICK_TAGS = [
   { label: 'Blockchain', emoji: '⛓️' },
 ];
 
-const SURPRISE_QUERIES = [
-  'Auto-GPT', 'Stable Diffusion', 'Llama 3', 'Computer Vision',
-  'Stock Prediction', 'LinkedIn Insights', 'React 19', 'Zustand',
-  'Hugging Face Transformers', 'RAG AI', 'Cybersecurity', 'Blockchain',
-  'OpenClaw', 'NanoClaw', 'PicoClaw', 'MegaClaw', 'OppoClaw', 'HyperClaw'
+const CATEGORIES = [
+  { id: 'All', label: 'All Projects', icon: Layout },
+  { id: 'AI', label: 'Artificial Intelligence', icon: Brain },
+  { id: 'Web', label: 'Web Apps', icon: Globe },
+  { id: 'Mobile', label: 'Mobile Tools', icon: Smartphone },
+  { id: 'CLI', label: 'CLI & Tools', icon: Terminal },
 ];
 
-export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
+export const SearchBar: React.FC<SearchBarProps> = ({ 
+  onSearch, 
+  isLoading, 
+  onCategoryChange, 
+  selectedCategory = 'All',
+  onSurpriseMe 
+}) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -39,17 +49,40 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => 
   };
 
   const handleSurprise = () => {
-    const randomTag = SURPRISE_QUERIES[Math.floor(Math.random() * SURPRISE_QUERIES.length)];
-    setQuery(randomTag);
-    onSearch(randomTag);
+    if (onSurpriseMe) {
+      onSurpriseMe();
+    } else {
+      const SURPRISE_QUERIES = ['Auto-GPT', 'Llama 3', 'OpenClaw', 'NanoClaw'];
+      const randomTag = SURPRISE_QUERIES[Math.floor(Math.random() * SURPRISE_QUERIES.length)];
+      setQuery(randomTag);
+      onSearch(randomTag);
+    }
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
+      
+      {/* Category Chips */}
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-8 animate-fade-in">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => onCategoryChange?.(cat.id)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
+              selectedCategory === cat.id
+                ? 'bg-orange-600 border-orange-500 text-white shadow-[0_0_20px_rgba(234,88,12,0.4)] scale-105'
+                : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/20'
+            }`}
+          >
+            <cat.icon className="w-3.5 h-3.5" />
+            {cat.label}
+          </button>
+        ))}
+      </div>
 
       {/* Search Bar */}
       <form onSubmit={handleSubmit} className="relative group">
-        {/* Glow ring */}
         <div className={`absolute -inset-[2px] rounded-2xl transition-all duration-700 ${
           isFocused
             ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 opacity-80 blur-[2px]'
@@ -59,45 +92,41 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => 
         <div className={`relative flex items-center bg-[#0c1628]/80 backdrop-blur-3xl rounded-2xl border transition-all duration-300 shadow-2xl overflow-hidden ${
           isFocused ? 'border-orange-500/60' : 'border-white/8 hover:border-white/15'
         }`}>
-          {/* Search icon */}
           <div className="pl-5 md:pl-6 shrink-0">
             <Search className={`w-5 h-5 md:w-6 md:h-6 transition-colors duration-300 ${isFocused ? 'text-orange-400' : 'text-gray-500'}`} />
           </div>
 
-          {/* Input */}
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Search projects, models, datasets..."
-            className="w-full bg-transparent text-white px-4 py-4 md:py-5 text-sm md:text-lg focus:outline-none placeholder-gray-600 min-w-0 font-medium"
+            placeholder="Explore the future of tech..."
+            className="w-full bg-transparent text-white px-4 py-4 md:py-6 text-sm md:text-xl focus:outline-none placeholder-gray-600 min-w-0 font-medium"
             disabled={isLoading}
           />
 
-          {/* Action buttons */}
           <div className="flex items-center gap-2 pr-2 shrink-0">
             <button
               type="button"
               onClick={handleSurprise}
               disabled={isLoading}
-              className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-orange-400 font-bold text-[10px] md:text-xs uppercase tracking-widest border border-orange-500/20 bg-orange-500/10 hover:bg-orange-500/20 hover:border-orange-500/40 transition-all duration-200 whitespace-nowrap"
+              className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-orange-400 font-black text-[10px] md:text-xs uppercase tracking-widest border border-orange-500/20 bg-orange-500/10 hover:bg-orange-500/20 hover:border-orange-500/40 transition-all duration-200 whitespace-nowrap group/luck"
             >
-              <Zap className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Surprise Me</span>
-              <span className="md:hidden">Luck</span>
+              <Zap className="w-3.5 h-3.5 group-hover:scale-125 transition-transform" />
+              <span>Surprise Me</span>
             </button>
 
             <button
               type="submit"
               disabled={isLoading || !query.trim()}
-              className="relative px-5 py-2.5 md:px-8 md:py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-bold rounded-xl transition-all duration-200 disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg shadow-orange-600/30 text-sm md:text-base whitespace-nowrap overflow-hidden group/btn"
+              className="relative px-5 py-2.5 md:px-10 md:py-4 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-black rounded-xl transition-all duration-200 disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg shadow-orange-600/30 text-[10px] md:text-sm uppercase tracking-widest overflow-hidden group/btn"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover/btn:animate-[shimmer_1.5s_infinite] pointer-events-none" />
               {isLoading
                 ? <Loader2 className="w-5 h-5 animate-spin" />
-                : <><Search className="w-4 h-4" /><span className="hidden sm:inline">Search</span></>
+                : <><Search className="w-4 h-4" /><span>Explore</span></>
               }
             </button>
           </div>
@@ -105,13 +134,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => 
       </form>
 
       {/* Quick Discovery Tags */}
-      <div className="mt-6 flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2 text-gray-600 font-bold uppercase tracking-[0.2em] text-[9px] md:text-[10px]">
+      <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="flex items-center gap-2 text-gray-600 font-black uppercase tracking-[0.3em] text-[8px] md:text-[9px]">
           <Sparkles className="w-3 h-3 text-orange-500/60" />
-          <span>Quick Discovery</span>
+          <span>Trending Heuristics</span>
         </div>
 
-        <div className="flex flex-wrap gap-2 justify-center max-w-3xl">
+        <div className="flex flex-wrap gap-2 justify-center max-w-4xl">
           {QUICK_TAGS.map((tag, i) => (
             <motion.button
               key={tag.label}
@@ -119,9 +148,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, duration: 0.3 }}
               onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
-              className="group flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/8 bg-white/[0.04] hover:bg-white/[0.09] hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-200 text-xs font-medium whitespace-nowrap backdrop-blur-sm"
+              className="group flex items-center gap-1.5 px-4 py-2 rounded-full border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-orange-500/30 text-gray-500 hover:text-white transition-all duration-200 text-[10px] font-bold whitespace-nowrap backdrop-blur-sm"
             >
-              <span className="text-[11px] group-hover:scale-110 transition-transform">{tag.emoji}</span>
+              <span className="text-xs group-hover:rotate-12 transition-transform">{tag.emoji}</span>
               <span>{tag.label}</span>
             </motion.button>
           ))}
