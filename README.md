@@ -109,8 +109,6 @@ Pull requests are welcome! Feel free to fork and improve.
 > **Copyright (c) 2026 Chimata Raghuram. All Rights Reserved.**
 > 
 > COMMERCIAL AND PERSONAL USE OF THIS SOFTWARE, CONTENT, OR SOURCE CODE IS STRICTLY PROHIBITED WITHOUT THE PRIOR WRITTEN CONSENT OF THE OWNER (CHIMATA RAGHURAM).
-> 
-> Any unauthorized copying, modification, distribution, transmission, or other use of this material is strictly prohibited. The developer (Chimata Raghuram) reserves all rights to this software and its intellectual property.
 
 ## 📬 Contact
 GitHub: [chimataraghuram](https://github.com/chimataraghuram)  
