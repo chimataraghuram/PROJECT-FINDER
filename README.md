@@ -7,7 +7,7 @@
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
 
 <p align="center">
-  <strong>The ultimate gateway to open-source inspiration, premium project discovery, and AI-assisted workflow.</strong>
+  <strong>🚀 Techboy Project Finder is a modern web application designed to help students and developers discover real-world open source projects from GitHub in seconds. It features real-time search and trending repositories powered by the GitHub API, enabling users to explore popular projects, view key details like stars and technologies, and find inspiration based on their interests. With a clean, responsive UI and smooth user experience, the platform makes learning, building, and contributing to open source faster, easier, and more engaging.</strong>
 </p>
 
 [🚀 Live Demo](https://chimataraghuram.github.io/PROJECT-FINDER/) • [💻 Explore Code](https://github.com/chimataraghuram/PROJECT-FINDER) • [🎨 Browse Profiles](https://chimataraghuram.github.io/PROJECT-FINDER/#profiles)
