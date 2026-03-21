@@ -4,58 +4,28 @@ import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
 import { searchProjects } from './services/apiService';
 import { Project, SearchResult, SearchState } from './types';
-import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight } from 'lucide-react';
+import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp } from 'lucide-react';
 import { Footer } from './components/Footer';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
 import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
-import { ReadmeDiscovery } from './components/ReadmeDiscovery';
+import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
-import { CollectionManager } from './components/CollectionManager';
 import { ComparisonStudio } from './components/ComparisonStudio';
-
-
 
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
-
-
-
 type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
 
-const TRENDING_PROJECTS: Project[] = [
-  {
-    id: 'trending-1',
-    name: "OpenClaw",
-    description: "The leading open-source personal AI assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord to solve complex tasks directly via chat.",
-    platform: 'GitHub',
-    url: "https://github.com/openclaw/openclaw",
-    tags: ["AI Agent", "Autonomous", "Python"],
-    stars: "210k"
-  },
-  {
-    id: 'trending-2',
-    name: "NanoClaw",
-    description: "A security-first, lightweight alternative to OpenClaw. Runs AI actions in isolated containers (Docker) for maximum safety and data privacy.",
-    platform: 'GitHub',
-    url: "https://github.com/nanoclaw/nanoclaw",
-    tags: ["Secure AI", "Sandboxed", "TypeScript"],
-    stars: "85k"
-  },
-  {
-    id: 'trending-3',
-    name: "PicoClaw",
-    description: "Ultra-portable AI agent built in Go. Designed to run on resource-constrained edge hardware like Raspberry Pi Zero with sub-10MB RAM usage.",
-    platform: 'GitHub',
-    url: "https://github.com/picoclaw/picoclaw",
-    tags: ["Edge AI", "Low-Resource", "Go"],
-    stars: "42k"
-  }
-];
+const LABELS = {
+  discover: "Search Projects",
+  trending: "Trending Projects",
+  favorites: "Starred"
+};
 
 const DEFAULT_FAVORITES: Project[] = [
   {
@@ -81,21 +51,6 @@ const DEFAULT_FAVORITES: Project[] = [
     type: 'project'
   },
   {
-    ...TRENDING_PROJECTS[0],
-    id: 'def-2',
-    type: 'project'
-  },
-  {
-    ...TRENDING_PROJECTS[1],
-    id: 'def-3',
-    type: 'project'
-  },
-  {
-    ...TRENDING_PROJECTS[2],
-    id: 'def-4',
-    type: 'project'
-  },
-  {
     id: 'def-5',
     name: "Auto-GPT",
     description: "An experimental open-source attempt to make GPT-4 fully autonomous. Auto-GPT pushes the boundaries of what is possible with AI.",
@@ -118,7 +73,6 @@ const DEFAULT_FAVORITES: Project[] = [
 ];
 
 import { IntroVideo } from './components/IntroVideo';
-
 
 const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -152,7 +106,6 @@ const App: React.FC = () => {
     handleSearch(randomQuery);
   };
 
-
   const [currentUser, setCurrentUser] = useState<any>(() => {
     // Initial check for Mock User
     const savedMock = localStorage.getItem('project-finder-mock-user');
@@ -161,7 +114,6 @@ const App: React.FC = () => {
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
-
   
   const [comparisonQueue, setComparisonQueue] = useState<Project[]>([]);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
@@ -175,18 +127,13 @@ const App: React.FC = () => {
     });
   };
 
-
-
-
   // Auth & Cloud Sync
   useEffect(() => {
-    // 1. Real Firebase Listener
     let unsubscribeAuth: any;
     if (auth && isFirebaseConfigured) {
       unsubscribeAuth = onAuthStateChanged(auth, (user) => {
         setCurrentUser(user);
         if (user && db) {
-          // Sync from Firestore
           const userDocRef = doc(db, 'users', user.uid);
           const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
             if (docSnap.exists()) {
@@ -200,7 +147,6 @@ const App: React.FC = () => {
       });
     }
 
-    // 2. Mock Auth Listener (Polyfill for local storage changes)
     const handleStorageChange = () => {
       const savedMock = localStorage.getItem('project-finder-mock-user');
       if (savedMock) setCurrentUser(JSON.parse(savedMock));
@@ -208,7 +154,6 @@ const App: React.FC = () => {
     };
 
     window.addEventListener('storage', handleStorageChange);
-    // Poll for changes if in same tab (simple for mock)
     const interval = setInterval(handleStorageChange, 1000);
 
     return () => {
@@ -218,10 +163,8 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Sync to Cloud (and Local fallback)
   useEffect(() => {
     localStorage.setItem('project-finder-favorites', JSON.stringify(favorites));
-    
     if (currentUser && db) {
       const userDocRef = doc(db, 'users', currentUser.uid);
       setDoc(userDocRef, { favorites }, { merge: true }).catch(err => {
@@ -230,19 +173,13 @@ const App: React.FC = () => {
     }
   }, [favorites, currentUser]);
 
-
-
-
   const toggleFavorite = (project: Project) => {
     setFavorites(prev => {
       const isFav = prev.some(p => p.url === project.url);
-      if (isFav) {
-        return prev.filter(p => p.url !== project.url);
-      }
+      if (isFav) return prev.filter(p => p.url !== project.url);
       return [...prev, { ...project, type: project.type || 'project' }];
     });
   };
-
 
   const triggerComingSoon = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -262,9 +199,7 @@ const App: React.FC = () => {
   const handleSearch = async (query: string) => {
     setSearchState({ isLoading: true, error: null, hasSearched: true });
     setResult(null);
-    // Reset filters on new search
     setFilterPlatform('All');
-
     try {
       const data = await searchProjects(query);
       setResult(data);
@@ -278,7 +213,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Derive Filtered Data
   const filteredProjects = result?.projects.filter(project => {
     const matchesPlatform = filterPlatform === 'All' || project.platform === filterPlatform;
     const matchesCategory = selectedCategory === 'All' || 
@@ -287,184 +221,109 @@ const App: React.FC = () => {
     return matchesPlatform && matchesCategory;
   }) || [];
 
-  // Dynamic Label Logic
   const [isCompact, setIsCompact] = useState(false);
-  
-  const LABELS = {
-    discover: isCompact ? "Discover" : "Discover Projects",
-    profiles: isCompact ? "Profiles" : "GitHub README Profiles",
-    saved: "Saved" // Stays "Saved" as per request
-  };
-
   useEffect(() => {
-    const handleScroll = () => {
-      setIsCompact(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsCompact(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const NAV_ITEMS = [
+    { id: 'search', label: 'Search Projects', icon: Search, color: 'from-orange-600 to-orange-500' },
+    { id: 'readme', label: 'Trending Projects', icon: TrendingUp, color: 'from-orange-600 to-orange-500' },
+    { id: 'favorites', label: 'Starred', icon: Star, color: 'from-orange-600 to-orange-500' }
+  ];
+
   return (
-    <div className={`min-h-screen text-slate-200 font-sans selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-500 ${isCompact ? 'pt-4' : ''}`}>
+    <div className={`min-h-screen text-slate-200 font-sans selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-500`}>
       {showIntro ? (
         <IntroVideo onComplete={() => setShowIntro(false)} />
       ) : (
         <>
           <Particles />
-          
-          {/* Animated AI Blueprint Background */}
           <div className="parallax-bg-container">
             <motion.div 
               style={{ y: smoothY }}
               className="parallax-bg-image animate-drift"
-              animate={{
-                opacity: [0.12, 0.16, 0.12],
-                scale: [1, 1.02, 1]
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              whileTap={{ scale: 0.98, opacity: 0.25, transition: { duration: 0.2 } }}
+              animate={{ opacity: [0.12, 0.16, 0.12], scale: [1, 1.02, 1] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
             <div className="parallax-bg-overlay" />
           </div>
 
-          {/* Unified Header for Desktop & Mobile */}
-          <header className={`z-[70] transition-all duration-500 flex flex-nowrap items-center justify-between pointer-events-none animate-fade-in ${
-            isCompact ? 'p-2 md:p-3 scale-95 origin-top' : 'p-2 md:p-4'
-          } ${/* Navbar should be fixed on mobile, desktop is handled by the overall header fixed class if any */ ''} 
-            fixed top-0 inset-x-0 md:bg-transparent
-          `}>
-            {/* Left: Logo (Desktop Only inside Header) */}
-            <div className="flex-shrink-0 pointer-events-auto hidden md:block">
+          <header className={`fixed top-0 inset-x-0 z-[70] transition-all duration-500 flex items-center justify-between px-4 md:px-8 pointer-events-none ${isCompact ? 'py-4' : 'py-8'}`}>
+            <motion.div 
+              layout
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: isCompact ? 0 : 1, x: 0 }}
+              className="hidden md:flex flex-shrink-0 pointer-events-auto"
+            >
               <div
-                onClick={() => {
-                  setCurrentView('search');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className={`transition-all duration-500 rounded-full border border-white/10 bg-[#0f172a]/60 backdrop-blur-2xl flex items-center justify-center cursor-pointer shadow-2xl hover:scale-105 gap-2 md:gap-3 group/logo ${
-                  isCompact ? 'h-8 md:h-10 px-3 md:px-5' : 'h-8 md:h-12 px-3 md:px-6'
-                }`}
+                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="h-12 px-6 rounded-full border border-white/10 bg-[#0f172a]/60 backdrop-blur-2xl flex items-center gap-3 cursor-pointer shadow-2xl hover:scale-105 group/logo"
               >
-                <div className={`bg-gradient-to-br from-red-500 to-orange-500 rounded-lg md:rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover/logo:rotate-[15deg] transition-all duration-500 ${
-                  isCompact ? 'p-0.5 md:p-1' : 'p-1 md:p-1'
-                }`}>
-                  <Search className={`${isCompact ? 'w-3 h-3 md:w-4 md:h-4' : 'w-3.5 h-3.5 md:w-5 md:h-5'} text-white`} />
+                <div className="bg-gradient-to-br from-red-500 to-orange-500 p-1.5 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover/logo:rotate-[15deg] transition-all">
+                  <Search className="w-5 h-5 text-white" />
                 </div>
-                <h1 className={`font-black text-white uppercase tracking-[0.2em] font-display transition-all duration-500 ${
-                  isCompact ? 'text-[9px] md:text-sm' : 'text-xs md:text-xl'
-                }`}>
-                  {isCompact ? 'PF' : 'Project Finder'}
-                </h1>
+                <h1 className="font-black text-white uppercase tracking-[0.2em] text-xl">Project Finder</h1>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Middle: Navigation Pill (The Navbar - Fixed on Mobile) */}
-            <div className="flex-shrink-0 flex justify-center pointer-events-auto md:relative fixed top-0 inset-x-0 z-[2000] py-4 bg-[#020617]/80 backdrop-blur-xl border-b border-white/5 md:bg-transparent md:backdrop-blur-0 md:border-none md:py-0">
+            <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
               <motion.nav 
                 layout
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className={`p-0.5 md:p-1 bg-[#0f172a]/80 backdrop-blur-3xl rounded-full shadow-2xl border border-white/10 flex items-center gap-0.5 md:gap-1.5 transition-all duration-500 ${
-                isCompact ? 'scale-90 px-1' : ''
-              }`}>
-                <motion.button
-                  layout
-                  onClick={() => {
-                    setCurrentView('search');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'search'
-                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
-                    : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                    }`}
-                >
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    <motion.span
-                      key={LABELS.discover}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="inline-block"
+                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-0.5"
+              >
+                {NAV_ITEMS.map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      layout
+                      transition={{
+                        layout: { type: "spring", stiffness: 400, damping: 30 },
+                        opacity: { duration: 0.2 }
+                      }}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`h-16 md:h-18 px-2.5 md:px-5 rounded-full border flex items-center justify-center gap-3 transition-all duration-500 font-black text-sm tracking-widest uppercase relative overflow-hidden group/nav ${
+                        isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_30px_rgba(249,115,22,0.4)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
+                      } ${isCompact ? 'px-3 min-w-[64px]' : ''}`}
                     >
-                      {LABELS.discover}
-                    </motion.span>
-                  </AnimatePresence>
-                </motion.button>
-
-                <motion.button
-                  layout
-                  onClick={() => {
-                    setCurrentView('readme');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'readme'
-                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
-                    : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                    }`}
-                >
-                  <FileCode className="w-3 h-3" />
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    <motion.span
-                      key={LABELS.profiles}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="inline-block"
-                    >
-                      {LABELS.profiles}
-                    </motion.span>
-                  </AnimatePresence>
-                </motion.button>
-
-                <motion.button
-                  layout
-                  onClick={() => {
-                    setCurrentView('favorites');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className={`px-3 sm:px-4 md:px-5 py-1.5 rounded-full border transition-all duration-500 flex items-center gap-1.5 md:gap-2 whitespace-nowrap font-black text-[8px] md:text-[10px] tracking-widest uppercase relative overflow-hidden ${currentView === 'favorites'
-                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white border-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]'
-                    : 'text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5'
-                    }`}
-                >
-                  <Heart className="w-3 h-3" />
-                  <AnimatePresence mode="popLayout" initial={false}>
-                    <motion.span
-                      key={LABELS.saved}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="inline-block"
-                    >
-                      {LABELS.saved} ({favorites.length})
-                    </motion.span>
-                  </AnimatePresence>
-                </motion.button>
+                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-6 h-6 transition-all`} />
+                      <AnimatePresence mode="sync">
+                        {!isCompact && (
+                          <motion.span
+                            initial={{ width: 0, opacity: 0, x: -10 }}
+                            animate={{ width: 'auto', opacity: 1, x: 0 }}
+                            exit={{ width: 0, opacity: 0, x: -10 }}
+                            className="hidden md:inline-block"
+                          >
+                            {item.label} {item.id === 'favorites' && `(${favorites.length})`}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                      {isActive && <motion.div layoutId="activeTab" className="absolute bottom-1 inset-x-4 h-0.5 bg-white/40 rounded-full" />}
+                    </motion.button>
+                  );
+                })}
               </motion.nav>
             </div>
 
-            {/* In-Between: TECHBOY AI Pill */}
-            <div className="flex-shrink-0 hidden lg:block pointer-events-auto">
-              <motion.button
-                onClick={() => setIsAIAssistantOpen(true)}
-                className="h-10 md:h-12 px-4 md:px-6 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-3 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_25px_rgba(249,115,22,0.3)] hover:border-orange-500/60 transition-all duration-500"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="text-[9px] md:text-[11px] font-black tracking-[0.2em] uppercase text-[#f97316]">Techboy AI</span>
-                <div className="w-5 h-5 md:w-7 md:h-7 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover/aipill:border-orange-500/50 transition-colors">
-                  <Bot className="w-3 h-3 md:w-4 md:h-4 text-[#f97316]" />
-                </div>
-              </motion.button>
-            </div>
-
-            {/* Right: Auth */}
-            <div className="flex-shrink-0 pointer-events-auto">
+            <div className="flex-shrink-0 pointer-events-auto flex items-center gap-4">
+              <div className="hidden lg:block">
+                <motion.button
+                  onClick={() => setIsAIAssistantOpen(true)}
+                  className="h-16 md:h-18 px-6 md:px-8 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-4 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Bot className="w-6 h-6 text-[#f97316]" />
+                  <span className="text-sm font-black tracking-[0.2em] uppercase text-[#f97316] hidden xl:inline">Techboy AI</span>
+                </motion.button>
+              </div>
               <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
             </div>
           </header>
@@ -491,10 +350,14 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+            {/* Trending View */}
             {currentView === 'readme' && (
-              <ReadmeDiscovery 
-                favorites={favorites}
-                onToggleFavorite={toggleFavorite}
+              <TrendingProjects 
+                favorites={favorites} 
+                onToggleFavorite={toggleFavorite} 
+                onToggleComparison={toggleComparison}
+                comparisonQueue={comparisonQueue}
+                onSummarize={handleSearch}
               />
             )}
 
@@ -512,24 +375,29 @@ const App: React.FC = () => {
               /* SEARCH VIEW */
               <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'min-h-screen flex flex-col justify-center' : 'pt-28 pb-20 md:pt-40'}`}>
                 {/* Hero Section */}
-                {/* Hero Section */}
                 <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-24 md:pt-32 pb-16 md:pb-20'}`}>
                   <div className="text-center mb-8 md:mb-16 space-y-4 md:space-y-8 relative z-10 max-w-6xl mx-auto">
                     <h1 className="flex flex-col items-center font-black tracking-tighter mb-4 md:mb-8 leading-tight animate-liquid-drop home-title gap-1 md:gap-2">
-                      <span className="text-white text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[5rem] drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] animate-liquid-text" data-text="Explore">
-                        Explore
+                      <span className="text-white text-[1.8rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] animate-liquid-text" data-text="Find Real-World Projects 🚀">
+                        Find Real-World Projects 🚀
                       </span>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[1.1rem] sm:text-xl md:text-2xl lg:text-[2rem] font-bold tracking-widest uppercase home-subtitle-top">
-                        The World of
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[0.9rem] sm:text-xl md:text-2xl lg:text-[1.8rem] font-bold tracking-widest uppercase home-subtitle-top">
+                        from GitHub, AI & Web in Seconds
                       </span>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[2.2rem] sm:text-5xl md:text-6xl lg:text-[5rem] home-subtitle-bottom">
-                        {LABELS.discover}
+                      <span className="text-gray-400 text-[10px] md:text-lg font-medium tracking-wide opacity-80 mt-2">
+                        Discover, explore, and build projects faster
                       </span>
                     </h1>
                     <p className="text-gray-400 text-[10px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60">
-                      The ultimate research engine for <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
+                      The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
+                    </p>
+                    
+                    {/* Data Credibility Footnote */}
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-4">
+                      Projects sourced from GitHub and open platforms
                     </p>
                   </div>
+
 
                   <SearchBar 
                     onSearch={handleSearch} 
@@ -538,41 +406,157 @@ const App: React.FC = () => {
                     onCategoryChange={setSelectedCategory}
                     onSurpriseMe={handleSurpriseMe}
                   />
+
+                  {/* Hero Suggestions - Trending Now */}
+                  {!searchState.hasSearched && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="mt-12 md:mt-24 max-w-6xl mx-auto px-4 relative"
+                    >
+                      {/* TECH BACKGROUND DECOR (Subtle) */}
+                      <div className="absolute inset-0 -top-20 pointer-events-none opacity-10">
+                         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/20 rounded-full blur-[120px]" />
+                         <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px]" />
+                      </div>
+
+                      <div className="flex items-center gap-4 mb-12 relative z-10">
+                        <div className="p-3 bg-[#1c1917] rounded-xl border border-orange-500/20 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                           <Flame size={24} className="text-[#f97316] fill-[#f97316]/20" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase italic">Trending Now</h2>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                        {[
+                          {
+                            id: 'trend-1',
+                            name: "OpenClaw",
+                            description: "The leading open-source personal AI assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord to solve complex tasks directly via chat.",
+                            platform: 'GitHub' as const,
+                            url: "https://github.com/OpenClaw/OpenClaw",
+                            tags: ["AI AGENT", "AUTONOMOUS", "PYTHON"],
+                            stars: "12.5k",
+                            type: 'project' as const
+                          },
+                          {
+                            id: 'trend-2',
+                            name: "NanoClaw",
+                            description: "A security-first, lightweight alternative to OpenClaw. Runs AI actions in isolated containers (Docker) for maximum safety and data privacy.",
+                            platform: 'GitHub' as const,
+                            url: "https://github.com/NanoClaw/NanoClaw",
+                            tags: ["SECURE AI", "SANDBOXED", "TYPESCRIPT"],
+                            stars: "8.2k",
+                            type: 'project' as const
+                          }
+                        ].map((project, idx) => {
+                          const isFav = favorites.some(f => f.url === project.url);
+                          
+                          return (
+                            <motion.div
+                              key={project.id}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.2 * idx }}
+                              className="relative group rounded-[2.5rem] bg-[#020617]/40 backdrop-blur-3xl border border-white/10 p-8 shadow-2xl hover:border-orange-500/40 transition-all duration-500 overflow-hidden"
+                            >
+                              {/* Card Content Top Row */}
+                              <div className="flex justify-between items-start mb-8">
+                                <div className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 flex items-center gap-2">
+                                  <Github size={14} className="text-white" />
+                                  <span className="text-[10px] font-black text-white tracking-widest uppercase">{project.platform}</span>
+                                </div>
+                                
+                                <div className="flex items-center gap-3">
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); setShowComingSoon(true); setTimeout(() => setShowComingSoon(false), 2000); }}
+                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-blue-500/10 hover:border-blue-500/20 transition-all cursor-pointer text-gray-400 hover:text-blue-400"
+                                    title="Security Status"
+                                  >
+                                    <Shield size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); handleSearch(`Summarize ${project.name}`); }}
+                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-orange-500/10 hover:border-orange-500/20 transition-all cursor-pointer text-gray-400 hover:text-orange-500"
+                                    title="AI Summary"
+                                  >
+                                    <Brain size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { 
+                                      e.stopPropagation(); 
+                                      navigator.clipboard.writeText(project.url);
+                                      // Trigger toast using coming soon for now but message is copy
+                                    }}
+                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-green-500/10 hover:border-green-500/20 transition-all cursor-pointer text-gray-400 hover:text-green-500"
+                                    title="Share Project"
+                                  >
+                                    <Share2 size={14} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(project); }}
+                                    className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                                      isFav 
+                                      ? 'bg-red-500/20 border-red-500/30 text-red-500' 
+                                      : 'bg-white/5 border-white/5 text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500'
+                                    }`}
+                                    title="Save to Collection"
+                                  >
+                                    <Heart size={14} fill={isFav ? "currentColor" : "none"} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { e.stopPropagation(); toggleComparison(project); }}
+                                    className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                                      comparisonQueue.some(p => p.id === project.id)
+                                      ? 'bg-blue-500/20 border-blue-500/30 text-blue-500'
+                                      : 'bg-white/5 border-white/5 text-gray-400 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-purple-500'
+                                    }`}
+                                    title="Add to Comparison"
+                                  >
+                                    <BarChart3 size={14} />
+                                  </button>
+                                </div>
+                              </div>
+
+                              <h3 className="text-3xl md:text-4xl font-black text-white mb-6 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-orange-400 transition-all duration-500">
+                                {project.name}
+                              </h3>
+                              
+                              <p className="text-gray-400 text-sm md:text-md leading-relaxed mb-8 opacity-80 min-h-[60px]">
+                                {project.description}
+                              </p>
+
+                              <div className="flex flex-wrap items-center gap-2 mb-10">
+                                {project.tags.map((tag, i) => (
+                                  <span key={i} className="px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[10px] font-black text-gray-500 tracking-wider uppercase">
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+
+                              <button 
+                                onClick={() => handleSearch(project.name)}
+                                className="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-95 transition-all"
+                              >
+                                Explore Project <Github size={18} />
+                              </button>
+                              
+                              {/* Decorative Glow */}
+                              <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/20 transition-all" />
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+
                 </section>
+
 
                 {/* Main Discovery Container */}
                 <div className="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row gap-8">
                   <div className="flex-1 min-w-0">
-                    {/* Trending Section - Show only if not searched */}
-                    {!searchState.hasSearched && (
-                      <motion.section 
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="py-12"
-                      >
-                        <div className="flex items-center gap-3 mb-8">
-                          <div className="p-2.5 bg-orange-500/10 rounded-xl border border-orange-500/20">
-                            <Flame className="w-5 h-5 text-orange-500" />
-                          </div>
-                          <h2 className="text-xl md:text-2xl font-black text-white tracking-tight uppercase">Trending Now</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {TRENDING_PROJECTS.map((project, index) => (
-                            <ProjectCard
-                              key={index}
-                              index={index}
-                              project={project}
-                              isFavorite={favorites.some((f) => f.id === project.id)}
-                              onToggleFavorite={toggleFavorite}
-                              onToggleCompare={toggleComparison}
-                              isComparing={comparisonQueue.some(p => p.id === project.id)}
-                            />
-                          ))}
-                        </div>
-                      </motion.section>
-                    )}
 
                     {/* Results Container */}
                     {result && (
@@ -685,11 +669,20 @@ const App: React.FC = () => {
 
                 </div>
 
-                {/* Loading State */}
+                {/* Loading State - Skeleton Grid */}
                 {searchState.isLoading && (
-                  <div className="max-w-7xl mx-auto px-4 py-32 flex flex-col items-center justify-center space-y-4">
-                    <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-                    <p className="text-gray-500 font-medium animate-pulse">Searching the cosmos...</p>
+                  <div className="max-w-7xl mx-auto px-4 py-12">
+                    <div className="flex flex-col items-center mb-12">
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 mb-4 animate-pulse">
+                        <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                        <span className="text-orange-500 font-black uppercase tracking-[0.2em] text-xs">Accessing GitHub & AI Repositories</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <SkeletonCard key={i} />
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -761,7 +754,7 @@ const App: React.FC = () => {
               </div>
             )}
 
-            <Footer onComingSoonClick={triggerComingSoon} />
+            <Footer onComingSoonClick={triggerComingSoon} labels={LABELS} />
 
             {/* Controlled autonomous TECHBOY AI Assistant */}
             <TechboyAssistant 

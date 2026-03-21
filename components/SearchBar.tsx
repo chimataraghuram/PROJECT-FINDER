@@ -11,6 +11,9 @@ interface SearchBarProps {
 }
 
 const QUICK_TAGS = [
+  { label: 'Chatbot', emoji: '💬' },
+  { label: 'Portfolio', emoji: '📁' },
+  { label: 'Netflix Clone', emoji: '🎥' },
   { label: 'OpenClaw', emoji: '🦾' },
   { label: 'NanoClaw', emoji: '🔬' },
   { label: 'PicoClaw', emoji: '⚡' },
@@ -27,10 +30,11 @@ const QUICK_TAGS = [
 
 const CATEGORIES = [
   { id: 'All', label: 'All Projects', icon: Layout },
-  { id: 'AI', label: 'Artificial Intelligence', icon: Brain },
-  { id: 'Web', label: 'Web Apps', icon: Globe },
-  { id: 'Mobile', label: 'Mobile Tools', icon: Smartphone },
-  { id: 'CLI', label: 'CLI & Tools', icon: Terminal },
+  { id: 'AI', label: 'AI', icon: Brain },
+  { id: 'Web Dev', label: 'Web Dev', icon: Globe },
+  { id: 'App Dev', label: 'App Dev', icon: Smartphone },
+  { id: 'Machine Learning', label: 'Machine Learning', icon: Terminal },
+  { id: 'Fun Projects', label: 'Fun Projects', icon: Sparkles },
 ];
 
 export const SearchBar: React.FC<SearchBarProps> = ({ 
@@ -102,7 +106,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Explore the future of tech..."
+            placeholder="Search AI, Web, ML projects..."
             className="w-full bg-transparent text-white px-4 py-4 md:py-6 text-sm md:text-xl focus:outline-none placeholder-gray-600 min-w-0 font-medium"
             disabled={isLoading}
           />
@@ -133,8 +137,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       </form>
 
-      {/* Quick Discovery Tags */}
-      <div className="mt-8 flex flex-col items-center gap-4">
+      {/* Quick Discovery Tags - Moved back below search */}
+      <div className="mt-8 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
         <div className="flex items-center gap-2 text-gray-600 font-black uppercase tracking-[0.3em] text-[8px] md:text-[9px]">
           <Sparkles className="w-3 h-3 text-orange-500/60" />
           <span>Trending Heuristics</span>
@@ -156,6 +160,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           ))}
         </div>
       </div>
+
 
     </div>
   );

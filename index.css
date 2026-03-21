@@ -534,37 +534,71 @@ h1, h2, h3, h4, .font-display {
 
 /* Mobile Responsive Updates */
 @media (max-width: 768px) {
-    /* Ensure parent containers don't break sticky/fixed positioning */
-    .home-content-wrapper, .home-section, main {
-        overflow: visible !important;
-        height: auto !important;
+    /* Navbar Fixed at top */
+    nav, .navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 2000 !important;
+        background: rgba(2, 6, 23, 0.8) !important;
+        backdrop-filter: blur(12px) !important;
     }
 
-    /* Vertical Spacing: Navbar -> Buttons -> Title -> SearchBar */
+    /* Main Content Spacing to avoid overlap */
+    main, .home-section {
+        padding-top: 80px !important;
+        overflow: visible !important;
+    }
+
+    /* "Project Finder" Pill Sticky Logic */
     .logo-container {
+        position: sticky !important;
+        top: 70px !important;
+        z-index: 1500 !important;
         margin-left: auto !important;
         margin-right: auto !important;
-        transition: none !important;
         display: flex !important;
         justify-content: center !important;
+        width: fit-content !important;
+        background: rgba(2, 6, 23, 0.4) !important;
+        backdrop-filter: blur(8px) !important;
+        border-radius: 999px !important;
+        padding: 4px 12px !important;
     }
 
+    /* vertical spacing: navbar (0) -> buttons (80) -> title (120) -> search bar (180) */
     .home-title {
-        margin-top: 40px !important;
-        margin-bottom: 24px !important;
+        margin-top: 60px !important;
+        margin-bottom: 32px !important;
     }
 
-    /* Centering Fixes */
-    .home-section {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-align: center !important;
-        padding-top: 20px !important;
+    .search-bar-container {
+        margin-top: 24px !important;
     }
 
     /* UX Polish */
     * {
         -webkit-tap-highlight-color: transparent;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
+
+    /* Ensure parent containers don't break sticky/fixed positioning */
+    .home-content-wrapper, main {
+        overflow: visible !important;
+        height: auto !important;
+    }
+}
+
+/* Global Performance Feel */
+.transition-glass {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
 }

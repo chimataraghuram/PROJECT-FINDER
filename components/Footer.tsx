@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart } from 'lucide-react';
+import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface FooterProps {
@@ -10,7 +10,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, labels }) => {
     const currentYear = new Date().getFullYear();
-    const activeLabels = labels || { discover: "Discover Projects", profiles: "GitHub README Profiles", saved: "Saved" };
+    const activeLabels = labels || { discover: "Search Projects", profiles: "Trending Projects", saved: "Starred" };
 
     return (
         <footer className="relative mt-32 pb-16 overflow-hidden border-t border-white/5 bg-transparent backdrop-blur-sm">
@@ -58,6 +58,22 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                     The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.profiles}</span> hub offers real-time synchronization with elite GitHub profiles.
                                 </p>
                             </div>
+
+                            {/* Core Steps - Small Containers */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 py-4">
+                                {[
+                                    { icon: <Search className="w-4 h-4" />, title: "Search", desc: "Find any tech or domain." },
+                                    { icon: <Layout className="w-4 h-4" />, title: "Explore", desc: "Curated aggregrations." },
+                                    { icon: <FileCode className="w-4 h-4" />, title: "Build", desc: "Source & Live demos." }
+                                ].map((step, i) => (
+                                    <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-orange-500/20 transition-all group overflow-hidden relative">
+                                        <div className="absolute -right-2 -top-2 w-8 h-8 bg-orange-500/5 blur-xl group-hover:bg-orange-500/10 transition-colors" />
+                                        <div className="text-orange-500 mb-2 group-hover:scale-110 transition-transform relative z-10">{step.icon}</div>
+                                        <h5 className="text-white font-black uppercase text-[10px] tracking-wider mb-1 relative z-10">{step.title}</h5>
+                                        <p className="text-gray-500 text-[9px] leading-tight font-medium relative z-10">{step.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
                             <a
                                 href="https://github.com/chimataraghuram/PROJECT-FINDER"
                                 target="_blank"
@@ -83,7 +99,8 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                         <div className="space-y-6">
                             {[
                                 { title: activeLabels.discover, desc: 'Find high-quality projects across multi-platform registries.' },
-                                { title: activeLabels.profiles, desc: 'Architect a premium presence with real-time profile inspirations.' }
+                                { title: activeLabels.profiles, desc: 'Architect a premium presence with real-time profile inspirations.' },
+                                { title: "Build & Learn", desc: "Access source code and live demos to accelerate your growth." }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
                                     <div className="relative flex-shrink-0">
@@ -163,23 +180,28 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 </div>
                             </motion.a>
 
-                            {/* Social Dock */}
-                            <div className="flex items-center gap-3 pt-2">
-                                {[
-                                    { icon: <Linkedin size={18} />, url: 'https://linkedin.com/in/chimataraghuram' },
-                                    { icon: <Github size={18} />, url: 'https://github.com/chimataraghuram' },
-                                    { icon: <Send size={18} />, url: 'https://t.me/raghu' },
-                                    { icon: <MessageCircle size={18} />, url: '#chat' }
-                                ].map((social, idx) => (
-                                    <motion.a
-                                        key={idx}
-                                        href={social.url}
-                                        whileHover={{ scale: 1.1, y: -3 }}
-                                        className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:text-white hover:border-orange-500/30 hover:bg-white/10 transition-all"
-                                    >
-                                        {social.icon}
-                                    </motion.a>
-                                ))}
+                            {/* Social Media Pill Buttons - Minimal and Centered */}
+                            <div className="flex flex-col items-center gap-6 pt-10 border-t border-white/5 w-full mt-10">
+                                <div className="flex items-center gap-4">
+                                    {[
+                                        { icon: <Linkedin size={18} />, url: 'https://linkedin.com/in/chimataraghuram', label: 'LinkedIn' },
+                                        { icon: <Github size={18} />, url: 'https://github.com/chimataraghuram', label: 'GitHub' },
+                                        { icon: <Globe size={18} />, url: 'https://chimataraghuram.github.io', label: 'Portfolio' },
+                                        { icon: <Send size={18} />, url: 'https://t.me/raghu', label: 'Telegram' }
+                                    ].map((social, idx) => (
+                                        <motion.a
+                                            key={idx}
+                                            href={social.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            whileHover={{ scale: 1.05, y: -5 }}
+                                            className="group flex items-center gap-3 px-6 py-3 rounded-full bg-white/[0.03] border border-white/10 text-gray-400 hover:text-white hover:border-orange-500/40 transition-all shadow-[0_10px_30px_rgba(0,0,0,0.3)] hover:shadow-orange-500/10"
+                                        >
+                                            {social.icon}
+                                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">{social.label}</span>
+                                        </motion.a>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>

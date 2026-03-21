@@ -53,6 +53,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState<ProjectAnalysis | null>(null);
+  const [showSavedFeedback, setShowSavedFeedback] = useState(false);
 
   const handleSummarize = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -160,7 +161,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
         y: -12,
         transition: { duration: 0.4, ease: "easeOut" }
       }}
-      className="group relative glass-card p-5 md:p-6 transition-all duration-700 flex flex-col h-full hover:shadow-2xl hover:shadow-orange-500/20 rounded-[2.5rem] overflow-hidden"
+      className="group relative glass-card p-5 md:p-6 transition-all duration-700 flex flex-col h-full hover:shadow-2xl hover:shadow-orange-500/20 rounded-[2.5rem] overflow-hidden hover-lift"
     >
 
       {/* Floating Sparkle Elements (Animated Background) */}
@@ -230,25 +231,51 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
               </button>
 
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  onToggleFavorite?.(project);
-                }}
-                className={`p-2 rounded-full transition-all duration-500 ${isFavorite
-                  ? 'bg-red-500/20 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]'
-                  : 'bg-white/5 text-gray-500 hover:text-red-400 hover:bg-white/10'
-                  }`}
-              >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-              </button>
+              {/* Action Icons */}
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onToggleFavorite?.(project);
+                      if (!isFavorite) {
+                        setShowSavedFeedback(true);
+                        setTimeout(() => setShowSavedFeedback(false), 2000);
+                      }
+                    }}
+                    className={`p-2.5 rounded-full transition-all duration-500 flex items-center justify-center ${
+                      isFavorite
+                        ? 'bg-red-500/20 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]'
+                        : 'bg-white/5 text-gray-500 hover:text-red-400 hover:bg-white/10'
+                    }`}
+                  >
+                    <motion.div
+                      animate={isFavorite ? { scale: [1, 1.4, 1], rotate: [0, 15, -15, 0] } : { scale: 1 }}
+                      transition={{ duration: 0.4 }}
+                    >
+                      <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                    </motion.div>
+                  </button>
 
+                  <AnimatePresence>
+                    {showSavedFeedback && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                        animate={{ opacity: 1, y: -45, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2 z-50 pointer-events-none"
+                      >
+                        <span>Saved to Favorites ✅</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  onToggleCompare?.(project);
-                }}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onToggleCompare?.(project);
+                  }}
                 className={`p-2 rounded-full transition-all duration-500 border ${
                   isComparing 
                     ? 'bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)]' 
@@ -260,6 +287,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               </button>
             </div>
           </div>
+        </div>
 
           <h3 className="text-lg md:text-xl font-black text-white leading-tight font-display mb-2 group-hover:text-orange-400 transition-colors">
             {project.name}
@@ -287,13 +315,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center justify-center gap-2 px-4 py-3 bg-orange-600 hover:bg-orange-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
+              className={`flex items-center justify-center gap-3 px-8 py-5 bg-orange-600 hover:bg-orange-500 text-white text-base font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
             >
               <span className="truncate">
                 {project.url.includes('dataset') ? 'Explore Dataset' :
                   isLinkedIn ? 'View on LinkedIn' : 'Explore Project'}
               </span>
-              <Github className="w-4 h-4 shrink-0" />
+              <Github className="w-5 h-5 shrink-0" />
             </a>
 
             {(project.liveUrl || project.demoUrl) && (
@@ -301,10 +329,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 href={project.liveUrl || project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center sm:w-1/2 gap-2 px-4 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button"
+                className="flex items-center justify-center sm:w-1/2 gap-3 px-8 py-5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-base font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button"
               >
                 <span className="truncate">Live Demo</span>
-                <ExternalLink className="w-4 h-4 shrink-0" />
+                <ExternalLink className="w-5 h-5 shrink-0" />
               </a>
             )}
           </div>
