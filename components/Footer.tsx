@@ -11,7 +11,7 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, labels }) => {
     const currentYear = new Date().getFullYear();
-    const activeLabels = labels || { discover: "Search Projects", profiles: "Trending Projects", saved: "Starred" };
+    const activeLabels = labels || { discover: "Search Projects", trending: "Trending Projects", saved: "Starred" };
 
     return (
         <footer className="relative mt-32 pb-16 overflow-hidden border-t border-white/5 bg-transparent backdrop-blur-sm">
@@ -56,7 +56,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                     Project Finder is an advanced innovation engine. Our <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> section provides a global gateway to high-quality projects.
                                 </p>
                                 <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.profiles}</span> hub offers real-time synchronization with elite GitHub profiles.
+                                    The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> hub offers real-time synchronization with elite GitHub profiles.
                                 </p>
                             </div>
 
@@ -100,7 +100,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                         <div className="space-y-6">
                             {[
                                 { title: activeLabels.discover, desc: 'Find high-quality projects across multi-platform registries.' },
-                                { title: activeLabels.profiles, desc: 'Architect a premium presence with real-time profile inspirations.' },
+                                { title: activeLabels.trending, desc: 'Architect a premium presence with real-time profile inspirations.' },
                                 { title: "Build & Learn", desc: "Access source code and live demos to accelerate your growth." }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
