@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import introVideo from '../src/assets/intro_new.mp4';
 
@@ -75,9 +76,12 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-base md:text-xl font-bold text-[#fef3c7] tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_8px_rgba(254,243,199,0.2)] ml-[0.4em]"
+                    className="flex items-center gap-3 text-base md:text-2xl font-black tracking-[0.3em] uppercase font-sans drop-shadow-[0_0_15px_rgba(249,115,22,0.4)]"
                 >
-                    Project Finder
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
+                        Project Finder
+                    </span>
+                    <Search className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
                 </motion.h2>
 
                 {/* Ambient Loading Indicator */}
