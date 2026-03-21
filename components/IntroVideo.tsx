@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
-import mascotLogo from '../src/assets/logo_final_v6.png';
-import introVideo from '../src/assets/PROJECT_FINDER_INTRO.mp4';
+import mascotLogo from '../src/assets/logos/logo_final_v6.png';
+import introVideo from '../src/assets/videos/PROJECT_FINDER_INTRO.mp4';
 
 interface IntroVideoProps {
     onComplete: () => void;

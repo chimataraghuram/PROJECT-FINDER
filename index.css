@@ -90,7 +90,7 @@ h1, h2, h3, h4, .font-display {
     left: -10%;
     width: 120%;
     height: 120%;
-    background-image: url('/bg-ai.png');
+    background-image: url('./src/assets/images/bg-ai.png');
     background-size: cover;
     background-position: center;
     opacity: 0.22;
