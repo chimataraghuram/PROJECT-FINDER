@@ -69,60 +69,23 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10" />
             </motion.div>
 
-            {/* Compact Stacked Title Text */}
-            <div className="mt-6 md:mt-8 text-center flex flex-col items-center">
-                <motion.h1 
-                    initial={{ y: 15, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-4xl md:text-5xl font-black tracking-[-0.05em] leading-none mb-1"
-                >
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#f97316] to-[#ea580c] drop-shadow-[0_4px_12px_rgba(249,115,22,0.3)]">
-                        TECHBOY
-                    </span>
-                </motion.h1>
-                
-                <motion.div 
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 1, duration: 1 }}
-                    className="w-10 h-0.5 bg-white/20 rounded-full mb-2"
-                />
-
-                <motion.h2 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2, duration: 0.8 }}
-                    className="text-[10px] md:text-sm font-bold text-[#fef3c7] tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_5px_rgba(254,243,199,0.2)] ml-[0.4em]"
-                >
-                    Project Finder
-                </motion.h2>
-
-                {/* Ambient Loading Indicator */}
-                <div className="mt-4 flex justify-center gap-1.5">
-                    {[0, 1, 2].map((i) => (
-                        <motion.div 
-                            key={i}
-                            animate={{ 
-                                scale: [1, 1.4, 1],
-                                opacity: [0.3, 1, 0.3]
-                            }}
-                            transition={{ 
-                                duration: 1.5,
-                                repeat: Infinity,
-                                delay: i * 0.2
-                            }}
-                            className="w-1 h-1 rounded-full bg-orange-500/60 shadow-[0_0_5px_rgba(249,115,22,0.5)]"
-                        />
-                    ))}
-                </div>
-            </div>
-
-            {/* Footer Tag */}
-            <div className="absolute bottom-10 md:bottom-16">
-                <div className="px-5 py-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm text-[10px] md:text-xs font-bold tracking-[0.2em] text-gray-500 uppercase shadow-xl">
-                    Cooked by Raghu with <span className="text-red-500">❤️</span>
-                </div>
+            {/* Ambient Loading Indicator - Kept for UX feedback */}
+            <div className="mt-8 flex justify-center gap-1.5">
+                {[0, 1, 2].map((i) => (
+                    <motion.div 
+                        key={i}
+                        animate={{ 
+                            scale: [1, 1.4, 1],
+                            opacity: [0.3, 1, 0.3]
+                        }}
+                        transition={{ 
+                            duration: 1.5,
+                            repeat: Infinity,
+                            delay: i * 0.2
+                        }}
+                        className="w-1 h-1 rounded-full bg-orange-500/60 shadow-[0_0_5px_rgba(249,115,22,0.5)]"
+                    />
+                ))}
             </div>
         </div>
     );
