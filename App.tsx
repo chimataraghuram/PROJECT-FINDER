@@ -260,15 +260,16 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="flex items-center gap-4 cursor-pointer pointer-events-auto group/logo"
+                className="flex items-center gap-3 md:gap-4 cursor-pointer pointer-events-auto group/logo"
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                  <img src={mascotLogo} className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
+                  <div className={`flex items-center justify-center ${isCompact ? 'w-10 h-10' : 'w-12 h-12 md:w-14 md:h-14'} bg-orange-500/10 border border-orange-500/30 rounded-xl relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20`}>
+                    <Search className={`${isCompact ? 'w-5 h-5' : 'w-6 h-6 md:w-7 md:h-7'} text-orange-500 transition-transform duration-500 group-hover/logo:scale-110`} strokeWidth={2.5} />
+                  </div>
                 </div>
                 <div className="hidden sm:flex flex-col">
-                  <span className={`${isCompact ? 'text-[10px]' : 'text-xs'} font-black text-orange-500 tracking-[0.3em] uppercase leading-none mb-1`}>Techboy</span>
-                  <span className={`${isCompact ? 'text-lg' : 'text-2xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
+                  <span className={`${isCompact ? 'text-xl' : 'text-2xl md:text-3xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
                 </div>
               </motion.div>
             </div>
