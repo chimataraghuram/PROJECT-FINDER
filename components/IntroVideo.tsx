@@ -45,12 +45,12 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
             className={`fixed inset-0 z-[100] bg-[#0f172a] flex flex-col items-center justify-center transition-opacity duration-1000 ${isFading ? 'opacity-0' : 'opacity-100'}`}
             onClick={handleSkip}
         >
-            {/* Balanced Cinematic Logo/Video Container */}
+            {/* Compact Cinematic Logo/Video Container */}
             <motion.div 
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="relative w-56 h-56 md:w-[350px] md:h-[350px] rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-[0_0_80px_rgba(249,115,22,0.35)] border border-white/10 bg-black group"
+                className="relative w-40 h-40 md:w-[240px] md:h-[240px] rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_rgba(249,115,22,0.3)] border border-white/10 bg-black group"
             >
                 <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 via-transparent to-purple-500/20 z-10 pointer-events-none" />
                 <video
@@ -69,15 +69,15 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10" />
             </motion.div>
 
-            {/* Balanced Stacked Title Text */}
-            <div className="mt-10 md:mt-16 text-center flex flex-col items-center">
+            {/* Compact Stacked Title Text */}
+            <div className="mt-8 md:mt-10 text-center flex flex-col items-center">
                 <motion.h1 
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5, duration: 0.8 }}
-                    className="text-5xl md:text-7xl font-black tracking-[-0.05em] leading-none mb-1"
+                    className="text-4xl md:text-5xl font-black tracking-[-0.05em] leading-none mb-1"
                 >
-                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#f97316] to-[#ea580c] drop-shadow-[0_8px_25px_rgba(249,115,22,0.4)]">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#f97316] to-[#ea580c] drop-shadow-[0_5px_15px_rgba(249,115,22,0.3)]">
                         TECHBOY
                     </span>
                 </motion.h1>
@@ -86,20 +86,20 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ delay: 1, duration: 1 }}
-                    className="w-16 h-0.5 bg-white/20 rounded-full mb-3"
+                    className="w-12 h-0.5 bg-white/20 rounded-full mb-2"
                 />
 
                 <motion.h2 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2, duration: 0.8 }}
-                    className="text-base md:text-xl font-bold text-[#fef3c7] tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_8px_rgba(254,243,199,0.2)] ml-[0.4em]"
+                    className="text-xs md:text-sm font-bold text-[#fef3c7] tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_5px_rgba(254,243,199,0.2)] ml-[0.4em]"
                 >
                     Project Finder
                 </motion.h2>
 
                 {/* Ambient Loading Indicator */}
-                <div className="mt-8 flex justify-center gap-2.5">
+                <div className="mt-6 flex justify-center gap-2">
                     {[0, 1, 2].map((i) => (
                         <motion.div 
                             key={i}
@@ -112,7 +112,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                                 repeat: Infinity,
                                 delay: i * 0.2
                             }}
-                            className="w-1.5 h-1.5 rounded-full bg-orange-500/60 shadow-[0_0_8px_rgba(249,115,22,0.5)]"
+                            className="w-1 h-1 rounded-full bg-orange-500/60 shadow-[0_0_5px_rgba(249,115,22,0.5)]"
                         />
                     ))}
                 </div>
