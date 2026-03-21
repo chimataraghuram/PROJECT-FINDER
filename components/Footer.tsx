@@ -1,7 +1,7 @@
 import React from 'react';
 import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User, Flame, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
-import mascotLogo from '../src/assets/logo.png';
+import mascotLogo from '../src/assets/mascot_final_v2.png';
 
 interface FooterProps {
     onComingSoonClick: (e: React.MouseEvent) => void;
