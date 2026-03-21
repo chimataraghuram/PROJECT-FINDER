@@ -360,15 +360,12 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* --- MOBILE NAVIGATION (Header + Centered Pill) --- */}
-          <div className="block md:hidden">
-            {/* Mobile Header: Fixed Top */}
-            <div 
-              className="fixed top-0 left-0 right-0 z-[5000] border-b border-white/10 flex items-center justify-between px-4 bg-[#020617] shadow-2xl"
-              style={{ height: '60px' }}
-            >
+          {/* --- MOBILE NAVIGATION (Separate Scrolling Islands) --- */}
+          <div className="block md:hidden px-4 pt-4 space-y-4 relative z-[100]">
+            <div className="flex items-center justify-between gap-2">
+              {/* 1. Logo Island (Scrolling) */}
               <div 
-                className="flex items-center gap-3 cursor-pointer"
+                className="p-1 px-1.5 bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] flex items-center justify-center translate-y-2"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative">
@@ -377,23 +374,8 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center shadow-lg active:scale-95 transition-all"
-                >
-                  <Bot className="w-5 h-5" />
-                </button>
-                <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
-              </div>
-            </div>
-
-            {/* Mobile Navbar: Centered & Scrolling */}
-            <div 
-              className="w-full flex justify-center py-4 px-4 bg-transparent relative z-10"
-              style={{ marginTop: '60px' }}
-            >
-              <nav className="p-1 px-1.5 bg-[#0f172a]/90 backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-2 shadow-2xl">
+              {/* 2. Main Nav Island (Scrolling) - Search, Trending (T), Starred (F) */}
+              <nav className="flex-1 max-w-[160px] p-1.5 bg-[#0f172a]/60 backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-around shadow-2xl translate-y-2">
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
@@ -401,18 +383,28 @@ const App: React.FC = () => {
                     <button
                       key={item.id}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-11 px-6 rounded-full border flex items-center justify-center gap-3 transition-all duration-300 font-bold text-[10px] tracking-widest uppercase relative overflow-hidden ${
+                      className={`p-2 rounded-full transition-all duration-300 ${
                         isActive 
-                          ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_20px_rgba(249,115,22,0.3)]` 
-                          : 'text-gray-400 border-transparent bg-white/5'
+                          ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]` 
+                          : 'text-gray-400 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-5 h-5`} />
-                      {isActive && <motion.div layoutId="activeTabMobile" className="absolute bottom-1 inset-y-1 w-1 bg-white/60 rounded-full left-1/2 -translate-x-1/2" />}
+                      <Icon className="w-4 h-4" />
                     </button>
                   );
                 })}
               </nav>
+
+              {/* 3. Action Island (Scrolling) - AI, User */}
+              <div className="p-1 px-1 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-1.5 shadow-2xl translate-y-2">
+                <button
+                  onClick={() => setIsAIAssistantOpen(true)}
+                  className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center transition-transform active:scale-90"
+                >
+                  <Bot className="w-5 h-5" />
+                </button>
+                <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
+              </div>
             </div>
           </div>
 
