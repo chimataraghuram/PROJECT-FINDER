@@ -31,12 +31,18 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             <div className="relative">
                                 <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
                                 <div className="relative bg-white/5 p-1 rounded-2xl shadow-2xl border border-white/10 transform group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500 overflow-hidden">
-                                    <img src={mascotLogo} className="w-14 h-14 object-cover rounded-xl" alt="Mascot" />
+                                    <img src={mascotLogo} className="w-14 h-14 object-cover rounded-xl" alt="Mascot Logo" />
+                                </div>
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                                <div className="relative flex items-center justify-center w-14 h-14 bg-white/5 p-1 rounded-2xl shadow-2xl border border-white/10 transform group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500 overflow-hidden">
+                                    <Search className="w-6 h-6 text-orange-500" strokeWidth={2.5} />
                                 </div>
                             </div>
                             <div className="flex flex-col select-none">
                                 <span className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-200 via-white to-orange-400 tracking-tighter">
-                                    {isCompact ? 'Techboy PF' : 'Techboy Project Finder'}
+                                    {isCompact ? 'Project Finder' : 'Project Finder'}
                                 </span>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="h-[2px] w-8 bg-orange-500 rounded-full" />
