@@ -8,7 +8,7 @@
   <strong>The ultimate gateway to open-source inspiration, premium project discovery, and AI-assisted workflow.</strong>
 </p>
 
-[🚀 Live Demo](https://project-finder-chimata.vercel.app/) • [💻 Explore Code](https://github.com/chimataraghuram/PROJECT-FINDER) • [🎨 Browse Profiles](https://project-finder-chimata.vercel.app/#profiles)
+[🚀 Live Demo](https://chimataraghuram.github.io/PROJECT-FINDER/) • [💻 Explore Code](https://github.com/chimataraghuram/PROJECT-FINDER) • [🎨 Browse Profiles](https://chimataraghuram.github.io/PROJECT-FINDER/#profiles)
 
 <br/>
 
