@@ -21,10 +21,17 @@
 
 ---
 
-## 📸 Visual Previews
+### 🚀 3-Island Floating Navbar
+Experience our state-of-the-art header featuring three independent glassmorphic islands with dynamic scroll scaling.
+
+<div align="center">
+  <img src="./screenshots/navbar_top.png" width="100%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);" />
+</div>
+
+<br/>
 
 ### 🖥️ Desktop Discovery
-Experience a fluid, glassmorphic discovery engine with real-time API integrations.
+A fluid, glassmorphic discovery engine with real-time API integrations and adaptive UI.
 
 <img src="./assets/desktop-preview.png" width="100%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);" />
 
@@ -56,7 +63,7 @@ Watch the real-time trending dashboard featuring GitHub, Kaggle, Hugging Face, a
 | ❤️ | **Save Favorites** | Securely save your favorite projects and profiles via Firebase integration. |
 | 🎨 | **README Gallery** | A curated visual gallery of the world's best GitHub profile designs. |
 | 📱 | **Responsive Design** | Pixel-perfect experience across mobile, tablet, and desktop. |
-| 🚀 | **3-Section Premium Navbar** | Balanced layout with mascot branding and adaptive navigation pill. |
+| 🚀 | **Dynamic 3-Island Nav**| Modular layout with independent glass islands and dynamic scroll scaling. |
 | ⚡ | **Fast UI** | Blazing fast search and interactions powered by React and Framer Motion. |
 | 🤖 | **Techboy Assistant** | Your personal AI guide to help you find the right tools and projects. |
 | ⭐ | **Live Analytics** | Seamlessly extract exact source intelligence and repository metrics. |
