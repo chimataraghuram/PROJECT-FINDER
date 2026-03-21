@@ -65,6 +65,19 @@
 
 ---
 
+## 🧩 Problem Solved
+
+Finding the right project ideas on GitHub can be overwhelming, especially for students and beginner developers. With millions of repositories available, it becomes difficult to identify relevant, high-quality, and practical projects to learn from or build. Many learners struggle to discover projects that match their skills, interests, or goals.
+
+Techboy Project Finder solves this problem by providing a fast and user-friendly platform to explore real-world open source projects. By integrating real-time data from GitHub, it allows users to easily search, filter, and discover trending projects, helping them learn faster, build effectively, and contribute to open source with confidence.
+
+---
+
+## 💡 Solution
+
+Techboy Project Finder addresses this problem by providing a streamlined platform to discover real-world open source projects directly from GitHub. By integrating the GitHub API, the application delivers real-time search and trending repositories, allowing users to quickly find relevant projects based on their interests and skill levels. The intuitive and responsive interface simplifies exploration, enabling students and developers to easily browse, analyze, and select projects for learning, building, or contributing. This reduces the time and effort required to find meaningful projects and enhances the overall learning experience.
+
+---
 
 ## 🔍 Features
 
