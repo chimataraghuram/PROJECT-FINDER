@@ -13,6 +13,7 @@ import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { ComparisonStudio } from './components/ComparisonStudio';
+import mascotLogo from './src/assets/logo.png';
 
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
@@ -251,42 +252,31 @@ const App: React.FC = () => {
             <div className="parallax-bg-overlay" />
           </div>
 
-          <header className={`fixed top-0 inset-x-0 z-[70] transition-all duration-500 flex items-center justify-between px-4 md:px-8 pointer-events-none ${isCompact ? 'py-4' : 'py-8'}`}>
+          <header className={`fixed top-0 inset-x-0 z-[2000] px-4 md:px-12 pointer-events-none transition-all duration-500 flex items-center justify-between ${isCompact ? 'py-4' : 'py-8'}`}>
+            {/* 1. Left Section: Logo & Brand */}
             <motion.div 
               layout
               initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: isCompact ? 0 : 1, x: 0 }}
-              className="hidden md:flex flex-shrink-0 pointer-events-auto"
+              animate={{ opacity: 1, x: 0 }}
+              onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="flex items-center gap-4 cursor-pointer pointer-events-auto group/logo"
             >
+              <div className="relative">
+                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+                <img src={mascotLogo} className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
+              </div>
+              <div className="flex flex-col">
+                <span className={`${isCompact ? 'text-[10px]' : 'text-xs'} font-black text-orange-500 tracking-[0.3em] uppercase leading-none mb-1`}>Techboy</span>
+                <span className={`${isCompact ? 'text-lg' : 'text-2xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
+              </div>
+            </motion.div>
 
-
+            {/* 2. Middle Section: Adaptive Navigation Pill */}
             <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
               <motion.nav 
                 layout
-                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-1"
+                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-1.5"
               >
-                {/* Brand Section */}
-                <motion.div 
-                  layout
-                  onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className={`flex items-center gap-3 cursor-pointer hover:bg-white/5 rounded-full transition-colors ${isCompact ? 'px-2' : 'px-4 border-r border-white/10 mr-1'}`}
-                >
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
-                    <img 
-                      src="/assets/logo.png" 
-                      className={`${isCompact ? 'w-10 h-10' : 'w-12 h-12'} rounded-full object-cover border border-white/20 shadow-2xl relative z-10 transition-all duration-500`} 
-                      alt="Techboy Logo" 
-                    />
-                  </div>
-                  {!isCompact && (
-                    <div className="flex flex-col pr-2">
-                      <span className="text-[10px] font-black text-orange-500 tracking-[0.2em] leading-none mb-0.5 whitespace-nowrap">TECHBOY</span>
-                      <span className="text-[12px] font-black text-white tracking-widest leading-none whitespace-nowrap">PROJECT FINDER</span>
-                    </div>
-                  )}
-                </motion.div>
-
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
