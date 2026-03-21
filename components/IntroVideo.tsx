@@ -69,23 +69,42 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10" />
             </motion.div>
 
-            {/* Ambient Loading Indicator - Kept for UX feedback */}
-            <div className="mt-8 flex justify-center gap-1.5">
-                {[0, 1, 2].map((i) => (
-                    <motion.div 
-                        key={i}
-                        animate={{ 
-                            scale: [1, 1.4, 1],
-                            opacity: [0.3, 1, 0.3]
-                        }}
-                        transition={{ 
-                            duration: 1.5,
-                            repeat: Infinity,
-                            delay: i * 0.2
-                        }}
-                        className="w-1 h-1 rounded-full bg-orange-500/60 shadow-[0_0_5px_rgba(249,115,22,0.5)]"
-                    />
-                ))}
+            {/* Balanced Title Text (TECHBOY removed) */}
+            <div className="mt-8 md:mt-12 text-center flex flex-col items-center">
+                <motion.h2 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                    className="text-base md:text-xl font-bold text-[#fef3c7] tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_8px_rgba(254,243,199,0.2)] ml-[0.4em]"
+                >
+                    Project Finder
+                </motion.h2>
+
+                {/* Ambient Loading Indicator */}
+                <div className="mt-6 flex justify-center gap-1.5">
+                    {[0, 1, 2].map((i) => (
+                        <motion.div 
+                            key={i}
+                            animate={{ 
+                                scale: [1, 1.4, 1],
+                                opacity: [0.3, 1, 0.3]
+                            }}
+                            transition={{ 
+                                duration: 1.5,
+                                repeat: Infinity,
+                                delay: i * 0.2
+                            }}
+                            className="w-1 h-1 rounded-full bg-orange-500/60 shadow-[0_0_5px_rgba(249,115,22,0.5)]"
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Footer Tag */}
+            <div className="absolute bottom-10 md:bottom-16">
+                <div className="px-5 py-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-sm text-[10px] md:text-xs font-bold tracking-[0.2em] text-gray-500 uppercase shadow-xl">
+                    Cooked by Raghu with <span className="text-red-500">❤️</span>
+                </div>
             </div>
         </div>
     );
