@@ -11,13 +11,20 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
 
     useEffect(() => {
         if (videoRef.current) {
-            // Play immediately (muted is required for autoplay in most browsers)
             videoRef.current.play().catch(error => {
                 console.error("Autoplay failed:", error);
-                // If autoplay fails completely, we skip the intro to avid a black screen
                 onComplete();
             });
         }
+
+        // FAIL-SAFE: If the video hangs or fails to trigger events, 
+        // force completion after 6 seconds so the user isn't stuck.
+        const failSafeTimeout = setTimeout(() => {
+            console.log("Intro safety timeout triggered");
+            onComplete();
+        }, 6000);
+
+        return () => clearTimeout(failSafeTimeout);
     }, [onComplete]);
 
     const handleVideoEnd = () => {
