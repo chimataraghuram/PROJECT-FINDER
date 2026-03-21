@@ -260,15 +260,15 @@ const App: React.FC = () => {
           >
             <div className="relative">
               <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-              <img src={mascotLogo} className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500" alt="Mascot Logo" />
+              <img src={mascotLogo} className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500" alt="Mascot Logo" />
             </div>
             <div className="relative">
               <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-              <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
-                <Search className="w-4 h-4 text-orange-500 transition-transform duration-500 group-hover/logo:scale-110" strokeWidth={2.5} />
+              <div className="w-8 h-8 md:w-9 md:h-9 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
+                <Search className="w-4 h-4 md:w-5 h-5 text-orange-500 transition-transform duration-500 group-hover/logo:scale-110" strokeWidth={2.5} />
               </div>
             </div>
-            <span className="hidden sm:inline-block text-lg md:text-xl font-black text-white tracking-tighter uppercase leading-none">Project Finder</span>
+            <span className="hidden sm:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none">Project Finder</span>
           </motion.div>
 
           {/* 2. Middle Island: Adaptive Navigation Pill */}
