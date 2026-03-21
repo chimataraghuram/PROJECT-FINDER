@@ -127,12 +127,19 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 
 ---
 
+## 🚀 Future Roadmap
+
+- [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
+- [ ] **Backend Integration**: Enhanced full-stack features with dedicated Express middleware.
+- [ ] **Community Portals**: Share and review project discoveries with other developers.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are always welcome! If you’d like to improve Techboy Project Finder, feel free to fork the repository and submit a pull request.
 
 ---
-
 
 ## 📄 License
 
@@ -142,20 +149,10 @@ You are free to use, modify, and contribute to this project. However, proper cre
 
 Unauthorized copying or redistribution of this project without attribution is not permitted.
 
----
-
 ⚠️ **Note:**
 This project is created for learning and development purposes. 
 If you use or modify this project, you must provide proper credit. 
 Do not claim this work as your own.
-
----
-
-## 🚀 Future Roadmap
-
-- [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
-- [ ] **Backend Integration**: Enhanced full-stack features with dedicated Express middleware.
-- [ ] **Community Portals**: Share and review project discoveries with other developers.
 
 ---
 
