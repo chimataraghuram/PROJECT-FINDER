@@ -105,6 +105,35 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 
 ---
 
+## 📁 Project Structure
+
+```text
+📁 PROJECT-FINDER
+│
+├── 📁 src               # React/TypeScript source files
+├── 📁 components        # Reusable UI glassmorphic components
+├── 📁 services          # API (GitHub, Hugging Face, Kaggle) integrations
+├── 📁 assets            # Project branding and mascot assets
+├── 📁 data              # Local datasets and trending logic
+├── 📁 public            # Static assets and build entry points
+│
+├── index.html           # Main SPA entry point
+├── App.tsx              # Core application logic & routing
+├── index.css            # Global Tailwind CSS styling
+├── index.tsx            # React application mounting
+├── vite.config.ts       # Vite build configuration
+└── README.md            # Comprehensive project documentation
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are always welcome! If you’d like to improve Techboy Project Finder, feel free to fork the repository and submit a pull request.
+
+---
+
+
 ## 🚀 Future Roadmap
 
 - [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
