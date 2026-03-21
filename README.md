@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./src/assets/logos/logo_final_v6.png" width="120"
+<img src="./frontend/src/assets/logos/logo_final_v6.png" width="120"
 style="border-radius: 50%; 
 box-shadow: 0 0 40px rgba(255,140,66,0.6); 
 margin-bottom: 20px;" />
@@ -43,7 +43,8 @@ Discover Real-World Open Source Projects 🚀
 <br/>
 
 [![Framework: React](https://img.shields.io/badge/Framework-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
-[![Cloud: Firebase](https://img.shields.io/badge/Cloud-Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Server: Node.js](https://img.shields.io/badge/Server-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Database: MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Styling: Tailwind](https://img.shields.io/badge/Styling-Tailwind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Animations: Framer Motion](https://img.shields.io/badge/Animations-Framer_Motion-FF52D9?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 <br/>
@@ -64,35 +65,35 @@ Discover Real-World Open Source Projects 🚀
 
 ### 1. Splash Screen
 *Premium loading experience with the project mascot and motion-ready typography.*
-<img src="./src/assets/images/screenshots/1.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/1.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 2. Hero Dashboard
 *The central search and discovery hub featuring global platform integrations and quick-access categories.*
-<img src="./src/assets/images/screenshots/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 3. Trending Feed
 *Real-time project activity display with high-engagement metrics and interactive repository cards.*
-<img src="./src/assets/images/screenshots/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 4. Multi-Platform Filtering
 *Seamless navigation across GitHub, Hugging Face, Kaggle, and LinkedIn discovery ecosystems.*
-<img src="./src/assets/images/screenshots/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 5. Repository Insights
 *Detailed visual cards highlighting star counts, tech stacks, and direct access buttons.*
-<img src="./src/assets/images/screenshots/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 6. Popular Repositories View
 *Curated exposure to world-class educational resources and system design primers.*
-<img src="./src/assets/images/screenshots/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 7. Personal Library (Starred)
 *Organized workspace for managing and discovering your saved project inspirations.*
-<img src="./src/assets/images/screenshots/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 8. Developer Profile & Guide
 *Complete author insights alongside a step-by-step master guide for platform mastery.*
-<img src="./src/assets/images/screenshots/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./frontend/src/assets/images/screenshots/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 </div>
 
@@ -130,11 +131,9 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: [React.js](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Backend/Auth**: [Firebase](https://firebase.google.com/)
-- **APIs**: GitHub Search API, Hugging Face API, Kaggle Dataset Discovery
+- **Backend**: [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **Authentication**: JWT (JSON Web Tokens)
 
 ---
 
@@ -143,18 +142,17 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 ```text
 📁 PROJECT-FINDER
 │
-├── 📁 src               # React/TypeScript source files
-├── 📁 components        # Reusable UI glassmorphic components
-├── 📁 services          # API (GitHub, Hugging Face, Kaggle) integrations
-├── 📁 assets            # Project branding and mascot assets
-├── 📁 data              # Local datasets and trending logic
-├── 📁 public            # Static assets and build entry points
+├── 📁 frontend          # React/TypeScript application
+│   ├── 📁 src/assets    # Project branding and mascot assets
+│   ├── 📁 components    # Reusable UI glassmorphic components
+│   ├── 📁 services      # API integration & mapping services
+│   └── App.tsx          # Core frontend logic
 │
-├── index.html           # Main SPA entry point
-├── App.tsx              # Core application logic & routing
-├── index.css            # Global Tailwind CSS styling
-├── index.tsx            # React application mounting
-├── vite.config.ts       # Vite build configuration
+├── 📁 backend           # Node.js/Express server
+│   ├── 📁 controllers   # Auth and Project logic
+│   ├── 📁 models        # Mongoose/MongoDB schemas
+│   └── server.js        # API entry point
+│
 └── README.md            # Comprehensive project documentation
 ```
 
@@ -163,7 +161,6 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 ## 🚀 Future Roadmap
 
 - [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
-- [ ] **Backend Integration**: Enhanced full-stack features with dedicated Express middleware.
 - [ ] **Community Portals**: Share and review project discoveries with other developers.
 
 ---
