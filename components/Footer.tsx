@@ -97,6 +97,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             <h3 className="text-white font-black text-xl tracking-tight uppercase tracking-widest">How to use this project</h3>
                         </div>
 
+                        <div className="space-y-6">
                             {[
                                 { title: "1. Search Globally", desc: "Enter any concept (e.g., 'React UI' or 'AI Models') into the search bar. We instantly pull matching source code, models, and datasets from multiple platforms." },
                                 { title: "2. Explore Trends", desc: "Not sure what to build? Navigate to Trending Projects to browse real-time feeds of the most active and highly-starred repositories updated daily." },
