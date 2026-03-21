@@ -251,91 +251,87 @@ const App: React.FC = () => {
             <div className="parallax-bg-overlay" />
           </div>
 
-          <header className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] max-w-7xl z-[2000] px-4 md:px-6 pointer-events-none transition-all duration-500 flex items-center justify-between border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-2xl rounded-2xl ${isCompact ? 'py-2 gap-2 opacity-95' : 'py-3 md:py-4 gap-4'}`}>
-            {/* 1. Left Section: Logo & Brand */}
-            <div className="flex-1 flex justify-start">
-              <motion.div 
-                layout
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="flex items-center gap-3 md:gap-4 cursor-pointer pointer-events-auto group/logo"
-              >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                  <img src={mascotLogo} className={`${isCompact ? 'w-8 h-8' : 'w-9 h-9 lg:w-10 lg:h-10'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Mascot Logo" />
-                </div>
-                <div className="relative">
-                  <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                  <div className={`flex items-center justify-center ${isCompact ? 'w-8 h-8' : 'w-10 h-10'} bg-orange-500/10 border border-orange-500/30 rounded-xl relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20`}>
-                    <Search className={`${isCompact ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-orange-500 transition-transform duration-500 group-hover/logo:scale-110`} strokeWidth={2.5} />
-                  </div>
-                </div>
-                  <span className={`${isCompact ? 'text-lg' : 'text-xl md:text-2xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
-              </motion.div>
+          {/* 1. Left Island: Logo & Brand */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`fixed top-4 left-4 md:left-8 z-[2000] px-4 py-2 flex items-center gap-3 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-full pointer-events-auto cursor-pointer group/logo transition-all duration-500 ${isCompact ? 'scale-90 origin-left opacity-90' : ''}`}
+            onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+              <img src={mascotLogo} className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500" alt="Mascot Logo" />
             </div>
-
-            {/* 2. Middle Section: Adaptive Navigation Pill (Integrated) */}
-            <div className="flex-shrink-0 pointer-events-auto">
-              <motion.nav 
-                layout
-                className="flex items-center gap-1.5 md:gap-2"
-              >
-                {NAV_ITEMS.map((item) => {
-                  const isActive = currentView === item.id;
-                  const Icon = item.icon;
-                  return (
-                    <motion.button
-                      key={item.id}
-                      layout
-                      transition={{
-                        layout: { type: "spring", stiffness: 400, damping: 30 },
-                        opacity: { duration: 0.2 }
-                      }}
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-8 md:h-10 px-3 md:px-5 rounded-full border flex items-center justify-center gap-2 md:gap-2.5 transition-all duration-500 font-bold text-[10px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
-                        isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_20px_rgba(249,115,22,0.3)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                      } ${isCompact ? 'px-2.5 min-w-[44px]' : ''}`}
-                    >
-                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-4 h-4 transition-all`} />
-                      <AnimatePresence mode="sync">
-                        {!isCompact && (
-                          <motion.span
-                            initial={{ width: 0, opacity: 0, x: -10 }}
-                            animate={{ width: 'auto', opacity: 1, x: 0 }}
-                            exit={{ width: 0, opacity: 0, x: -10 }}
-                            className="hidden md:inline-block"
-                          >
-                            {item.label} {item.id === 'favorites' && `(${favorites.length})`}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
-                      {isActive && <motion.div layoutId="activeTab" className="absolute bottom-1 inset-x-4 h-0.5 bg-white/40 rounded-full" />}
-                    </motion.button>
-                  );
-                })}
-              </motion.nav>
+            <div className="relative">
+              <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+              <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
+                <Search className="w-4 h-4 text-orange-500 transition-transform duration-500 group-hover/logo:scale-110" strokeWidth={2.5} />
+              </div>
             </div>
+            <span className="hidden sm:inline-block text-lg md:text-xl font-black text-white tracking-tighter uppercase leading-none">Project Finder</span>
+          </motion.div>
 
-            {/* 3. Right Section: Action Hub */}
-            <div className="flex-1 flex justify-end pointer-events-auto flex items-center gap-4 lg:gap-6">
+          {/* 2. Middle Island: Adaptive Navigation Pill */}
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
+            <motion.nav 
+              layout
+              className={`p-1.5 bg-[#0f172a]/40 backdrop-blur-2xl rounded-full shadow-2xl border border-white/10 flex items-center gap-1.5 transition-all duration-500 ${isCompact ? 'scale-95 opacity-90' : ''}`}
+            >
+              {NAV_ITEMS.map((item) => {
+                const isActive = currentView === item.id;
+                const Icon = item.icon;
+                return (
+                  <motion.button
+                    key={item.id}
+                    layout
+                    whileHover={{ y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className={`h-9 md:h-10 px-4 md:px-5 rounded-full border flex items-center justify-center gap-2.5 transition-all duration-500 font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
+                      isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_20px_rgba(249,115,22,0.3)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
+                    } ${isCompact ? 'px-3 min-w-[48px]' : ''}`}
+                  >
+                    <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-4.5 h-4.5 transition-all`} />
+                    <AnimatePresence mode="sync">
+                      {!isCompact && (
+                        <motion.span
+                          initial={{ width: 0, opacity: 0, x: -10 }}
+                          animate={{ width: 'auto', opacity: 1, x: 0 }}
+                          exit={{ width: 0, opacity: 0, x: -10 }}
+                          className="hidden lg:inline-block"
+                        >
+                          {item.label} {item.id === 'favorites' && `(${favorites.length})`}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                    {isActive && <motion.div layoutId="activeTab" className="absolute bottom-1 inset-x-4 h-0.5 bg-white/40 rounded-full" />}
+                  </motion.button>
+                );
+              })}
+            </motion.nav>
+          </div>
+
+          {/* 3. Right Island: Action Hub */}
+          <div className="fixed top-4 right-4 md:right-8 z-[2000] pointer-events-auto">
+            <motion.div 
+              layout
+              className={`flex items-center gap-3 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-full p-1.5 transition-all duration-500 ${isCompact ? 'scale-90 origin-right opacity-90' : ''}`}
+            >
               <motion.button
                 onClick={() => setIsAIAssistantOpen(true)}
-                className={`h-8 md:h-10 px-3 md:px-4 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all ${isCompact ? 'scale-90' : ''}`}
+                className="h-9 md:h-10 px-3 md:px-5 rounded-full border border-orange-500/30 bg-orange-500/10 flex items-center gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="p-1.5 bg-orange-500 rounded-lg">
+                <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
-                <span className="text-[10px] md:text-xs font-black tracking-[0.1em] md:tracking-[0.2em] uppercase text-[#f97316] hidden lg:inline whitespace-nowrap">Techboy AI</span>
+                <span className="text-[10px] md:text-xs font-black tracking-widest uppercase text-orange-500 hidden xl:inline">Techboy AI</span>
               </motion.button>
               
               <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
-            </div>
-          </header>
+            </motion.div>
+          </div>
 
 
 
