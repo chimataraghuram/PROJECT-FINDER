@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart } from 'lucide-react';
+import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrendingProjects } from '../services/apiService';
 
@@ -13,11 +13,9 @@ interface TrendingProjectsProps {
 }
 
 const TrendingBadge = () => (
-    <div className="absolute top-4 right-4 z-10">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 backdrop-blur-md">
-            <Flame size={12} className="text-orange-500 animate-pulse" />
-            <span className="text-[10px] font-black text-orange-500 uppercase tracking-wider">Trending</span>
-        </div>
+    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 backdrop-blur-md">
+        <Flame size={12} className="text-orange-500 animate-pulse" />
+        <span className="text-[10px] font-black text-orange-500 uppercase tracking-wider">Trending</span>
     </div>
 );
 
@@ -30,16 +28,14 @@ const RankBadge: React.FC<{ rank: number }> = ({ rank }) => {
     ];
     
     return (
-        <div className="absolute top-4 left-4 z-10">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-xl backdrop-blur-md border ${
-                isTop3 
-                ? `bg-gradient-to-br ${colors[rank-1]} border-white/20 shadow-lg` 
-                : 'bg-white/5 border-white/10'
-            }`}>
-                <span className={`text-xs font-black ${isTop3 ? 'text-white' : 'text-gray-400'}`}>
-                    #{rank}
-                </span>
-            </div>
+        <div className={`flex items-center justify-center w-10 h-10 rounded-xl backdrop-blur-md border shrink-0 ${
+            isTop3 
+            ? `bg-gradient-to-br ${colors[rank-1]} border-white/20 shadow-lg` 
+            : 'bg-white/5 border-white/10'
+        }`}>
+            <span className={`text-xs font-black ${isTop3 ? 'text-white' : 'text-gray-400'}`}>
+                #{rank}
+            </span>
         </div>
     );
 };
@@ -99,64 +95,79 @@ const TrendingCard: React.FC<{
                 />
             )}
 
-            <RankBadge rank={rank} />
-            <TrendingBadge />
-            
-            {/* Action Icon Bar */}
-            <div className="flex justify-end gap-2 mb-4 relative z-30">
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                className="p-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-blue-500/10 hover:border-blue-500/20 transition-all text-gray-400 hover:text-blue-400"
-                title="Security Status"
-              >
-                <Shield size={14} />
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}
-                className="p-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-orange-500/10 hover:border-orange-500/20 transition-all text-gray-400 hover:text-orange-500"
-                title="AI Summary"
-              >
-                <Brain size={14} />
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}
-                className="p-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-green-500/10 hover:border-green-500/20 transition-all text-gray-400 hover:text-green-500"
-                title="Share Link"
-              >
-                <Share2 size={14} />
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}
-                className={`p-2.5 rounded-xl border transition-all ${
-                  isFavorite 
-                  ? 'bg-red-500/20 border-red-500/30 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' 
-                  : 'bg-white/5 border-white/5 text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500'
-                }`}
-                title="Save"
-              >
-                <Heart size={14} fill={isFavorite ? "currentColor" : "none"} />
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }}
-                className={`p-2.5 rounded-xl border transition-all ${
-                  isComparing
-                  ? 'bg-orange-500/20 border-orange-500/30 text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
-                  : 'bg-white/5 border-white/5 text-gray-400 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-purple-500'
-                }`}
-                title="Compare"
-              >
-                <BarChart3 size={14} />
-              </motion.button>
+            {/* Top Bar: Badges and Actions */}
+            <div className="flex flex-col gap-4 mb-6 relative z-30">
+                <div className="flex items-center gap-2">
+                    <RankBadge rank={rank} />
+                    <TrendingBadge />
+                </div>
+                
+                {/* Action Icon Bar */}
+                <div className="flex items-center gap-1.5 p-1.5 rounded-[1.5rem] bg-[#020617]/50 border border-white/10 w-fit">
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    className="p-2 rounded-full hover:bg-blue-500/20 transition-all text-gray-400 hover:text-blue-400"
+                    title="Security Status"
+                  >
+                    <Shield size={14} />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}
+                    className="p-2 rounded-full hover:bg-orange-500/20 transition-all text-gray-400 hover:text-orange-500"
+                    title="AI Summary"
+                  >
+                    <Brain size={14} />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}
+                    className="p-2 rounded-full hover:bg-green-500/20 transition-all text-gray-400 hover:text-green-500"
+                    title="Share Link"
+                  >
+                    <Share2 size={14} />
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}
+                    className={`p-2 rounded-full transition-all ${
+                      isFavorite 
+                      ? 'bg-red-500/20 text-red-500' 
+                      : 'text-gray-400 hover:bg-red-500/20 hover:text-red-500'
+                    }`}
+                    title="Save"
+                  >
+                    <Heart size={14} fill={isFavorite ? "currentColor" : "none"} />
+                  </motion.button>
+                  
+                  <div className="w-px h-4 bg-white/10 mx-1" />
+
+                  <div className="px-2 py-1 rounded-full bg-orange-500/10 text-orange-500 flex items-center gap-1" title="Stars">
+                      <Star size={12} fill="currentColor" />
+                      <span className="text-[10px] font-black tracking-widest">{typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}</span>
+                  </div>
+                  
+                  <div className="w-px h-4 bg-white/10 mx-1" />
+
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }}
+                    className={`p-2 rounded-full transition-all ${
+                      isComparing
+                      ? 'bg-orange-500/20 text-orange-500'
+                      : 'text-gray-400 hover:bg-purple-500/20 hover:text-purple-500'
+                    }`}
+                    title="Compare"
+                  >
+                    <BarChart3 size={14} />
+                  </motion.button>
+                </div>
             </div>
 
             {/* Author Info */}
@@ -198,6 +209,12 @@ const TrendingCard: React.FC<{
                         {project.description || 'Discover this amazing open-source contribution across platform.'}
                     </p>
                 </div>
+                {project.language && (
+                    <div className="flex items-center gap-2 mb-6">
+                        <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
+                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">{project.language}</span>
+                    </div>
+                )}
             </div>
 
             {/* Footer Actions */}
@@ -215,16 +232,16 @@ const TrendingCard: React.FC<{
                         href={project.url}
                         target="_blank"
                         rel="noreferrer"
-                        whileHover={{ scale: 1.02, boxShadow: "0 0 25px rgba(234,88,12,0.4)" }}
+                        whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(234,88,12,0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!project.url || project.url === '#') e.preventDefault();
                         }}
-                        className={`group/btn py-7 rounded-[2rem] bg-gradient-to-r from-orange-600 to-orange-500 text-white text-base font-black uppercase tracking-[0.25em] transition-all flex items-center justify-center gap-4 shadow-xl shadow-orange-600/30 overflow-hidden relative ${project.liveUrl ? 'px-4' : 'px-8'}`}
+                        className={`group/btn py-3.5 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-orange-600/30 overflow-hidden relative ${project.liveUrl ? 'px-4' : 'px-8'}`}
                     >
                         <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-                        <config.icon size={22} className="relative z-10" /> 
+                        <config.icon size={16} className="relative z-10" /> 
                         <span className="relative z-10">{project.liveUrl ? 'Repo' : config.label}</span>
                     </motion.a>
 
@@ -233,16 +250,16 @@ const TrendingCard: React.FC<{
                             href={project.liveUrl}
                             target="_blank"
                             rel="noreferrer"
-                            whileHover={{ scale: 1.02, boxShadow: "0 0 25px rgba(59,130,246,0.4)" }}
+                            whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(59,130,246,0.4)" }}
                             whileTap={{ scale: 0.98 }}
                             onClick={(e) => {
                               e.stopPropagation();
                               if (!project.liveUrl || project.liveUrl === '#') e.preventDefault();
                             }}
-                            className="group/demo py-7 rounded-[2rem] bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-base font-black uppercase tracking-[0.25em] transition-all flex items-center justify-center gap-4 shadow-xl shadow-blue-600/30 overflow-hidden relative px-4"
+                            className="group/btn py-3.5 px-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-blue-600/30 overflow-hidden relative"
                         >
-                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/demo:translate-y-0 transition-transform duration-300" />
-                            <ExternalLink size={22} className="relative z-10" /> 
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+                            <ExternalLink size={16} className="relative z-10" /> 
                             <span className="relative z-10">Live Demo</span>
                         </motion.a>
                     )}
@@ -257,30 +274,43 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showToast, setShowToast] = useState(false);
-    const [activePlatform, setActivePlatform] = useState('All');
+    const [activePlatform, setActivePlatform] = useState('GitHub');
+    const [activeCategory, setActiveCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
-    const PLATFORMS = ['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
+    const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
+    const CATEGORIES = ['All', 'AI', 'Web', 'ML'];
 
-    const loadTrending = useCallback(async (platform = activePlatform) => {
+    const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory) => {
         setLoading(true);
-        const data = await fetchTrendingProjects(platform);
-        setProjects(data);
-        setLoading(false);
-        setIsRefreshing(false);
-    }, [activePlatform]);
+        setError(null);
+        try {
+            const data = await fetchTrendingProjects(platform, category);
+            if (!data || data.length === 0) {
+                setError("Unable to load trending projects");
+            } else {
+                setProjects(data);
+            }
+        } catch (e) {
+            setError("Unable to load trending projects");
+        } finally {
+            setLoading(false);
+            setIsRefreshing(false);
+        }
+    }, [activePlatform, activeCategory]);
 
     useEffect(() => {
-        loadTrending(activePlatform);
+        loadTrending(activePlatform, activeCategory);
 
-        // Auto-refresh every 60 seconds
+        // Auto-refresh every 10 minutes to respect API rate limits
         const interval = setInterval(() => {
-            console.log(`Auto-refreshing trending data for ${activePlatform}...`);
-            loadTrending(activePlatform);
-        }, 60000);
+            console.log(`Auto-refreshing trending data for ${activePlatform}/${activeCategory}...`);
+            loadTrending(activePlatform, activeCategory);
+        }, 600000);
 
         return () => clearInterval(interval);
-    }, [activePlatform, loadTrending]); // Added loadTrending to dependencies
+    }, [activePlatform, activeCategory, loadTrending]);
 
     const handleRefresh = () => {
         setIsRefreshing(true);
@@ -289,7 +319,12 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
 
     const handlePlatformChange = (p: string) => {
         setActivePlatform(p);
-        loadTrending(p);
+        loadTrending(p, activeCategory);
+    };
+
+    const handleCategoryChange = (c: string) => {
+        setActiveCategory(c);
+        loadTrending(activePlatform, c);
     };
 
     const handleShare = (url: string) => {
@@ -377,13 +412,58 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                         {isRefreshing ? 'Refreshing...' : 'Refresh Feed'}
                     </motion.button>
                 </div>
+
+                {/* Search & Categories */}
+                <div className="mt-8 flex flex-col items-center gap-6">
+                    {/* Inner Search Bar */}
+                    <div className="relative w-full max-w-md group">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 group-focus-within:text-orange-500 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="Find specific topics, datasets, or tags..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-[#0f172a]/50 border border-white/10 rounded-full py-3.5 pl-14 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 focus:bg-[#0f172a] focus:ring-1 focus:ring-orange-500/50 transition-all font-medium backdrop-blur-md shadow-inner"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery('')}
+                                className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white hover:bg-white/10 p-1 rounded-full transition-all"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Tech Filters */}
+                    <div className="flex flex-wrap justify-center gap-3">
+                        <div className="w-full flex items-center justify-center gap-2 mb-2">
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Filter by Tech</span>
+                        </div>
+                    {CATEGORIES.map((c) => (
+                        <motion.button
+                            key={c}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleCategoryChange(c)}
+                            className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                activeCategory === c
+                                ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
+                                : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border-white/5'
+                            }`}
+                        >
+                            {c}
+                        </motion.button>
+                    ))}
+                    </div>
+                </div>
             </div>
 
             <div className="flex items-center gap-4 mb-12">
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="flex items-center gap-2 px-8 py-3 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-2xl">
                     <Flame size={14} className="text-orange-500 animate-pulse" />
-                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform}</span>
+                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
                     <div className="ml-2 px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/30">
                         <span className="text-[8px] font-black text-orange-500">REAL-TIME</span>
                     </div>
@@ -394,11 +474,22 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {loading ? (
                     Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+                ) : error ? (
+                    <div className="col-span-full text-center py-20 bg-red-500/5 rounded-[2.5rem] border border-dashed border-red-500/20">
+                        <Shield size={48} className="text-red-500/30 mx-auto mb-6" />
+                        <p className="text-red-500 font-bold text-xl uppercase tracking-tighter">{error}</p>
+                        <button 
+                            onClick={handleRefresh}
+                            className="mt-6 text-orange-500 font-black uppercase tracking-widest text-xs hover:underline"
+                        >
+                            Retry Loading
+                        </button>
+                    </div>
                 ) : (
                     <AnimatePresence mode="popLayout">
                         {filteredProjects.map((project, index) => (
                             <TrendingCard 
-                                key={project.id} 
+                                key={project.id || `${project.name}-${index}`} 
                                 project={project}
                                 rank={index + 1}
                                 isFavorite={favorites.some(f => f.id === project.id)}

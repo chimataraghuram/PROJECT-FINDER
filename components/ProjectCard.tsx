@@ -127,6 +127,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
 
   const handleShare = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     const shareText = `Check out this project on Project Finder: ${project.name}\n\n${project.description}\n\nLink: ${project.url}`;
     navigator.clipboard.writeText(shareText);
     setCopied(true);
@@ -315,13 +316,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center justify-center gap-3 px-8 py-5 bg-orange-600 hover:bg-orange-500 text-white text-base font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
+              className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
             >
               <span className="truncate">
                 {project.url.includes('dataset') ? 'Explore Dataset' :
                   isLinkedIn ? 'View on LinkedIn' : 'Explore Project'}
               </span>
-              <Github className="w-5 h-5 shrink-0" />
+              <Github className="w-4 h-4 shrink-0" />
             </a>
 
             {(project.liveUrl || project.demoUrl) && (
@@ -329,10 +330,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 href={project.liveUrl || project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center sm:w-1/2 gap-3 px-8 py-5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-base font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button"
+                className="flex items-center justify-center sm:w-1/2 gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button"
               >
                 <span className="truncate">Live Demo</span>
-                <ExternalLink className="w-5 h-5 shrink-0" />
+                <ExternalLink className="w-4 h-4 shrink-0" />
               </a>
             )}
           </div>

@@ -10,8 +10,11 @@ interface GitHubRepo {
   homepage: string | null;
   topics: string[];
   stargazers_count: number;
+  language: string | null;
   owner: {
     login: string;
+    avatar_url: string;
+    html_url: string;
   };
 }
 
@@ -32,16 +35,32 @@ interface KaggleDataset {
   downloadCount: number;
 }
 
+// Simple in-memory cache to prevent GitHub API rate limits (403/429 errors)
+const apiCache = new Map<string, { data: any, timestamp: number }>();
+const CACHE_TTL_MS = 1000 * 60 * 10; // 10 minutes caching
+
+const getCachedData = (key: string) => {
+  const cached = apiCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
+    return cached.data;
+  }
+  return null;
+};
+
 // Search GitHub repositories
 // Note: GitHub API allows 60 requests/hour without authentication (per IP)
 // This works directly from the browser - no API key needed!
 const searchGitHub = async (query: string): Promise<Project[]> => {
+  const cacheKey = `search-github-${query.toLowerCase()}`;
+  const cached = getCachedData(cacheKey);
+  if (cached) return cached;
+
   try {
     const PUBLISHER_USERNAME = 'chimataraghuram';
 
     // 1. Search general GitHub
     const generalSearchPromise = fetch(
-      `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=6`,
+      `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=10`,
       { headers: { 'Accept': 'application/vnd.github.v3+json' } }
     );
 
@@ -65,6 +84,12 @@ const searchGitHub = async (query: string): Promise<Project[]> => {
         liveUrl: repo.homepage || `https://${PUBLISHER_USERNAME}.github.io/${repo.name}`, // Auto-detect GitHub Pages
         tags: [...(repo.topics || []), 'Publisher', 'GitHub'],
         stars: repo.stargazers_count,
+        language: repo.language || 'Unknown',
+        owner: {
+          login: repo.owner.login,
+          avatar_url: repo.owner.avatar_url,
+          html_url: repo.owner.html_url
+        },
         isPublisher: true
       }));
     }
@@ -81,12 +106,19 @@ const searchGitHub = async (query: string): Promise<Project[]> => {
           liveUrl: repo.homepage || null, // Capture repo homepage as demo
           tags: [...(repo.topics || []), 'Open Source', 'GitHub'],
           stars: repo.stargazers_count,
+          language: repo.language || 'Unknown',
+          owner: {
+            login: repo.owner.login,
+            avatar_url: repo.owner.avatar_url,
+            html_url: repo.owner.html_url
+          },
           isPublisher: false
         }));
 
-      projects = [...projects, ...generalProjects].slice(0, 8);
+      projects = [...projects, ...generalProjects].slice(0, 10);
     }
 
+    apiCache.set(cacheKey, { data: projects, timestamp: Date.now() });
     return projects;
   } catch (error) {
     console.error('GitHub search error:', error);
@@ -534,30 +566,52 @@ export const summarizeProject = (name: string, description: string, readme: stri
 /**
  * Fetches real-time trending projects from various platforms
  */
-export const fetchTrendingProjects = async (platform: string = 'All'): Promise<Project[]> => {
+export const fetchTrendingProjects = async (platform: string = 'All', category: string = 'All'): Promise<Project[]> => {
   try {
-    const fetchers: Record<string, () => Promise<Project[]>> = {
+    const fetchers = {
       'GitHub': async () => {
+        const cacheKey = `trending-github-${category}`;
+        const cached = getCachedData(cacheKey);
+        if (cached) return cached;
+
+        let query = 'stars:>5000';
+        if (category !== 'All') {
+          const categoryMap: Record<string, string> = {
+            'AI': 'topic:machine-learning',
+            'Web': 'topic:frontend',
+            'ML': 'topic:machine-learning',
+          };
+          query += ` ${categoryMap[category] || category}`;
+        }
+
         const response = await fetch(
-          'https://api.github.com/search/repositories?q=stars:>1000&sort=stars&order=desc&per_page=12',
+          `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=8`,
           { headers: { 'Accept': 'application/vnd.github.v3+json' } }
         );
         const data = await response.json();
-        return (data.items || []).map((repo: any) => ({
+        const results = (data.items || []).map((repo: any) => ({
           id: `gh-${repo.id}`,
           name: repo.name,
           description: repo.description,
           platform: 'GitHub' as const,
           url: repo.html_url,
+          liveUrl: repo.homepage || null,
+          github: repo.html_url,
           stars: repo.stargazers_count,
-          tags: [repo.language, ...(repo.topics || [])].filter(Boolean).slice(0, 4),
-          liveUrl: repo.homepage,
+          tags: [...(repo.topics || []).slice(0, 3)],
+          category: [category, 'Trending'],
+          difficulty: 'Advanced' as const,
+          bestFor: 'Production' as const,
+          language: repo.language || 'Unknown',
           owner: {
             login: repo.owner.login,
             avatar_url: repo.owner.avatar_url,
             html_url: repo.owner.html_url
           }
         }));
+        
+        apiCache.set(cacheKey, { data: results, timestamp: Date.now() });
+        return results;
       },
       'Hugging Face': async () => {
         try {
@@ -586,16 +640,16 @@ export const fetchTrendingProjects = async (platform: string = 'All'): Promise<P
       },
       'Kaggle': async () => {
         return [
-          { id: 'kg-1', name: "Global Climate Change", description: "Historical temperature analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=climate+change", stars: 12500, tags: ["Science", "Climate"], owner: { login: "Berkeley Earth", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-2', name: "Mental Health in Tech", description: "Trends in wellness survey.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=mental+health", stars: 8400, tags: ["Wellness", "Survey"], owner: { login: "OSMI", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-3', name: "Netflix Movie Data", description: "Content recommendations analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=netflix", stars: 6200, tags: ["Movies", "Analysis"], owner: { login: "Data Masters", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-4', name: "Cryptocurrency Prices", description: "Real-time BTC/ETH history.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=crypto", stars: 6800, tags: ["Crypto", "Finance"], owner: { login: "CoinData", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-5', name: "Amazon Product Reviews", description: "Sentiment analysis on 1M+ reviews.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=amazon+reviews", stars: 5900, tags: ["NLP", "Retail"], owner: { login: "ShoppingAI", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-6', name: "SpaceX Launch History", description: "Complete booster telemetry.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=spacex", stars: 4500, tags: ["Space", "Engineering"], owner: { login: "RocketSci", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-7', name: "Global Music Trends", description: "Spotify charting analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=spotify", stars: 3800, tags: ["Music", "Spotify"], owner: { login: "AudioLink", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-8', name: "Formula 1 Stats", description: "Driver and pit stop analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=f1", stars: 3200, tags: ["Racing", "F1"], owner: { login: "PitWall", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-9', name: "COVID-19 Genome", description: "Public sequence analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=covid", stars: 2900, tags: ["Bio", "Genes"], owner: { login: "LabGen", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } },
-          { id: 'kg-10', name: "World Happiness Report", description: "Socio-economic analysis across nations.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=happiness", stars: 2100, tags: ["Nations", "Stats"], owner: { login: "HappyGlobal", avatar_url: "https://www.kaggle.com/static/images/profile-placeholder.png", html_url: "https://www.kaggle.com" } }
+          { id: 'kg-1', name: "Global Climate Change", description: "Historical temperature analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=climate+change", stars: 12500, tags: ["Science", "Climate"], owner: { login: "Berkeley Earth", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-2', name: "Mental Health in Tech", description: "Trends in wellness survey.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=mental+health", stars: 8400, tags: ["Wellness", "Survey"], owner: { login: "OSMI", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-3', name: "Netflix Movie Data", description: "Content recommendations analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=netflix", stars: 6200, tags: ["Movies", "Analysis"], owner: { login: "Data Masters", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-4', name: "Cryptocurrency Prices", description: "Real-time BTC/ETH history.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=crypto", stars: 6800, tags: ["Crypto", "Finance"], owner: { login: "CoinData", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-5', name: "Amazon Product Reviews", description: "Sentiment analysis on 1M+ reviews.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=amazon+reviews", stars: 5900, tags: ["NLP", "Retail"], owner: { login: "ShoppingAI", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-6', name: "SpaceX Launch History", description: "Complete booster telemetry.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=spacex", stars: 4500, tags: ["Space", "Engineering"], owner: { login: "RocketSci", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-7', name: "Global Music Trends", description: "Spotify charting analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=spotify", stars: 3800, tags: ["Music", "Spotify"], owner: { login: "AudioLink", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-8', name: "Formula 1 Stats", description: "Driver and pit stop analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=f1", stars: 3200, tags: ["Racing", "F1"], owner: { login: "PitWall", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-9', name: "COVID-19 Genome", description: "Public sequence analysis.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=covid", stars: 2900, tags: ["Bio", "Genes"], owner: { login: "LabGen", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } },
+          { id: 'kg-10', name: "World Happiness Report", description: "Socio-economic analysis across nations.", platform: 'Kaggle', url: "https://www.kaggle.com/datasets?search=happiness", stars: 2100, tags: ["Nations", "Stats"], owner: { login: "HappyGlobal", avatar_url: "https://avatars.githubusercontent.com/u/13253755?v=4", html_url: "https://www.kaggle.com" } }
         ];
       },
       'LinkedIn': async () => {

@@ -197,9 +197,16 @@ const App: React.FC = () => {
   }, [result, searchState.isLoading]);
 
   const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      // Return to home state if search is cleared
+      setSearchState({ isLoading: false, error: null, hasSearched: false });
+      setResult(null);
+      return;
+    }
+
     setSearchState({ isLoading: true, error: null, hasSearched: true });
     setResult(null);
-    setFilterPlatform('All');
+    // Preserving filterPlatform so users can search within a specific tab
     try {
       const data = await searchProjects(query);
       setResult(data);
@@ -377,7 +384,10 @@ const App: React.FC = () => {
                 onToggleFavorite={toggleFavorite} 
                 onToggleComparison={toggleComparison}
                 comparisonQueue={comparisonQueue}
-                onSummarize={handleSearch}
+                onSummarize={(projectName) => {
+                  setCurrentView('search');
+                  handleSearch(`Summarize ${projectName}`);
+                }}
               />
             )}
 
