@@ -5,15 +5,6 @@
 <h1 align="center">PROJECT FINDER</h1>
 
 
-<br/>
-
-[![Framework: React](https://img.shields.io/badge/Framework-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
-[![Cloud: Firebase](https://img.shields.io/badge/Cloud-Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Styling: Tailwind](https://img.shields.io/badge/Styling-Tailwind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Animations: Framer Motion](https://img.shields.io/badge/Animations-Framer_Motion-FF52D9?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
-
-<br/>
-
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
 
 <p align="center">
@@ -24,7 +15,56 @@
 
 </div>
 
+<br/>
+
+[![Framework: React](https://img.shields.io/badge/Framework-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Cloud: Firebase](https://img.shields.io/badge/Cloud-Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Styling: Tailwind](https://img.shields.io/badge/Styling-Tailwind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Animations: Framer Motion](https://img.shields.io/badge/Animations-Framer_Motion-FF52D9?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+<br/>
+
 ---
+
+## 🖼️ PROJECT SCREENSHOTS
+
+<div align="center">
+
+### 1. Splash Screen
+*Premium loading experience with the project mascot and motion-ready typography.*
+<img src="./PROJECT SCREENSHOTS/1.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 2. Hero Dashboard
+*The central search and discovery hub featuring global platform integrations and quick-access categories.*
+<img src="./PROJECT SCREENSHOTS/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 3. Trending Feed
+*Real-time project activity display with high-engagement metrics and interactive repository cards.*
+<img src="./PROJECT SCREENSHOTS/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 4. Multi-Platform Filtering
+*Seamless navigation across GitHub, Hugging Face, Kaggle, and LinkedIn discovery ecosystems.*
+<img src="./PROJECT SCREENSHOTS/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 5. Repository Insights
+*Detailed visual cards highlighting star counts, tech stacks, and direct access buttons.*
+<img src="./PROJECT SCREENSHOTS/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 6. Popular Repositories View
+*Curated exposure to world-class educational resources and system design primers.*
+<img src="./PROJECT SCREENSHOTS/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 7. Personal Library (Starred)
+*Organized workspace for managing and discovering your saved project inspirations.*
+<img src="./PROJECT SCREENSHOTS/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+### 8. Developer Profile & Guide
+*Complete author insights alongside a step-by-step master guide for platform mastery.*
+<img src="./PROJECT SCREENSHOTS/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
+</div>
+
+---
+
 
 ## 🔍 Features
 
