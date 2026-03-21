@@ -8,6 +8,7 @@ interface SearchBarProps {
   onCategoryChange?: (category: string) => void;
   selectedCategory?: string;
   onSurpriseMe?: () => void;
+  hideCategoriesOnMobile?: boolean;
 }
 
 const QUICK_TAGS = [
@@ -28,7 +29,7 @@ const QUICK_TAGS = [
   { label: 'Blockchain', emoji: '⛓️' },
 ];
 
-const CATEGORIES = [
+export const CATEGORIES = [
   { id: 'All', label: 'All Projects', icon: Layout },
   { id: 'AI', label: 'AI', icon: Brain },
   { id: 'Web Dev', label: 'Web Dev', icon: Globe },
@@ -42,7 +43,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   isLoading, 
   onCategoryChange, 
   selectedCategory = 'All',
-  onSurpriseMe 
+  onSurpriseMe,
+  hideCategoriesOnMobile = false
 }) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -89,7 +91,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="w-full max-w-4xl mx-auto px-4">
       
       {/* Category Chips */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-8 animate-fade-in">
+      <div className={`flex flex-wrap items-center justify-center gap-2 mb-8 animate-fade-in ${hideCategoriesOnMobile ? 'hidden md:flex' : 'flex'}`}>
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}

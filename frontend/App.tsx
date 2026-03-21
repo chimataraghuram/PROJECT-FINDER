@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SearchBar } from './components/SearchBar';
+import { SearchBar, CATEGORIES } from './components/SearchBar';
 import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
 import { Project, SearchResult, SearchState } from './types';
@@ -360,13 +360,13 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* --- MOBILE NAVIGATION (Phase 2: Two-Row Scrolling) --- */}
-          <div className="block md:hidden px-4 pt-6 pb-2 space-y-6 relative z-[100]">
+          {/* --- MOBILE NAVIGATION (Phase 3: Core Nav Only) --- */}
+          <div className="block md:hidden px-4 pt-6 pb-2 space-y-4 relative z-[100]">
             {/* Row 1: Logo (Left) | Actions (Right) */}
             <div className="flex items-center justify-between">
               {/* Logo Island */}
               <div 
-                className="p-1 px-1.5 bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-full shadow-[0_8px_32px_0_rgba(0,0,0,0.8)] flex items-center justify-center cursor-pointer"
+                className="p-1 px-1.5 bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl flex items-center justify-center cursor-pointer"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative">
@@ -387,23 +387,27 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Row 2: Centered Navigation Pill */}
+            {/* Row 2: Core Navigation Pill (Search, Trending, Saved) */}
             <div className="flex justify-center w-full">
-              <nav className="inline-flex p-1.5 bg-[#0f172a]/60 backdrop-blur-2xl border border-white/10 rounded-full items-center gap-4 px-6 shadow-2xl">
-                {NAV_ITEMS.map((item) => {
+              <nav className="inline-flex p-1.5 bg-[#0f172a]/60 backdrop-blur-2xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-2xl">
+                {[
+                  { id: 'search', icon: Search },
+                  { id: 'trending', icon: TrendingUp },
+                  { id: 'favorites', icon: Heart }
+                ].map((item) => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
                   return (
                     <button
                       key={item.id}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`p-2 rounded-full transition-all duration-300 ${
+                      className={`p-2.5 rounded-full transition-all duration-300 ${
                         isActive 
-                          ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]` 
+                          ? `bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.5)] scale-110` 
                           : 'text-gray-400 hover:bg-white/5'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-6 h-6" />
                     </button>
                   );
                 })}
@@ -443,28 +447,33 @@ const App: React.FC = () => {
 
               /* SEARCH VIEW */
               <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
-                {/* Hero Section */}
-                <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-20 md:pt-32 pb-12 md:pb-20'}`}>
-                  <div className="text-center mb-6 md:mb-16 space-y-6 md:space-y-8 relative z-10 max-w-6xl mx-auto">
-                    <h1 className="flex flex-col items-center font-black tracking-tighter mb-6 md:mb-8 leading-tight animate-liquid-drop home-title gap-2 md:gap-2">
+                {/* Hero Section (Phase 3 Simplified) */}
+                <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-12 md:pt-32 pb-8 md:pb-20'}`}>
+                  <div className="text-center mb-6 md:mb-16 space-y-8 md:space-y-8 relative z-10 max-w-6xl mx-auto">
+                    <h1 className="flex flex-col items-center font-black tracking-tighter mb-4 md:mb-8 leading-tight animate-liquid-drop home-title gap-2 md:gap-2">
                       <span className="text-white text-[1.8rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] animate-liquid-text" data-text="Find Real-World Projects 🚀">
                         Find Real-World Projects <span className="hidden md:inline">🚀</span>
                       </span>
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 via-white to-red-300 bg-300% animate-gradient drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] text-[0.9rem] sm:text-xl md:text-2xl lg:text-[1.8rem] font-bold tracking-widest uppercase home-subtitle-top">
-                        from GitHub, AI & Web in Seconds
-                      </span>
-                      <span className="text-gray-400 text-[10px] md:text-lg font-medium tracking-wide opacity-80 mt-2">
-                        Discover, explore, and build projects faster
+                        Discover & Build Faster
                       </span>
                     </h1>
-                    <p className="text-gray-400 text-[10px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 hidden md:block">
-                      The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
-                    </p>
                     
-                    {/* Data Credibility Footnote */}
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-4 hidden md:block">
-                      Projects sourced from GitHub and open platforms
-                    </p>
+                    <div className="flex flex-col items-center gap-6">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => { setSelectedCategory('All'); handleSearch(''); }} 
+                        className="px-10 py-4 bg-orange-600 border border-orange-500 text-white rounded-full font-black uppercase tracking-widest shadow-[0_0_30px_rgba(234,88,12,0.5)] flex items-center gap-3 transition-all duration-300 active:scale-95 md:hidden"
+                      >
+                         <Layout className="w-5 h-5" />
+                         <span>All Projects</span>
+                      </motion.button>
+
+                      <p className="text-gray-400 text-[10px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 hidden md:block">
+                        The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
+                      </p>
+                    </div>
                   </div>
 
 
@@ -474,7 +483,28 @@ const App: React.FC = () => {
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
                     onSurpriseMe={handleSurpriseMe}
+                    hideCategoriesOnMobile={true}
                   />
+
+                  {/* Mobile Mobile-Only Category Section (Below Search) */}
+                  <div className="md:hidden mt-8 px-4">
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {CATEGORIES.filter(cat => cat.id !== 'All').map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setSelectedCategory(cat.id)}
+                          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
+                            selectedCategory === cat.id
+                              ? 'bg-[#1e293b]/80 border-orange-500 text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
+                              : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'
+                          }`}
+                        >
+                          <cat.icon className="w-3.5 h-3.5" />
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Hero Suggestions - Trending Now */}
                   {!searchState.hasSearched && (
