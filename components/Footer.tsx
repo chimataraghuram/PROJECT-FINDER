@@ -52,11 +52,11 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 About the Platform
                             </h4>
                             <div className="space-y-4">
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    Project Finder is an advanced innovation engine. Our <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> section provides a global gateway to high-quality projects.
+                                <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
+                                    Techboy Project Finder is your AI-powered gateway to discovering top-tier open-source projects. Whether you're hunting for inspiration, datasets, or specific codebases, our engine aggregates the best resources across the web.
                                 </p>
-                                <p className="text-gray-400 text-lg leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    The <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> hub offers real-time synchronization with elite GitHub profiles.
+                                <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
+                                    Use <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> to query specific technologies across GitHub, HuggingFace, and Kaggle. Or, visit the <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> hub to see what the global developer community is building right now.
                                 </p>
                             </div>
 
@@ -97,11 +97,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             <h3 className="text-white font-black text-xl tracking-tight uppercase tracking-widest">How to use this project</h3>
                         </div>
 
-                        <div className="space-y-6">
                             {[
-                                { title: activeLabels.discover, desc: 'Find high-quality projects across multi-platform registries.' },
-                                { title: activeLabels.trending, desc: 'Architect a premium presence with real-time profile inspirations.' },
-                                { title: "Build & Learn", desc: "Access source code and live demos to accelerate your growth." }
+                                { title: "1. Search Globally", desc: "Enter any concept (e.g., 'React UI' or 'AI Models') into the search bar. We instantly pull matching source code, models, and datasets from multiple platforms." },
+                                { title: "2. Explore Trends", desc: "Not sure what to build? Navigate to Trending Projects to browse real-time feeds of the most active and highly-starred repositories updated daily." },
+                                { title: "3. Save & Analyze", desc: "Click the Star icon to bookmark interesting projects to your personal dashboard. Use the AI Assistant to automatically summarize dense repository files." }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
                                     <div className="relative flex-shrink-0">
