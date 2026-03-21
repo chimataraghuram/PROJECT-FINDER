@@ -1,8 +1,24 @@
 <div align="center">
- 
-<img src="./src/assets/logo_final_v6.png" width="120" style="border-radius: 50%; box-shadow: 0 0 50px rgba(249,115,22,0.3); margin-bottom: 20px;" />
- 
-<h1 align="center">PROJECT FINDER</h1>
+
+<img src="./src/assets/logo_final_v6.png" width="120"
+style="border-radius: 50%; 
+box-shadow: 0 0 40px rgba(255,140,66,0.6); 
+margin-bottom: 20px;" />
+
+<h1 style="
+color: #ff8c42;
+font-weight: 800;
+letter-spacing: 2px;
+margin-bottom: 10px;
+">
+PROJECT FINDER
+</h1>
+
+<p style="color: #aaa;">
+Discover Real-World Open Source Projects 🚀
+</p>
+
+</div>
 
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
@@ -137,7 +153,7 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 
 ## 🤝 Contributing
 
-Contributions are always welcome! If you’d like to improve Techboy Project Finder, feel free to fork the repository and submit a pull request.
+Contributions are always welcome! If you’d like to improve  Project Finder, feel free to fork the repository and submit a pull request.
 
 ---
 
