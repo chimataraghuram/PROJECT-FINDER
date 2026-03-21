@@ -2,9 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { SearchBar } from './components/SearchBar';
 import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
-import { searchProjects } from './services/apiService';
 import { Project, SearchResult, SearchState } from './types';
-import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp } from 'lucide-react';
+import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp, Play, Info } from 'lucide-react';
 import { Footer } from './components/Footer';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
@@ -12,11 +11,9 @@ import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
+import { searchProjects, fetchTrendingProjects, saveProject, fetchFavorites } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
-import { auth, db, isFirebaseConfigured } from './services/firebase';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
 
 type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
@@ -107,9 +104,8 @@ const App: React.FC = () => {
   };
 
   const [currentUser, setCurrentUser] = useState<any>(() => {
-    // Initial check for Mock User
-    const savedMock = localStorage.getItem('project-finder-mock-user');
-    return savedMock ? JSON.parse(savedMock) : (auth?.currentUser || null);
+    const savedUser = localStorage.getItem('project-finder-user');
+    return savedUser ? JSON.parse(savedUser) : null;
   });
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -129,56 +125,43 @@ const App: React.FC = () => {
 
   // Auth & Cloud Sync
   useEffect(() => {
-    let unsubscribeAuth: any;
-    if (auth && isFirebaseConfigured) {
-      unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user);
-        if (user && db) {
-          const userDocRef = doc(db, 'users', user.uid);
-          const unsubscribeSnap = onSnapshot(userDocRef, (docSnap) => {
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              const cloudFavs = data.favorites || [];
-              if (cloudFavs.length > 0) setFavorites(cloudFavs);
-            }
-          });
-          return () => unsubscribeSnap();
-        }
+    const token = localStorage.getItem('project-finder-token');
+    if (token && currentUser) {
+      fetchFavorites(token).then(favs => {
+        if (favs.length > 0) setFavorites(favs);
       });
     }
 
     const handleStorageChange = () => {
-      const savedMock = localStorage.getItem('project-finder-mock-user');
-      if (savedMock) setCurrentUser(JSON.parse(savedMock));
-      else if (!isFirebaseConfigured) setCurrentUser(null);
+      const savedUser = localStorage.getItem('project-finder-user');
+      if (savedUser) setCurrentUser(JSON.parse(savedUser));
+      else setCurrentUser(null);
     };
 
     window.addEventListener('storage', handleStorageChange);
-    const interval = setInterval(handleStorageChange, 1000);
-
-    return () => {
-      if (unsubscribeAuth) unsubscribeAuth();
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('project-finder-favorites', JSON.stringify(favorites));
-    if (currentUser && db) {
-      const userDocRef = doc(db, 'users', currentUser.uid);
-      setDoc(userDocRef, { favorites }, { merge: true }).catch(err => {
-        console.error("Cloud sync failed:", err);
-      });
-    }
-  }, [favorites, currentUser]);
+  }, [favorites]);
 
-  const toggleFavorite = (project: Project) => {
-    setFavorites(prev => {
-      const isFav = prev.some(p => p.url === project.url);
-      if (isFav) return prev.filter(p => p.url !== project.url);
-      return [...prev, { ...project, type: project.type || 'project' }];
-    });
+  const toggleFavorite = async (project: Project) => {
+    const isFav = favorites.some(p => p.url === project.url);
+    if (isFav) {
+      setFavorites(prev => prev.filter(p => p.url !== project.url));
+      return;
+    }
+
+    const token = localStorage.getItem('project-finder-token');
+    if (token) {
+      const saved = await saveProject(project, token);
+      if (saved) {
+        setFavorites(prev => [...prev, saved]);
+      }
+    } else {
+      setFavorites(prev => [...prev, { ...project, type: project.type || 'project' }]);
+    }
   };
 
   const triggerComingSoon = (e: React.MouseEvent) => {
@@ -290,7 +273,7 @@ const App: React.FC = () => {
                 opacity: isCompact ? 0.9 : 1
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="hidden sm:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none origin-left"
+              className="hidden md:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none origin-left"
             >
               Project Finder
             </motion.span>
@@ -331,7 +314,7 @@ const App: React.FC = () => {
                           initial={{ width: 0, opacity: 0, x: -10 }}
                           animate={{ width: 'auto', opacity: 1, x: 0 }}
                           exit={{ width: 0, opacity: 0, x: -10 }}
-                          className="hidden lg:inline-block"
+                          className="hidden sm:inline-block"
                         >
                           {item.label} {item.id === 'favorites' && `(${favorites.length})`}
                         </motion.span>
@@ -362,10 +345,12 @@ const App: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg">
+                <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg shrink-0">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
-                <span className="text-[10px] md:text-xs font-black tracking-widest uppercase text-orange-500 hidden xl:inline">Techboy AI</span>
+                <span className="hidden sm:inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/90 group-hover/aipill:text-orange-500 transition-colors">
+                  AI Assistant
+                </span>
               </motion.button>
               
               <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />

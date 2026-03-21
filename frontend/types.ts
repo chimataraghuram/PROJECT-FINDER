@@ -27,6 +27,14 @@ export interface Project {
     avatar_url: string;
     html_url: string;
   };
+  image?: string;
+  username?: string;
+  title?: string;
+  readme?: string;
+  bestFor?: string;
+  difficulty?: string;
+  category?: string[];
+  github?: string;
 }
 
 
