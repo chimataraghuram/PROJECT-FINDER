@@ -1,8 +1,8 @@
 <div align="center">
-
-<img src="./src/assets/logo_final_v6.png" width="280" style="border-radius: 50%; box-shadow: 0 0 80px rgba(249,115,22,0.4); margin-bottom: 20px;" />
-
-# PROJECT FINDER WITH LOGO OF THE PROJECT
+ 
+<img src="./src/assets/logo_final_v6.png" width="120" style="border-radius: 50%; box-shadow: 0 0 50px rgba(249,115,22,0.3); margin-bottom: 20px;" />
+ 
+<h1 align="center">PROJECT FINDER</h1>
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
 
