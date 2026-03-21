@@ -1,3 +1,4 @@
+import React, { useRef, useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import introVideo from '../src/assets/intro_new.mp4';
