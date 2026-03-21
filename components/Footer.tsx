@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User } from 'lucide-react';
+import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User, Flame, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import mascotLogo from '../src/assets/logo.png';
 
@@ -63,9 +63,9 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             {/* Core Steps - Small Containers */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 py-4">
                                 {[
-                                    { icon: <Search className="w-4 h-4" />, title: "Search", desc: "Find any tech or domain." },
-                                    { icon: <Layout className="w-4 h-4" />, title: "Explore", desc: "Curated aggregrations." },
-                                    { icon: <FileCode className="w-4 h-4" />, title: "Build", desc: "Source & Live demos." }
+                                    { icon: <Search className="w-4 h-4" />, title: activeLabels.discover, desc: "Cross-platform search." },
+                                    { icon: <Flame className="w-4 h-4" />, title: activeLabels.trending, desc: "Real-time tech trends." },
+                                    { icon: <Star className="w-4 h-4" />, title: activeLabels.saved, desc: "Save your favorites." }
                                 ].map((step, i) => (
                                     <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-orange-500/20 transition-all group overflow-hidden relative">
                                         <div className="absolute -right-2 -top-2 w-8 h-8 bg-orange-500/5 blur-xl group-hover:bg-orange-500/10 transition-colors" />
