@@ -258,16 +258,7 @@ const App: React.FC = () => {
               animate={{ opacity: isCompact ? 0 : 1, x: 0 }}
               className="hidden md:flex flex-shrink-0 pointer-events-auto"
             >
-              <div
-                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="h-12 px-6 rounded-full border border-white/10 bg-[#0f172a]/60 backdrop-blur-2xl flex items-center gap-3 cursor-pointer shadow-2xl hover:scale-105 group/logo"
-              >
-                <div className="relative bg-white/5 p-1 rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover/logo:rotate-[15deg] transition-all overflow-hidden border border-white/10">
-                  <img src="/assets/logo.png" className="w-6 h-6 object-cover rounded-lg" alt="Logo" />
-                </div>
-                <h1 className="font-black text-white uppercase tracking-[0.2em] text-xl">Project Finder</h1>
-              </div>
-            </motion.div>
+
 
             <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
               <motion.nav 
@@ -354,24 +345,7 @@ const App: React.FC = () => {
 
           <main className="relative z-10 pt-[80px] md:pt-0">
             {/* Global Mobile Sticky Logo Pill */}
-            <div className="md:hidden sticky top-[60px] z-[1500] px-4 py-4 backdrop-blur-md">
-              <div className="flex justify-center">
-                <div
-                  onClick={() => {
-                    setCurrentView('search');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="h-10 px-5 rounded-full border border-white/10 bg-[#0f172a]/80 backdrop-blur-2xl flex items-center justify-center cursor-pointer shadow-2xl gap-3 hover:scale-105 transition-transform"
-                >
-                  <div className="relative bg-white/5 p-0.5 rounded-lg border border-white/10 overflow-hidden">
-                    <img src="/assets/logo.png" className="w-5 h-5 object-cover rounded-md" alt="Logo" />
-                  </div>
-                  <h1 className="font-black text-white uppercase tracking-[0.2em] font-display text-sm">
-                    Project Finder
-                  </h1>
-                </div>
-              </div>
-            </div>
+
             {/* Trending View */}
             {currentView === 'readme' && (
               <TrendingProjects 
