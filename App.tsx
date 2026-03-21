@@ -254,28 +254,51 @@ const App: React.FC = () => {
           {/* 1. Left Island: Logo & Brand */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`fixed top-4 left-4 md:left-8 z-[2000] px-4 py-2 flex items-center gap-3 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-full pointer-events-auto cursor-pointer group/logo transition-all duration-500 ${isCompact ? 'scale-90 origin-left opacity-90' : ''}`}
+            animate={{ 
+              opacity: isCompact ? 0.9 : 1, 
+              y: 0,
+              boxShadow: isCompact ? "0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.2)" : "0 10px 30px rgba(0,0,0,0.3)"
+            }}
+            className={`fixed top-4 left-4 md:left-8 z-[2000] px-4 py-2 flex items-center gap-3 bg-[#0f172a]/40 ${isCompact ? 'backdrop-blur-3xl' : 'backdrop-blur-2xl'} border border-white/10 rounded-full pointer-events-auto cursor-pointer group/logo transition-all duration-500`}
             onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           >
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              animate={{ scale: isCompact ? 1.15 : 1 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
               <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
               <img src={mascotLogo} className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500" alt="Mascot Logo" />
-            </div>
+            </motion.div>
             <div className="relative">
               <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
               <div className="w-8 h-8 md:w-9 md:h-9 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-500 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
                 <Search className="w-4 h-4 md:w-5 h-5 text-orange-500 transition-transform duration-500 group-hover/logo:scale-110" strokeWidth={2.5} />
               </div>
             </div>
-            <span className="hidden sm:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none">Project Finder</span>
+            <motion.span 
+              animate={{ 
+                scale: isCompact ? 0.85 : 1,
+                opacity: isCompact ? 0.8 : 1
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="hidden sm:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none origin-left"
+            >
+              Project Finder
+            </motion.span>
           </motion.div>
 
           {/* 2. Middle Island: Adaptive Navigation Pill */}
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
             <motion.nav 
               layout
-              className={`p-1.5 bg-[#0f172a]/40 backdrop-blur-2xl rounded-full shadow-2xl border border-white/10 flex items-center gap-1.5 transition-all duration-500 ${isCompact ? 'scale-95 opacity-90' : ''}`}
+              animate={{ 
+                scale: isCompact ? 0.95 : 1,
+                opacity: isCompact ? 0.95 : 1,
+                boxShadow: isCompact ? "0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.2)" : "0 10px 30px rgba(0,0,0,0.3)"
+              }}
+              transition={{ duration: 0.3 }}
+              className={`p-1.5 bg-[#0f172a]/40 ${isCompact ? 'backdrop-blur-3xl' : 'backdrop-blur-2xl'} rounded-full border border-white/10 flex items-center gap-1.5 transition-all duration-500`}
             >
               {NAV_ITEMS.map((item) => {
                 const isActive = currentView === item.id;
@@ -315,7 +338,13 @@ const App: React.FC = () => {
           <div className="fixed top-4 right-4 md:right-8 z-[2000] pointer-events-auto">
             <motion.div 
               layout
-              className={`flex items-center gap-3 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 shadow-2xl rounded-full p-1.5 transition-all duration-500 ${isCompact ? 'scale-90 origin-right opacity-90' : ''}`}
+              animate={{ 
+                scale: isCompact ? 0.9 : 1,
+                opacity: isCompact ? 0.95 : 1,
+                boxShadow: isCompact ? "0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.2)" : "0 10px 30px rgba(0,0,0,0.3)"
+              }}
+              transition={{ duration: 0.3 }}
+              className={`flex items-center gap-3 bg-[#0f172a]/40 ${isCompact ? 'backdrop-blur-3xl' : 'backdrop-blur-2xl'} border border-white/10 rounded-full p-1.5 transition-all duration-500`}
             >
               <motion.button
                 onClick={() => setIsAIAssistantOpen(true)}
