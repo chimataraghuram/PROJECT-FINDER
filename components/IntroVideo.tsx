@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import introVideo from '../assets/intro.mp4';
+import introVideo from '../src/assets/intro_new.mp4';
 
 interface IntroVideoProps {
     onComplete: () => void;
