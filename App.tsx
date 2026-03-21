@@ -13,6 +13,7 @@ import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { ComparisonStudio } from './components/ComparisonStudio';
+import mascotLogo from './src/assets/logo.png';
 
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
@@ -263,7 +264,7 @@ const App: React.FC = () => {
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                  <img src="/logo.png" className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
+                  <img src={mascotLogo} className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
                 </div>
                 <div className="hidden sm:flex flex-col">
                   <span className={`${isCompact ? 'text-[10px]' : 'text-xs'} font-black text-orange-500 tracking-[0.3em] uppercase leading-none mb-1`}>Techboy</span>

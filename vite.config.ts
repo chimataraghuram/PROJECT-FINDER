@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: '0.0.0.0',
     },
-    base: './', // Ensure relative paths for correct asset loading on GitHub Pages
+    base: '/PROJECT-FINDER/', // Ensure absolute paths for correct asset loading on GitHub Pages
     plugins: [react()],
     resolve: {
       alias: {
