@@ -50,6 +50,14 @@ Discover Real-World Open Source Projects 🚀
 
 ---
 
+## 🌐 Live Demo
+
+👉 https://chimataraghuram.github.io/PROJECT-FINDER/
+
+* Helping students and developers quickly discover meaningful projects to learn, build, and contribute.
+
+---
+
 ## 🖼️ PROJECT SCREENSHOTS
 
 <div align="center">
@@ -162,7 +170,14 @@ Techboy Project Finder addresses this problem by providing a streamlined platfor
 
 ## 🤝 Contributing
 
-Contributions are always welcome! If you’d like to improve  Project Finder, feel free to fork the repository and submit a pull request.
+Contributions are always welcome! If you'd like to improve **Project Finder**, follow these steps:
+
+1. Fork the repository
+2. Create a new branch (`feature/your-feature-name`)
+3. Make your changes
+4. Commit your changes
+5. Push to your branch
+6. Open a Pull Request
 
 ---
 
@@ -170,13 +185,11 @@ Contributions are always welcome! If you’d like to improve  Project Finder, fe
 
 This project is licensed under the MIT License.
 
-You are free to use, modify, and contribute to this project. However, proper credit must be given to the original author.
-
-Unauthorized copying or redistribution of this project without attribution is not permitted.
+You are free to use, modify, and contribute to this project. However, proper attribution must be given to the original author.
 
 ⚠️ **Note:**
-This project is created for learning and development purposes. 
-If you use or modify this project, you must provide proper credit. 
+This project is created for learning and development purposes.
+If you use or modify this project, you must provide proper credit.
 Do not claim this work as your own.
 
 ---
