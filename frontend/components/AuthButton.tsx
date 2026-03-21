@@ -5,9 +5,10 @@ import { loginUser, signupUser } from '../services/apiService';
 
 interface AuthButtonProps {
     onViewDashboard?: () => void;
+    minimal?: boolean;
 }
 
-export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard }) => {
+export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard, minimal }) => {
     const [user, setUser] = useState<any>(() => {
         const saved = localStorage.getItem('project-finder-user');
         return saved ? JSON.parse(saved) : null;
@@ -58,6 +59,16 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard }) => {
     };
 
     if (user) {
+        if (minimal) {
+            return (
+                <button 
+                    onClick={onViewDashboard} 
+                    className="p-2.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 shadow-lg cursor-pointer hover:scale-105 transition-transform"
+                >
+                    <UserIcon className="w-4 h-4" />
+                </button>
+            );
+        }
         return (
             <div className="flex items-center gap-3 pl-3 pr-1 py-1 rounded-full bg-[#0f172a]/80 border border-white/10 backdrop-blur-3xl group shadow-2xl hover:border-orange-500/30 transition-all duration-500">
                 <button 
@@ -106,10 +117,13 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard }) => {
         <div className="relative">
             <button
                 onClick={() => setShowOptions(!showOptions)}
-                className="flex items-center gap-2.5 px-3 md:px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-indigo-600/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group border border-white/20"
+                className={minimal 
+                    ? "p-2.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg flex items-center justify-center" 
+                    : "flex items-center gap-2.5 px-3 md:px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-indigo-600/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group border border-white/20"
+                }
             >
                 <UserIcon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline-block">Signup / Login</span>
+                {!minimal && <span className="hidden sm:inline-block">Signup / Login</span>}
             </button>
 
             <AnimatePresence>

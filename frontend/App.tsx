@@ -241,125 +241,184 @@ const App: React.FC = () => {
             <div className="parallax-bg-overlay" />
           </div>
 
-          {/* 1. Left Island: Logo & Brand */}
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ 
-              opacity: isCompact ? 1 : 1, 
-              y: 0,
-              boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
-            }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className={`fixed top-4 left-4 md:left-8 z-[2000] px-5 py-2.5 flex items-center gap-4 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full pointer-events-auto cursor-pointer group/logo transition-all duration-300`}
-            onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          >
+          {/* --- DESKTOP NAVIGATION (Fixed Islands) --- */}
+          <div className="hidden md:block">
+            {/* 1. Left Island: Logo & Brand */}
             <motion.div 
-              className="relative"
-              animate={{ scale: isCompact ? 1.2 : 1 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
+              }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
+              className={`fixed top-4 left-8 z-[2000] px-5 py-2.5 flex items-center gap-4 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full pointer-events-auto cursor-pointer group/logo transition-all duration-300`}
+              onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
-              <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-              <img src={mascotLogo} className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300" alt="Mascot Logo" />
+              <motion.div 
+                className="relative"
+                animate={{ scale: isCompact ? 1.2 : 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
+                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+                <img src={mascotLogo} className="w-11 h-11 md:w-14 md:h-14 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300" alt="Mascot Logo" />
+              </motion.div>
+              <div className="relative">
+                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+                <div className="w-8 h-8 md:w-9 md:h-9 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-300 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
+                  <Search className="w-4 h-4 md:w-5 md:h-5 text-orange-500 transition-transform duration-300 group-hover/logo:scale-110" strokeWidth={2.5} />
+                </div>
+              </div>
+              <motion.span 
+                animate={{ 
+                  scale: isCompact ? 0.9 : 1,
+                  opacity: isCompact ? 0.9 : 1
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="hidden md:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none origin-left"
+              >
+                Project Finder
+              </motion.span>
             </motion.div>
-            <div className="relative">
-              <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-              <div className="w-8 h-8 md:w-9 md:h-9 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 transition-all duration-300 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20">
-                <Search className="w-4 h-4 md:w-5 md:h-5 text-orange-500 transition-transform duration-300 group-hover/logo:scale-110" strokeWidth={2.5} />
+
+            {/* 2. Middle Island: Adaptive Navigation Pill (Fixed) */}
+            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
+              <motion.nav 
+                layout
+                animate={{ 
+                  scale: isCompact ? 0.95 : 1,
+                  opacity: 1,
+                  boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-300`}
+              >
+                {NAV_ITEMS.map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      layout
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`h-10 md:h-12 px-5 md:px-6 rounded-full border flex items-center justify-center gap-3 transition-all duration-300 font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
+                        isActive 
+                          ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_25px_rgba(249,115,22,0.4)]` 
+                          : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
+                      } ${isCompact ? 'px-4 min-w-[52px]' : ''}`}
+                    >
+                      <Icon className={`${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-5 h-5 transition-all`} />
+                      <AnimatePresence mode="sync">
+                        {!isCompact && (
+                          <motion.span
+                            initial={{ width: 0, opacity: 0, x: -10 }}
+                            animate={{ width: 'auto', opacity: 1, x: 0 }}
+                            exit={{ width: 0, opacity: 0, x: -10 }}
+                            className="hidden sm:inline-block"
+                          >
+                            {item.label} {item.id === 'favorites' && `(${favorites.length})`}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                      {isActive && <motion.div layoutId="activeTab" className="absolute bottom-1 inset-x-5 h-0.5 bg-white/60 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />}
+                    </motion.button>
+                  );
+                })}
+              </motion.nav>
+            </div>
+
+            {/* 3. Right Island: Action Hub */}
+            <div className="fixed top-4 right-8 z-[2000] pointer-events-auto">
+              <motion.div 
+                layout
+                animate={{ 
+                  scale: isCompact ? 0.9 : 1,
+                  opacity: 1,
+                  boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
+                }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className={`flex items-center gap-3 md:gap-4 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full p-2.5 md:p-3 transition-all duration-300`}
+              >
+                <motion.button
+                  onClick={() => setIsAIAssistantOpen(true)}
+                  className="h-9 md:h-10 px-3 md:px-5 rounded-full border border-orange-500/30 bg-orange-500/10 flex items-center gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg shrink-0">
+                    <Bot className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="hidden sm:inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/90 group-hover/aipill:text-orange-500 transition-colors">
+                    AI Assistant
+                  </span>
+                </motion.button>
+                
+                <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
+              </motion.div>
+            </div>
+          </div>
+
+          {/* --- MOBILE NAVIGATION (Header + Centered Pill) --- */}
+          <div className="block md:hidden">
+            {/* Mobile Header: Fixed Top */}
+            <div 
+              className="fixed top-0 left-0 right-0 z-[5000] border-b border-white/10 flex items-center justify-between px-4 bg-[#020617] shadow-2xl"
+              style={{ height: '60px' }}
+            >
+              <div 
+                className="flex items-center gap-3 cursor-pointer"
+                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
+                  <img src={mascotLogo} className="w-8 h-8 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsAIAssistantOpen(true)}
+                  className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center shadow-lg active:scale-95 transition-all"
+                >
+                  <Bot className="w-5 h-5" />
+                </button>
+                <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
               </div>
             </div>
-            <motion.span 
-              animate={{ 
-                scale: isCompact ? 0.9 : 1,
-                opacity: isCompact ? 0.9 : 1
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="hidden md:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none origin-left"
-            >
-              Project Finder
-            </motion.span>
-          </motion.div>
 
-          {/* 2. Middle Island: Adaptive Navigation Pill */}
-          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
-            <motion.nav 
-              layout
-              animate={{ 
-                scale: isCompact ? 0.95 : 1,
-                opacity: isCompact ? 1 : 1,
-                boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-300`}
+            {/* Mobile Navbar: Centered & Scrolling */}
+            <div 
+              className="w-full flex justify-center py-4 px-4 bg-transparent relative z-10"
+              style={{ marginTop: '60px' }}
             >
-              {NAV_ITEMS.map((item) => {
-                const isActive = currentView === item.id;
-                const Icon = item.icon;
-                return (
-                  <motion.button
-                    key={item.id}
-                    layout
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className={`h-10 md:h-12 px-5 md:px-6 rounded-full border flex items-center justify-center gap-3 transition-all duration-300 font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
-                      isActive 
-                        ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_25px_rgba(249,115,22,0.4)]` 
-                        : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                    } ${isCompact ? 'px-4 min-w-[52px]' : ''}`}
-                  >
-                    <Icon className={`${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-5 h-5 transition-all`} />
-                    <AnimatePresence mode="sync">
-                      {!isCompact && (
-                        <motion.span
-                          initial={{ width: 0, opacity: 0, x: -10 }}
-                          animate={{ width: 'auto', opacity: 1, x: 0 }}
-                          exit={{ width: 0, opacity: 0, x: -10 }}
-                          className="hidden sm:inline-block"
-                        >
-                          {item.label} {item.id === 'favorites' && `(${favorites.length})`}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                    {isActive && <motion.div layoutId="activeTab" className="absolute bottom-1 inset-x-5 h-0.5 bg-white/60 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" />}
-                  </motion.button>
-                );
-              })}
-            </motion.nav>
-          </div>
-
-          {/* 3. Right Island: Action Hub */}
-          <div className="fixed top-4 right-4 md:right-8 z-[2000] pointer-events-auto">
-            <motion.div 
-              layout
-              animate={{ 
-                scale: isCompact ? 0.9 : 1,
-                opacity: 1,
-                boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className={`flex items-center gap-3 md:gap-4 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full p-2.5 md:p-3 transition-all duration-300`}
-            >
-              <motion.button
-                onClick={() => setIsAIAssistantOpen(true)}
-                className="h-9 md:h-10 px-3 md:px-5 rounded-full border border-orange-500/30 bg-orange-500/10 flex items-center gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg shrink-0">
-                  <Bot className="w-3.5 h-3.5 text-white" />
-                </div>
-                <span className="hidden sm:inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/90 group-hover/aipill:text-orange-500 transition-colors">
-                  AI Assistant
-                </span>
-              </motion.button>
-              
-              <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
-            </motion.div>
+              <nav className="p-1 px-1.5 bg-[#0f172a]/90 backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-2 shadow-2xl">
+                {NAV_ITEMS.map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`h-11 px-6 rounded-full border flex items-center justify-center gap-3 transition-all duration-300 font-bold text-[10px] tracking-widest uppercase relative overflow-hidden ${
+                        isActive 
+                          ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_20px_rgba(249,115,22,0.3)]` 
+                          : 'text-gray-400 border-transparent bg-white/5'
+                      }`}
+                    >
+                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-5 h-5`} />
+                      {isActive && <motion.div layoutId="activeTabMobile" className="absolute bottom-1 inset-y-1 w-1 bg-white/60 rounded-full left-1/2 -translate-x-1/2" />}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
 
 
 
-          <main className="relative z-10 pt-[80px] md:pt-0">
+          <main className="relative z-10 pt-[10px] md:pt-0">
             {/* Global Mobile Sticky Logo Pill */}
 
             {/* Trending View */}
@@ -388,7 +447,7 @@ const App: React.FC = () => {
             {currentView === 'search' && (
 
               /* SEARCH VIEW */
-              <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'min-h-screen flex flex-col justify-center' : 'pt-28 pb-20 md:pt-40'}`}>
+              <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
                 {/* Hero Section */}
                 <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-24 md:pt-32 pb-16 md:pb-20'}`}>
                   <div className="text-center mb-8 md:mb-16 space-y-4 md:space-y-8 relative z-10 max-w-6xl mx-auto">
