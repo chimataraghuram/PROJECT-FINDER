@@ -360,8 +360,8 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* --- MOBILE NAVIGATION (Phase 3: Core Nav Only) --- */}
-          <div className="block md:hidden px-4 pt-6 pb-2 space-y-4 relative z-[100]">
+          {/* --- MOBILE NAVIGATION (Row 1 Only) --- */}
+          <div className="block md:hidden px-4 pt-6 pb-2 relative z-[100]">
             {/* Row 1: Logo (Left) | Actions (Right) */}
             <div className="flex items-center justify-between">
               {/* Logo Island */}
@@ -385,33 +385,6 @@ const App: React.FC = () => {
                 </button>
                 <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
               </div>
-            </div>
-
-            {/* Row 2: Core Navigation Pill (Search, Trending, Saved) */}
-            <div className="flex justify-center w-full">
-              <nav className="inline-flex p-1.5 bg-[#0f172a]/60 backdrop-blur-2xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-2xl">
-                {[
-                  { id: 'search', icon: Search },
-                  { id: 'trending', icon: TrendingUp },
-                  { id: 'favorites', icon: Heart }
-                ].map((item) => {
-                  const isActive = currentView === item.id;
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`p-2.5 rounded-full transition-all duration-300 ${
-                        isActive 
-                          ? `bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.5)] scale-110` 
-                          : 'text-gray-400 hover:bg-white/5'
-                      }`}
-                    >
-                      <Icon className="w-6 h-6" />
-                    </button>
-                  );
-                })}
-              </nav>
             </div>
           </div>
 
@@ -446,7 +419,7 @@ const App: React.FC = () => {
             {currentView === 'search' && (
 
               /* SEARCH VIEW */
-              <div className={`animate-fade-in home-content-wrapper ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
+              <div className={`animate-fade-in home-content-wrapper pb-24 md:pb-0 ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
                 {/* Hero Section (Phase 3 Simplified) */}
                 <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-12 md:pt-32 pb-8 md:pb-20'}`}>
                   <div className="text-center mb-6 md:mb-16 space-y-8 md:space-y-8 relative z-10 max-w-6xl mx-auto">
@@ -862,6 +835,39 @@ const App: React.FC = () => {
               setIsOpen={setIsAIAssistantOpen} 
             />
 
+            {/* --- MOBILE BOTTOM NAVIGATION (Phase 4) --- */}
+            <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] w-full px-6 flex justify-center pointer-events-none">
+              <nav className="inline-flex p-1.5 bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-8 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] pointer-events-auto">
+                {[
+                  { id: 'search', icon: Search },
+                  { id: 'trending', icon: TrendingUp },
+                  { id: 'favorites', icon: Heart }
+                ].map((item) => {
+                  const isActive = currentView === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      className={`relative p-3 rounded-full transition-all duration-300 ${
+                        isActive 
+                          ? `bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.5)] scale-110` 
+                          : 'text-gray-400 hover:bg-white/5 opacity-70'
+                      }`}
+                    >
+                      <Icon className="w-6 h-6" />
+                      {isActive && (
+                        <motion.div 
+                          layoutId="activeNav"
+                          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
           </main>
 
           {/* Comparison Studio Modal */}
@@ -879,7 +885,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 100 }}
-                className="fixed bottom-8 right-8 z-[2100]"
+                className="fixed bottom-32 md:bottom-8 right-8 z-[2100]"
               >
                 <button 
                   onClick={() => setIsComparisonOpen(true)}
