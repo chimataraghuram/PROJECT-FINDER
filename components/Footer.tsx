@@ -36,8 +36,8 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 </div>
                             </div>
                             <div className="flex flex-col select-none">
-                                <span className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-200 via-white to-orange-400 tracking-tighter">
-                                    {isCompact ? 'PF' : 'Project Finder'}
+                                <span className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-orange-200 via-white to-orange-400 tracking-tighter">
+                                    {isCompact ? 'Techboy PF' : 'Techboy Project Finder'}
                                 </span>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="h-[2px] w-8 bg-orange-500 rounded-full" />
@@ -214,11 +214,11 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <div className="flex items-center gap-4">
                             <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest opacity-40">
-                                © {currentYear} Project Finder
+                                © {currentYear} Techboy Project Finder
                             </p>
                             <div className="w-1 h-1 rounded-full bg-gray-800" />
                             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                                COOKED BY <span className="text-white">RAGHU</span> <Heart size={10} className="text-red-500 fill-red-500 animate-pulse" />
+                                COOKED BY <span className="text-white">TECHBOY RAGHU</span> <Heart size={10} className="text-red-500 fill-red-500 animate-pulse" />
                             </div>
                         </div>
                     </div>

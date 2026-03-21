@@ -1,11 +1,11 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Project%20Finder&fontSize=90&animation=fadeIn&fontAlignY=38" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=200&section=header&text=Techboy%20Project%20Finder&fontSize=70&animation=fadeIn&fontAlignY=38" width="100%" />
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+GitHub+Profile+Designs;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;Save+Your+Favorite+Projects)](https://git.io/typing-svg)
 
 <p align="center">
-  <strong>The ultimate gateway to open-source inspiration, project discovery, and profile aesthetics.</strong>
+  <strong>The ultimate gateway to open-source inspiration, premium project discovery, and AI-assisted workflow.</strong>
 </p>
 
 [🚀 Live Demo](https://project-finder-chimata.vercel.app/) • [💻 Explore Code](https://github.com/chimataraghuram/PROJECT-FINDER) • [🎨 Browse Profiles](https://project-finder-chimata.vercel.app/#profiles)
@@ -39,11 +39,11 @@ Fully responsive design optimized for browsing on the go.
 
 <br/>
 
-### ⚡ Live Functionality (GIF Demo)
-Watch the smart search and README gallery discovery in action.
+### ⚡ Trending & Discovery Engine
+Watch the real-time trending dashboard featuring GitHub, Kaggle, Hugging Face, and more.
 
 <div align="center">
-  <img src="./assets/demo.webp" width="100%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);" />
+  <img src="./assets/trending-preview.png" width="100%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);" />
 </div>
 
 ---
@@ -56,11 +56,10 @@ Watch the smart search and README gallery discovery in action.
 | ❤️ | **Save Favorites** | Securely save your favorite projects and profiles via Firebase integration. |
 | 🎨 | **README Gallery** | A curated visual gallery of the world's best GitHub profile designs. |
 | 📱 | **Responsive Design** | Pixel-perfect experience across mobile, tablet, and desktop. |
+| 🚀 | **3-Section Premium Navbar** | Balanced layout with mascot branding and adaptive navigation pill. |
 | ⚡ | **Fast UI** | Blazing fast search and interactions powered by React and Framer Motion. |
 | 🤖 | **Techboy Assistant** | Your personal AI guide to help you find the right tools and projects. |
-| 💊 | **Adaptive Navbar** | Scroll-aware navigation pill that transitions between text and icon modes. |
-| 🔥 | **Trending Hub** | Real-time discovery across GitHub, Hugging Face, Kaggle, and LinkedIn. |
-| 🎨 | **Profile Gallery** | Massive visual collection of world-class GitHub profile README designs. |
+| ⭐ | **Live Analytics** | Seamlessly extract exact source intelligence and repository metrics. |
 
 ---
 
