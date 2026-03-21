@@ -13,7 +13,6 @@ import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { ComparisonStudio } from './components/ComparisonStudio';
-import mascotLogo from './src/assets/logo.png';
 
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
@@ -254,28 +253,30 @@ const App: React.FC = () => {
 
           <header className={`fixed top-0 inset-x-0 z-[2000] px-4 md:px-12 pointer-events-none transition-all duration-500 flex items-center justify-between ${isCompact ? 'py-4' : 'py-8'}`}>
             {/* 1. Left Section: Logo & Brand */}
-            <motion.div 
-              layout
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-              className="flex items-center gap-4 cursor-pointer pointer-events-auto group/logo"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                <img src={mascotLogo} className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
-              </div>
-              <div className="flex flex-col">
-                <span className={`${isCompact ? 'text-[10px]' : 'text-xs'} font-black text-orange-500 tracking-[0.3em] uppercase leading-none mb-1`}>Techboy</span>
-                <span className={`${isCompact ? 'text-lg' : 'text-2xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
-              </div>
-            </motion.div>
+            <div className="flex-1 flex justify-start">
+              <motion.div 
+                layout
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="flex items-center gap-4 cursor-pointer pointer-events-auto group/logo"
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
+                  <img src="/logo.png" className={`${isCompact ? 'w-10 h-10' : 'w-14 h-14'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Logo" />
+                </div>
+                <div className="hidden sm:flex flex-col">
+                  <span className={`${isCompact ? 'text-[10px]' : 'text-xs'} font-black text-orange-500 tracking-[0.3em] uppercase leading-none mb-1`}>Techboy</span>
+                  <span className={`${isCompact ? 'text-lg' : 'text-2xl'} font-black text-white tracking-tighter uppercase leading-none`}>Project Finder</span>
+                </div>
+              </motion.div>
+            </div>
 
             {/* 2. Middle Section: Adaptive Navigation Pill */}
             <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
               <motion.nav 
                 layout
-                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-1.5"
+                className={`p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-2 transition-all duration-500 ${isCompact ? 'px-1' : 'px-2'}`}
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
@@ -291,11 +292,11 @@ const App: React.FC = () => {
                       whileHover={{ y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-16 md:h-18 px-2.5 md:px-5 rounded-full border flex items-center justify-center gap-3 transition-all duration-500 font-black text-sm tracking-widest uppercase relative overflow-hidden group/nav ${
+                      className={`h-12 md:h-14 px-3 md:px-6 rounded-full border flex items-center justify-center gap-3 transition-all duration-500 font-bold text-sm tracking-widest uppercase relative overflow-hidden group/nav ${
                         isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_30px_rgba(249,115,22,0.4)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                      } ${isCompact ? 'px-3 min-w-[64px]' : ''}`}
+                      } ${isCompact ? 'px-4 min-w-[56px]' : ''}`}
                     >
-                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-6 h-6 transition-all`} />
+                      <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-5 h-5 transition-all`} />
                       <AnimatePresence mode="sync">
                         {!isCompact && (
                           <motion.span
@@ -315,18 +316,20 @@ const App: React.FC = () => {
               </motion.nav>
             </div>
 
-            <div className="flex-shrink-0 pointer-events-auto flex items-center gap-4">
-              <div className="hidden lg:block">
-                <motion.button
-                  onClick={() => setIsAIAssistantOpen(true)}
-                  className="h-16 md:h-18 px-6 md:px-8 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-4 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Bot className="w-6 h-6 text-[#f97316]" />
-                  <span className="text-sm font-black tracking-[0.2em] uppercase text-[#f97316] hidden xl:inline">Techboy AI</span>
-                </motion.button>
-              </div>
+            {/* 3. Right Section: Action Hub */}
+            <div className="flex-1 flex justify-end pointer-events-auto flex items-center gap-4 lg:gap-6">
+              <motion.button
+                onClick={() => setIsAIAssistantOpen(true)}
+                className={`h-12 md:h-14 px-4 md:px-6 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-3 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all ${isCompact ? 'scale-90' : ''}`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="p-1.5 bg-orange-500 rounded-lg">
+                  <Bot className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-xs font-black tracking-[0.2em] uppercase text-[#f97316] hidden lg:inline">Assistant</span>
+              </motion.button>
+              
               <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
             </div>
           </header>
