@@ -13,8 +13,6 @@ import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { ComparisonStudio } from './components/ComparisonStudio';
-import mascotLogo from './src/assets/logo.png';
-
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
