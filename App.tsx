@@ -251,7 +251,7 @@ const App: React.FC = () => {
             <div className="parallax-bg-overlay" />
           </div>
 
-          <header className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] lg:w-[80%] max-w-7xl z-[2000] px-4 md:px-6 pointer-events-none transition-all duration-500 flex items-center justify-between border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-2xl rounded-2xl md:rounded-[2rem] ${isCompact ? 'py-2 gap-2 opacity-95' : 'py-3 md:py-4 gap-4'}`}>
+          <header className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] max-w-7xl z-[2000] px-4 md:px-6 pointer-events-none transition-all duration-500 flex items-center justify-between border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-2xl rounded-2xl ${isCompact ? 'py-2 gap-2 opacity-95' : 'py-3 md:py-4 gap-4'}`}>
             {/* 1. Left Section: Logo & Brand */}
             <div className="flex-1 flex justify-start">
               <motion.div 
