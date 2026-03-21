@@ -321,14 +321,14 @@ const App: React.FC = () => {
             <div className="flex-1 flex justify-end pointer-events-auto flex items-center gap-4 lg:gap-6">
               <motion.button
                 onClick={() => setIsAIAssistantOpen(true)}
-                className={`h-12 md:h-14 px-4 md:px-6 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-3 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all ${isCompact ? 'scale-90' : ''}`}
+                className={`h-11 md:h-12 px-3 md:px-5 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-3 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all ${isCompact ? 'scale-90' : ''}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <div className="p-1.5 bg-orange-500 rounded-lg">
                   <Bot className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-xs font-black tracking-[0.2em] uppercase text-[#f97316] hidden lg:inline">Assistant</span>
+                <span className="text-[10px] md:text-xs font-black tracking-[0.1em] md:tracking-[0.2em] uppercase text-[#f97316] hidden lg:inline whitespace-nowrap">Techboy AI</span>
               </motion.button>
               
               <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />

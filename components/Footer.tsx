@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode } from 'lucide-react';
+import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import mascotLogo from '../src/assets/logo.png';
 
@@ -122,9 +122,9 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                     <div className="lg:col-span-4 space-y-10">
                         <div className="flex items-center gap-3.5">
                             <div className="p-2.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-lg">
-                                <Sparkles className="w-5 h-5 text-blue-400" />
+                                <User className="w-5 h-5 text-blue-400" />
                             </div>
-                            <h3 className="text-white font-black text-xl tracking-tight uppercase tracking-widest">Architects</h3>
+                            <h3 className="text-white font-black text-xl tracking-tight uppercase tracking-widest">Developer</h3>
                         </div>
 
                         <div className="space-y-6">
