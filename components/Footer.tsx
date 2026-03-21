@@ -1,5 +1,6 @@
 import React from 'react';
 import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User, Flame, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface FooterProps {
     onComingSoonClick: (e: React.MouseEvent) => void;
