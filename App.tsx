@@ -14,7 +14,6 @@ import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import mascotLogo from './src/assets/logo.png';
-import appPreview from './assets/desktop-preview.png';
 import { auth, db, isFirebaseConfigured } from './services/firebase';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, setDoc, onSnapshot } from 'firebase/firestore';
@@ -264,7 +263,7 @@ const App: React.FC = () => {
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />
-                  <img src={appPreview} className={`${isCompact ? 'w-8 h-8' : 'w-10 h-10 lg:w-12 lg:h-12'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="App Logo" />
+                  <img src={mascotLogo} className={`${isCompact ? 'w-8 h-8' : 'w-10 h-10 lg:w-12 lg:h-12'} rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500`} alt="Mascot Logo" />
                 </div>
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40" />

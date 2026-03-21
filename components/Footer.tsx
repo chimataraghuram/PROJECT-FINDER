@@ -1,7 +1,7 @@
 import React from 'react';
 import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User, Flame, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
-import appPreview from '../assets/desktop-preview.png';
+import mascotLogo from '../src/assets/logo.png';
 
 interface FooterProps {
     onComingSoonClick: (e: React.MouseEvent) => void;
@@ -32,7 +32,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             <div className="relative">
                                 <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
                                 <div className="relative bg-white/5 p-1 rounded-2xl shadow-2xl border border-white/10 transform group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500 overflow-hidden">
-                                    <img src={appPreview} className="w-14 h-14 object-cover rounded-xl" alt="App Logo" />
+                                    <img src={mascotLogo} className="w-14 h-14 object-cover rounded-xl" alt="Mascot Logo" />
                                 </div>
                             </div>
                             <div className="relative">
