@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import introVideo from '../src/assets/intro_new.mp4';
 
 interface IntroVideoProps {
@@ -44,12 +45,17 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
             className={`fixed inset-0 z-[100] bg-[#0f172a] flex flex-col items-center justify-center transition-opacity duration-1000 ${isFading ? 'opacity-0' : 'opacity-100'}`}
             onClick={handleSkip}
         >
-            {/* Logo/Video Container */}
-            <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-[2rem] overflow-hidden shadow-[0_0_60px_rgba(249,115,22,0.3)] border border-white/10 bg-black group">
-                <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-purple-500/20 opacity-50 z-10" />
+            {/* Massive Cinematic Logo/Video Container */}
+            <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="relative w-72 h-72 md:w-[450px] md:h-[450px] rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[0_0_100px_rgba(249,115,22,0.4)] border border-white/10 bg-black group"
+            >
+                <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/30 via-transparent to-purple-500/30 z-10 pointer-events-none" />
                 <video
                     ref={videoRef}
-                    className="w-full h-full object-cover relative z-0"
+                    className="w-full h-full object-cover relative z-0 scale-110"
                     src={introVideo}
                     onEnded={handleVideoEnd}
                     onError={() => onComplete()}
@@ -58,19 +64,57 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                     playsInline
                     style={{ pointerEvents: 'none' }}
                 />
-            </div>
+                
+                {/* Subtle Overlay Vignette */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10" />
+            </motion.div>
 
-            {/* Text Title */}
-            <div className="mt-8 md:mt-12 text-center space-y-4">
-                <h1 className="text-xl md:text-2xl font-black text-orange-500 tracking-[0.4em] uppercase font-sans drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
-                    Project Finder 🔍
-                </h1>
+            {/* Massive Stacked Title Text */}
+            <div className="mt-12 md:mt-20 text-center flex flex-col items-center">
+                <motion.h1 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                    className="text-6xl md:text-8xl font-black tracking-[-0.05em] leading-none mb-1"
+                >
+                    <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#f97316] to-[#ea580c] drop-shadow-[0_10px_30px_rgba(249,115,22,0.4)]">
+                        TECHBOY
+                    </span>
+                </motion.h1>
+                
+                <motion.div 
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 1, duration: 1 }}
+                    className="w-24 h-1 bg-white/20 rounded-full mb-4"
+                />
 
-                {/* Loading Dots */}
-                <div className="flex justify-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500/50 animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500/50 animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500/50 animate-bounce" style={{ animationDelay: '300ms' }} />
+                <motion.h2 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.2, duration: 0.8 }}
+                    className="text-lg md:text-2xl font-bold text-[#fef3c7] tracking-[0.5em] uppercase font-sans drop-shadow-[0_0_10px_rgba(254,243,199,0.3)] ml-[0.5em]"
+                >
+                    Project Finder
+                </motion.h2>
+
+                {/* Ambient Loading Indicator */}
+                <div className="mt-10 flex justify-center gap-3">
+                    {[0, 1, 2].map((i) => (
+                        <motion.div 
+                            key={i}
+                            animate={{ 
+                                scale: [1, 1.5, 1],
+                                opacity: [0.3, 1, 0.3]
+                            }}
+                            transition={{ 
+                                duration: 1.5,
+                                repeat: Infinity,
+                                delay: i * 0.2
+                            }}
+                            className="w-2 h-2 rounded-full bg-orange-500/60 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                        />
+                    ))}
                 </div>
             </div>
 
