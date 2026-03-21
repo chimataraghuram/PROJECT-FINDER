@@ -30,8 +30,8 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                         >
                             <div className="relative">
                                 <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity" />
-                                <div className="relative bg-gradient-to-br from-orange-500 to-red-600 p-4 rounded-2xl shadow-2xl border border-white/20 transform group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500">
-                                    <Search className="w-8 h-8 text-white" />
+                                <div className="relative bg-white/5 p-1 rounded-2xl shadow-2xl border border-white/10 transform group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500 overflow-hidden">
+                                    <img src="/assets/logo.png" className="w-14 h-14 object-cover rounded-xl" alt="Mascot" />
                                 </div>
                             </div>
                             <div className="flex flex-col select-none">

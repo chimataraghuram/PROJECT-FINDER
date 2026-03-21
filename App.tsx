@@ -272,8 +272,30 @@ const App: React.FC = () => {
             <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
               <motion.nav 
                 layout
-                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-0.5"
+                className="p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-1"
               >
+                {/* Brand Section */}
+                <motion.div 
+                  layout
+                  onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className={`flex items-center gap-3 cursor-pointer hover:bg-white/5 rounded-full transition-colors ${isCompact ? 'px-2' : 'px-4 border-r border-white/10 mr-1'}`}
+                >
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
+                    <img 
+                      src="/assets/logo.png" 
+                      className={`${isCompact ? 'w-10 h-10' : 'w-12 h-12'} rounded-full object-cover border border-white/20 shadow-2xl relative z-10 transition-all duration-500`} 
+                      alt="Techboy Logo" 
+                    />
+                  </div>
+                  {!isCompact && (
+                    <div className="flex flex-col pr-2">
+                      <span className="text-[10px] font-black text-orange-500 tracking-[0.2em] leading-none mb-0.5 whitespace-nowrap">TECHBOY</span>
+                      <span className="text-[12px] font-black text-white tracking-widest leading-none whitespace-nowrap">PROJECT FINDER</span>
+                    </div>
+                  )}
+                </motion.div>
+
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
