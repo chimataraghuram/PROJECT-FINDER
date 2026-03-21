@@ -15,7 +15,7 @@ import { searchProjects, fetchTrendingProjects, saveProject, fetchFavorites } fr
 import { ComparisonStudio } from './components/ComparisonStudio';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
-type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard';
+type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
 
 const LABELS = {
@@ -770,7 +770,7 @@ const App: React.FC = () => {
             )}
 
             {currentView === 'favorites' && (
-              <div className="max-w-7xl mx-auto px-4 py-12 md:py-32 animate-fade-in relative z-10">
+              <div className="max-w-7xl mx-auto px-4 py-12 md:py-32 animate-fade-in relative z-10 pb-24 md:pb-0">
                 <div className="text-center mb-16 space-y-4">
                   <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
                     Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">Library</span>
@@ -808,6 +808,18 @@ const App: React.FC = () => {
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {currentView === 'trending' && (
+              <div className="animate-fade-in pb-24 md:pb-0">
+                <TrendingProjects 
+                  favorites={favorites}
+                  onToggleFavorite={toggleFavorite}
+                  onToggleComparison={toggleComparison}
+                  comparisonQueue={comparisonQueue}
+                  onSummarize={(name) => handleSearch(`Summarize ${name}`)}
+                />
               </div>
             )}
 
