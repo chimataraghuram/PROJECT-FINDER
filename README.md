@@ -134,6 +134,23 @@ Contributions are always welcome! If you’d like to improve Techboy Project Fin
 ---
 
 
+## 📄 License
+
+This project is licensed under the MIT License.
+
+You are free to use, modify, and contribute to this project. However, proper credit must be given to the original author.
+
+Unauthorized copying or redistribution of this project without attribution is not permitted.
+
+---
+
+⚠️ **Note:**
+This project is created for learning and development purposes. 
+If you use or modify this project, you must provide proper credit. 
+Do not claim this work as your own.
+
+---
+
 ## 🚀 Future Roadmap
 
 - [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
@@ -144,7 +161,7 @@ Contributions are always welcome! If you’d like to improve Techboy Project Fin
 
 ## 👨‍💻 Author
 
-**Raghu (Techboy)**
+**CHIMATA RAGHURAM (TECHBOY)**
 
 <a href="https://www.linkedin.com/in/chimataraghuram/">
   <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
@@ -156,5 +173,5 @@ Contributions are always welcome! If you’d like to improve Techboy Project Fin
 ---
 
 <div align="center">
-  Built with ❤️ for the Developer Community
+  COOKED BY RAGHU❤️
 </div>
