@@ -251,7 +251,7 @@ const App: React.FC = () => {
             <div className="parallax-bg-overlay" />
           </div>
 
-          <header className={`fixed top-0 inset-x-0 z-[2000] px-4 md:px-12 pointer-events-none transition-all duration-500 flex items-center justify-between ${isCompact ? 'py-3' : 'py-5'}`}>
+          <header className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] md:w-[85%] lg:w-[80%] max-w-7xl z-[2000] px-4 md:px-6 pointer-events-none transition-all duration-500 flex items-center justify-between border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-2xl rounded-2xl md:rounded-[2rem] ${isCompact ? 'py-2 gap-2 opacity-95' : 'py-3 md:py-4 gap-4'}`}>
             {/* 1. Left Section: Logo & Brand */}
             <div className="flex-1 flex justify-start">
               <motion.div 
@@ -275,11 +275,11 @@ const App: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* 2. Middle Section: Adaptive Navigation Pill */}
-            <div className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-[2000] pointer-events-auto">
+            {/* 2. Middle Section: Adaptive Navigation Pill (Integrated) */}
+            <div className="flex-shrink-0 pointer-events-auto">
               <motion.nav 
                 layout
-                className={`p-1 bg-[#0f172a]/60 backdrop-blur-3xl rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex items-center gap-1.5 transition-all duration-500 ${isCompact ? 'px-1' : 'px-1.5'}`}
+                className="flex items-center gap-1.5 md:gap-2"
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
@@ -295,9 +295,9 @@ const App: React.FC = () => {
                       whileHover={{ y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-9 md:h-10.5 px-3 md:px-5 rounded-full border flex items-center justify-center gap-2.5 transition-all duration-500 font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
-                        isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_30px_rgba(249,115,22,0.4)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
-                      } ${isCompact ? 'px-3 min-w-[48px]' : ''}`}
+                      className={`h-8 md:h-10 px-3 md:px-5 rounded-full border flex items-center justify-center gap-2 md:gap-2.5 transition-all duration-500 font-bold text-[10px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
+                        isActive ? `bg-gradient-to-r ${item.color} text-white border-white/20 shadow-[0_0_20px_rgba(249,115,22,0.3)]` : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5'
+                      } ${isCompact ? 'px-2.5 min-w-[44px]' : ''}`}
                     >
                       <Icon className={`${isActive ? 'scale-110' : 'opacity-70'} w-4 h-4 transition-all`} />
                       <AnimatePresence mode="sync">
@@ -323,7 +323,7 @@ const App: React.FC = () => {
             <div className="flex-1 flex justify-end pointer-events-auto flex items-center gap-4 lg:gap-6">
               <motion.button
                 onClick={() => setIsAIAssistantOpen(true)}
-                className={`h-9 md:h-10 px-3 md:px-4 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-2.5 group/aipill shadow-[0_0_20px_rgba(249,115,22,0.2)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] transition-all ${isCompact ? 'scale-90' : ''}`}
+                className={`h-8 md:h-10 px-3 md:px-4 rounded-full border border-orange-500/30 bg-orange-500/5 backdrop-blur-3xl flex items-center gap-2 md:gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all ${isCompact ? 'scale-90' : ''}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
