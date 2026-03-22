@@ -4,34 +4,34 @@ const BACKEND_URL = 'http://localhost:5000/api';
 
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => ({
-  id: item._id || item.id?.toString() || Math.random().toString(),
-  name: item.projectName || item.name || item.login || 'Unknown Project',
+  id: item.id?.toString() || Math.random().toString(),
+  name: item.name || 'Unknown Project',
   description: item.description || '',
-  platform: item.platform || 'GitHub',
-  url: item.repoUrl || item.html_url || item.url || '#',
-  stars: item.stars || item.stargazers_count || 0,
+  platform: 'GitHub',
+  url: item.html_url || '#',
+  stars: item.stargazers_count || 0,
   language: item.language || 'Unknown',
-  tags: item.tags || item.topics || [],
-  isPublisher: item.isPublisher || false,
+  tags: item.topics || [],
+  isPublisher: false,
   owner: item.owner ? {
     login: item.owner.login,
     avatar_url: item.owner.avatar_url,
     html_url: item.owner.html_url
   } : null,
-  image: item.owner?.avatar_url || item.image || null,
-  readme: item.readme || item.description || ''
+  image: item.owner?.avatar_url || null,
+  readme: item.description || ''
 });
 
 export const searchProjects = async (query: string): Promise<SearchResult> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/search?q=${encodeURIComponent(query)}`);
+    const response = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`);
     if (!response.ok) throw new Error('Search failed');
     const data = await response.json();
-    const projects = data.map(mapToFrontendProject);
+    const projects = (data.items || []).map(mapToFrontendProject);
     return {
-      summary: `Found ${projects.length} results for "${query}" via Backend.`,
+      summary: `Found ${projects.length} results via GitHub real-time search.`,
       projects,
-      groundingSources: projects.map(p => ({ title: p.name, uri: p.url }))
+      groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
   } catch (error) {
     console.error('Search error:', error);
@@ -41,10 +41,12 @@ export const searchProjects = async (query: string): Promise<SearchResult> => {
 
 export const fetchTrendingProjects = async (platform: string = 'All', category: string = 'All'): Promise<Project[]> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/trending?platform=${platform}&category=${category}`);
+    // Using GitHub Search API for trending: stars > 5000 and sorted by stars
+    const query = category !== 'All' ? `${category} stars:>5000` : 'stars:>5000';
+    const response = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc`);
     if (!response.ok) throw new Error('Trending fetch failed');
     const data = await response.json();
-    return data.map(mapToFrontendProject);
+    return (data.items || []).map(mapToFrontendProject);
   } catch (error) {
     console.error('Trending fetch error:', error);
     return [];
