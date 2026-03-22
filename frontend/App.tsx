@@ -114,6 +114,33 @@ const App: React.FC = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
+  const handleSearch = useCallback(async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
+    const trimmedQuery = query.trim();
+    
+    if (!trimmedQuery) {
+      setResult(null);
+      setSearchState({ isLoading: false, error: null, hasSearched: false });
+      localStorage.removeItem('last-search-query');
+      return;
+    }
+
+    setSearchState({ isLoading: true, error: null, hasSearched: true });
+    setResult(null);
+    localStorage.setItem('last-search-query', trimmedQuery);
+
+    try {
+      const data = await fetchSearch(trimmedQuery, category, platform);
+      setResult(data);
+      setSearchState({ isLoading: false, error: null, hasSearched: true });
+    } catch (err: any) {
+      setSearchState({ 
+        isLoading: false, 
+        error: err.message || 'The gateway to this platform is temporarily congested. Please try again.',
+        hasSearched: true 
+      });
+    }
+  }, [selectedCategory, filterPlatform]);
+
   const handleSurpriseMe = useCallback(() => {
     const pools = ['AI', 'React', 'Python', 'Agent', 'Automation', 'CLI', 'Web3', 'Tailwind', 'Next.js'];
     const randomQuery = pools[Math.floor(Math.random() * pools.length)];
@@ -213,32 +240,6 @@ const App: React.FC = () => {
     }
   }, [result, searchState.isLoading]);
 
-  const handleSearch = useCallback(async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
-    const trimmedQuery = query.trim();
-    
-    if (!trimmedQuery) {
-      setResult(null);
-      setSearchState({ isLoading: false, error: null, hasSearched: false });
-      localStorage.removeItem('last-search-query');
-      return;
-    }
-
-    setSearchState({ isLoading: true, error: null, hasSearched: true });
-    setResult(null);
-    localStorage.setItem('last-search-query', trimmedQuery);
-
-    try {
-      const data = await fetchSearch(trimmedQuery, category, platform);
-      setResult(data);
-      setSearchState({ isLoading: false, error: null, hasSearched: true });
-    } catch (err: any) {
-      setSearchState({ 
-        isLoading: false, 
-        error: err.message || 'The gateway to this platform is temporarily congested. Please try again.',
-        hasSearched: true 
-      });
-    }
-  }, [selectedCategory, filterPlatform]);
 
 
   const filteredProjects = result?.projects || [];
