@@ -165,7 +165,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                         )}
                                     </h3>
                                     <span className="text-[10px] font-bold text-orange-500/80 uppercase tracking-tighter">
-                                        {isSyncing ? 'Cloud Syncing...' : 'Autonomous Assistant'}
+                                        {isSyncing ? 'Cloud Syncing...' : 'TECHBOY AI'}
                                     </span>
                                 </div>
                             </div>

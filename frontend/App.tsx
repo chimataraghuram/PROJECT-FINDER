@@ -351,7 +351,7 @@ const App: React.FC = () => {
                     <Bot className="w-3.5 h-3.5 text-white" />
                   </div>
                   <span className="hidden sm:inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/90 group-hover/aipill:text-orange-500 transition-colors">
-                    AI Assistant
+                    TECHBOY AI
                   </span>
                 </motion.button>
                 
@@ -505,7 +505,7 @@ const App: React.FC = () => {
                           {
                             id: 'trend-1',
                             name: "OpenClaw",
-                            description: "The leading open-source personal AI assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord to solve complex tasks directly via chat.",
+                            description: "The leading open-source personal TECHBOY AI Assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord to solve complex tasks directly via chat.",
                             platform: 'GitHub' as const,
                             url: "https://github.com/OpenClaw/OpenClaw",
                             tags: ["AI AGENT", "AUTONOMOUS", "PYTHON"],

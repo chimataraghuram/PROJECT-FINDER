@@ -9,7 +9,7 @@ interface Message {
 
 export const ChatTab: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'Hello! I am your AI assistant. Ask me anything about coding, projects, or data science.' }
+    { role: 'model', text: 'Hello! I am TECHBOY AI. Ask me anything about coding, projects, or data science.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +70,7 @@ export const ChatTab: React.FC = () => {
       <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <Bot className={`w-5 h-5 ${isFastMode ? 'text-yellow-400' : 'text-blue-400'}`} />
-          <span className="font-semibold text-white">AI Chat</span>
+          <span className="font-semibold text-white">TECHBOY AI Chat</span>
           <span className="text-xs text-gray-500 ml-2">
             {isFastMode ? 'Fast Mode' : 'Pro Mode'}
           </span>

@@ -107,7 +107,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             {[
                                 { title: "1. Search Globally", desc: "Enter any concept (e.g., 'React UI' or 'AI Models') into the search bar. We instantly pull matching source code, models, and datasets from multiple platforms." },
                                 { title: "2. Explore Trends", desc: "Not sure what to build? Navigate to Trending Projects to browse real-time feeds of the most active and highly-starred repositories updated daily." },
-                                { title: "3. Save & Analyze", desc: "Click the Star icon to bookmark interesting projects to your personal dashboard. Use the AI Assistant to automatically summarize dense repository files." }
+                                { title: "3. Save & Analyze", desc: "Click the Star icon to bookmark interesting projects to your personal dashboard. Use TECHBOY AI to automatically summarize dense repository files." }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
                                     <div className="relative flex-shrink-0">
