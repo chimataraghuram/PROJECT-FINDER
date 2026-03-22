@@ -4,6 +4,7 @@ import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, B
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProjectReadme, summarizeProject } from '../services/apiService';
 import { analyzeProject, ProjectAnalysis } from '../services/aiService';
+import { openSafe } from '../src/utils/urlHelper';
 
 // Custom SVG for Hugging Face logo
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
@@ -312,28 +313,40 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
-            >
-              <span className="truncate">
-                {project.platform === 'Kaggle' ? 'View Dataset' :
-                  isLinkedIn ? 'View on LinkedIn' : 
-                  project.liveUrl || project.demoUrl ? 'View Repo' : 'Explore Project'}
-              </span>
-              {isLinkedIn ? <Linkedin className="w-4 h-4 shrink-0" /> : 
-               isKaggle ? <ExternalLink className="w-4 h-4 shrink-0" /> :
-               <Github className="w-4 h-4 shrink-0" />}
-            </a>
-
-            {(project.liveUrl || project.demoUrl) && (
+            {project.url && project.url !== '#' && (
               <a
-                href={project.liveUrl || project.demoUrl}
+                href={project.url}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openSafe(project.url);
+                }}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center sm:w-1/2 gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button"
+                className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${(project.liveUrl && project.liveUrl !== '#') ? 'sm:w-1/2' : 'w-full'}`}
+              >
+                <span className="truncate">
+                  {project.platform === 'Kaggle' ? 'View Dataset' :
+                    isLinkedIn ? 'View on LinkedIn' : 
+                    (project.liveUrl && project.liveUrl !== '#') ? 'View Repo' : 'Explore Project'}
+                </span>
+                {isLinkedIn ? <Linkedin className="w-4 h-4 shrink-0" /> : 
+                 isKaggle ? <ExternalLink className="w-4 h-4 shrink-0" /> :
+                 <Github className="w-4 h-4 shrink-0" />}
+              </a>
+            )}
+
+            {(project.liveUrl && project.liveUrl !== '#') && (
+              <a
+                href={project.liveUrl}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  openSafe(project.liveUrl);
+                }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button ${(!project.url || project.url === '#') ? 'w-full' : 'sm:w-1/2'}`}
               >
                 <span className="truncate">Live Demo</span>
                 <ExternalLink className="w-4 h-4 shrink-0" />

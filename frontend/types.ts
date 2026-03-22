@@ -18,6 +18,7 @@ export interface Project {
   type?: 'project' | 'readme';
   aiSummary?: SummaryData;
   homepage?: string;
+  slug?: string;
   license?: string;
   stargazers_count?: number;
   forks_count?: number;

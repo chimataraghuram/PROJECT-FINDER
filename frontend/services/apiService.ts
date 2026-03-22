@@ -7,7 +7,20 @@ const mapToFrontendProject = (item: any): Project => {
   // Defensive mapping to handle both backend and hardcoded fallback shapes
   const name = item.name || 'Unknown Project';
   const platform = item.platform || 'GitHub';
-  const repoUrl = item.html_url || item.url || '#';
+  let repoUrl = item.html_url || item.url || '#';
+  
+  if (platform === 'GitHub') {
+    // Ensure GitHub links use html_url and are full paths
+    if (repoUrl !== '#' && !repoUrl.startsWith('http')) {
+      repoUrl = `https://github.com/${repoUrl}`;
+    }
+  }
+
+  // FINAL SAFETY: Hide buttons if URL is missing or invalid (no https://)
+  if (repoUrl !== '#' && !repoUrl.startsWith('https://')) {
+    repoUrl = '#';
+  }
+  
   const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
   const topics = item.topics || item.tags || [];
   
@@ -25,8 +38,14 @@ const mapToFrontendProject = (item: any): Project => {
     owner: item.owner ? {
       login: item.owner.login || 'Owner',
       avatar_url: item.owner.avatar_url || '',
-      html_url: item.owner.html_url || item.html_url || '#'
+      html_url: (item.owner.html_url && item.owner.html_url !== '#') ? item.owner.html_url : (
+        platform === 'GitHub' ? `https://github.com/${item.owner.login || 'Owner'}` :
+        platform === 'Kaggle' ? `https://www.kaggle.com/${item.owner.login || 'Owner'}` :
+        platform === 'Hugging Face' ? `https://huggingface.co/${item.owner.login || 'Owner'}` :
+        platform === 'LinkedIn' ? (item.owner.login ? `https://www.linkedin.com/in/${item.owner.login}` : 'https://www.linkedin.com') : '#'
+      )
     } : { login: 'Community', avatar_url: '', html_url: '#' },
+    slug: item.slug || null,
     image: item.owner?.avatar_url || null,
     readme: item.description || ''
   };
@@ -35,6 +54,35 @@ const mapToFrontendProject = (item: any): Project => {
 // Service functions continue below...
 
 export const fetchSearch = async (query: string, category: string = 'All', platform: string = 'GitHub'): Promise<SearchResult> => {
+  // Direct return for static platforms (Phase 26)
+  if (platform.toLowerCase() === 'kaggle') {
+    return {
+      projects: [
+        { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
+      ].map(mapToFrontendProject),
+      groundingSources: [],
+      summary: "Displaying top Kaggle datasets and competitions. This platform uses static predefined data only."
+    };
+  }
+  
+  if (platform.toLowerCase() === 'linkedin') {
+    return {
+      projects: [
+        { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
+      ].map(mapToFrontendProject),
+      groundingSources: [],
+      summary: "Displaying top LinkedIn groups and professional tech discussions. This platform uses static predefined data only."
+    };
+  }
+
   const timestamp = Date.now();
   try {
     const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}&timestamp=${timestamp}`;
@@ -46,11 +94,20 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     const data = await response.json();
     console.log("BACKEND SEARCH RESULT COUNT:", Array.isArray(data) ? data.length : 0);
     
-    if (!Array.isArray(data)) {
-        throw new Error("Backend returned invalid data format (expected array)");
+    // DATA QUALITY GUARD: Identify generic placeholders (no specific project ID/slug)
+    const filteredData = Array.isArray(data) ? data.filter(item => {
+      const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.linkedin.com');
+      const hasIdentifier = !!(item.slug || (item.html_url && item.html_url.length > 30)); // Simple heuristic for non-homepage URLs
+      
+      // Keep if it matches platform AND (is not generic OR has identity for repair)
+      return !isGenericLink || hasIdentifier;
+    }) : [];
+
+    if (filteredData.length === 0) {
+        throw new Error("No high-quality results from API (generic or empty response)");
     }
 
-    const projects = data.map(mapToFrontendProject);
+    const projects = filteredData.map(mapToFrontendProject);
     
     // If backend returns 0 results for GitHub, try direct fallback to ensure discovery
     if (projects.length === 0 && platform.toLowerCase() === 'github') {
@@ -63,41 +120,29 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
       groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
   } catch (error) {
-    console.warn(`[Backend API] Search for ${platform} failed, using fallback.`, error);
+    console.warn(`[Backend API] Search for ${platform} failed or returned low-quality data, using curated fallbacks.`, error);
     
-    // No direct GitHub fallback allowed. Fall through to curated discovery.
-
-    // High-quality discovery fallbacks for all platforms (Ensure 10 items)
+    // Curated discovery fallbacks for SEARCH results (Phase 24 - specific URLs)
     let fallbackProjects: any[] = [];
     if (platform.toLowerCase() === 'hugging face') {
       fallbackProjects = [
-        { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [query, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } },
-        { id: 'hf-s2', name: `Llama-3-Instruct`, description: `State-of-the-art large language model weights and optimization guide.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'Meta-Llama', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
+        { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [query, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/StabilityAI' } },
+        { id: 'hf-s2', name: `Llama-3-Instruct`, description: `State-of-the-art large language model weights and optimization guide.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'Meta-Llama', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/meta-llama' } }
       ];
-    } else if (platform.toLowerCase() === 'kaggle') {
-      fallbackProjects = [
-        { id: 'ks-1', name: `Global Weather Trends 2024`, description: `Comprehensive climate data from 5,000+ stations worldwide.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets/zainub/global-weather-repository', stargazers_count: 8200, language: 'CSV', topics: [query, 'Data Science'], owner: { login: 'Zainub', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
-      ];
-    } else if (platform.toLowerCase() === 'linkedin') {
-      fallbackProjects = [
-        { id: 'ls-1', name: `State of Open Source 2024`, description: `A professional analysis of open source trends and growth metrics.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/posts/github_the-state-of-the-octoverse-2024-activity-7256994784711311360-R-vH', stargazers_count: 15400, language: 'Article', topics: [query, 'LinkedIn'], owner: { login: 'GitHub', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
-      ];
-    } else {
-      // Default fallback for GitHub or any other platform (Strictly local data)
+    }
+ else {
       fallbackProjects = [
         { id: 'gs-1', name: `React`, description: `A JavaScript library for building user interfaces.`, platform: 'GitHub', html_url: 'https://github.com/facebook/react', stargazers_count: 220000, language: 'TypeScript', topics: [query, 'Framework'], homepage: 'https://react.dev', owner: { login: 'Facebook', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/facebook' } },
         { id: 'gs-2', name: `Auto-GPT`, description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: 'https://github.com/Significant-Gravitas/Auto-GPT', stargazers_count: 160000, language: 'Python', topics: [query, 'AI'], homepage: 'https://agpt.co', owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/Significant-Gravitas' } }
       ];
     }
 
-    // Reach 10 items if possible
     const finalProjects = [...fallbackProjects];
     while (finalProjects.length > 0 && finalProjects.length < 10) {
-      finalProjects.push({ ...finalProjects[finalProjects.length % (fallbackProjects.length || 1)], id: `${finalProjects[0].id}_${finalProjects.length}` });
+      finalProjects.push({ ...finalProjects[finalProjects.length % fallbackProjects.length], id: `${finalProjects[0].id}_${finalProjects.length}` });
     }
 
     const mapped = finalProjects.map(mapToFrontendProject);
-
     return {
       summary: `Providing curated discovery for ${platform} matching "${query}".`,
       projects: mapped,
@@ -107,6 +152,27 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
 };
 
 export const fetchTrending = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
+  // Direct return for static platforms (Phase 26)
+  if (platform.toLowerCase() === 'kaggle') {
+    return [
+      { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+      { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+      { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+      { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+      { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
+    ].map(mapToFrontendProject);
+  }
+
+  if (platform.toLowerCase() === 'linkedin') {
+    return [
+      { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+      { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+      { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+      { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+      { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
+    ].map(mapToFrontendProject);
+  }
+
   const timestamp = Date.now();
   try {
     const url = `${BASE_URL}/trending?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}&timestamp=${timestamp}`;
@@ -122,19 +188,19 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
         throw new Error("Backend returned invalid trending format");
     }
 
-    // DATA QUALITY GUARD: If backend returns generic placeholders or lacks demos for platforms where we have them
-    const isGeneric = data.some(item => 
-      (item.html_url === 'https://www.kaggle.com/datasets') || 
-      (item.html_url === 'https://www.linkedin.com') ||
-      (platform.toLowerCase() === 'hugging face' && !item.homepage) // Force fallback for HF to get demos
-    );
+    // DATA QUALITY GUARD: Filter out individual generic placeholders instead of failing the whole request
+    const filteredTrending = Array.isArray(data) ? data.filter(item => {
+      const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.linkedin.com');
+      const hasIdentifier = !!(item.slug || (item.html_url && item.html_url.length > 30));
+      return !isGenericLink || hasIdentifier;
+    }) : [];
 
-    if (isGeneric) {
-      console.warn(`[Backend API] ${platform} returned low-quality or generic data, using curated fallbacks.`);
-      throw new Error("Low quality data detected"); 
+    if (filteredTrending.length === 0) {
+      console.warn(`[Backend API] ${platform} trending returned only generic data, using curated fallbacks.`);
+      throw new Error("Generic data detected in trending"); 
     }
 
-    return data.map(mapToFrontendProject);
+    return filteredTrending.map(mapToFrontendProject);
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
     
@@ -154,29 +220,19 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       ].map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'kaggle') {
       return [
-        { id: 'k1', name: 'Global Weather Trends 2024', description: 'Comprehensive climate data from 5,000+ stations worldwide.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/zainub/global-weather-repository', homepage: 'https://www.kaggle.com/code/zainub/global-weather-trends-eda', stars: 1240, language: 'CSV / Data', tags: ['Climate', 'Data Science'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k2', name: 'Retail Consumer Behavior', description: 'Large-scale transactional dataset for market basket analysis.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/vipin20/retail-consumer-behavior', homepage: 'https://www.kaggle.com/code/vipin20/retail-analysis-notebook', stars: 850, language: 'JSON', tags: ['Retail', 'Analytics'], owner: { login: 'DataExpert', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k3', name: 'Stock Market Real-time', description: 'Aggregated financial technical indicators for S&P 500.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/borismarjanovic/price-volume-data-for-all-us-stocks-etfs', homepage: 'https://www.kaggle.com/code/borismarjanovic/stock-analysis', stars: 2100, language: 'Python', tags: ['Finance', 'Forecasting'], owner: { login: 'QuantTeam', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k4', name: 'MNIST Handwritten Digits', description: 'The classic dataset for training computer vision models.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/hojjat/mnist-dataset', homepage: 'https://www.kaggle.com/code/hojjat/mnist-deep-learning', stars: 15400, language: 'Images', tags: ['Deep Learning', 'Computer Vision'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k5', name: 'Spotify Top 50 2024', description: 'Audio features of the most streamed songs this year.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/notshubh/spotify-top-50-2024', homepage: 'https://www.kaggle.com/code/notshubh/spotify-trends-2024', stars: 3200, language: 'CSV', tags: ['Music', 'Data Viz'], owner: { login: 'DataGeek', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k6', name: 'E-commerce User Analytics', description: 'Session logs and purchase history for churn prediction.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store', homepage: 'https://www.kaggle.com/code/mkechinov/user-segmentation', stars: 1100, language: 'SQL', tags: ['Marketing', 'ML'], owner: { login: 'BizIntelligence', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k7', name: 'House Prices: Advanced Regression', description: '79 explanatory variables describing (almost) every aspect of residential homes.', platform: 'Kaggle', url: 'https://www.kaggle.com/c/house-prices-advanced-regression-techniques', homepage: 'https://www.kaggle.com/code/serigne/stacked-regressions-top-4-on-leaderboard', stars: 4500, language: 'Python', tags: ['Regression', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k8', name: 'Titanic - Machine Learning', description: 'The legendary dataset for starting ML journeys.', platform: 'Kaggle', url: 'https://www.kaggle.com/c/titanic', homepage: 'https://www.kaggle.com/code/alexisbcook/titanic-tutorial', stars: 25000, language: 'CSV', tags: ['Beginner', 'Classification'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k9', name: 'Wine Quality Data', description: 'Physicochemical properties of Vinho Verde wine variants.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/yasserh/wine-quality-dataset', homepage: 'https://www.kaggle.com/code/yasserh/wine-quality-analysis', stars: 980, language: 'R', tags: ['Chemical', 'Modeling'], owner: { login: 'SommelierNet', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k10', name: 'Sentiment140', description: '1.6 million tweets for sentiment analysis experiments.', platform: 'Kaggle', url: 'https://www.kaggle.com/datasets/kazanova/sentiment140', homepage: 'https://www.kaggle.com/code/kazanova/sentiment-analysis-tutorial', stars: 5600, language: 'JSON', tags: ['NLP', 'Social Media'], owner: { login: 'StanfordNLP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
+        { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
+        { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
       ].map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'linkedin') {
       return [
-        { id: 'l1', name: 'The Future of AI Agents', description: 'Trending discussion on the shift from LLMs to autonomous agents.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/andrewng_ai-agents-are-the-next-frontier-activity-7185243555555555555', stars: 4500, language: 'Article', tags: ['AI Agents', 'Tech Trends'], owner: { login: 'AndrewNg', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l2', name: 'Web Dev Roadmap 2025', description: 'Visual guide to mastering modern full-stack development.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/roadmap-sh_web-development-roadmap-2025-activity-7265432109876543210', stars: 3200, language: 'Infographic', tags: ['Web Dev', 'Careers'], owner: { login: 'RoadmapSH', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l3', name: 'System Design Interview Tips', description: 'How to handle high-level architectural questions in big tech.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/alex-xu_system-design-interview-tips-activity-7195432109876543210', stars: 6700, language: 'Post', tags: ['System Design', 'Interviewing'], owner: { login: 'AlexXu', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l4', name: 'Docker vs Kubernetes 2024', description: 'Detailed breakdown of container orchestration in simple terms.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/docker_docker-vs-kubernetes-guide-activity-7175432109876543210', stars: 2100, language: 'Guide', tags: ['DevOps', 'Cloud'], owner: { login: 'DockerInc', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l5', name: 'Mental Health in Tech', description: 'Overcoming burnout and maintaining work-life balance in remote roles.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/wellbeing-tech_mental-health-tech-burnout-activity-7165432109876543210', stars: 8900, language: 'Poll', tags: ['Wellbeing', 'Remote Work'], owner: { login: 'WellTech', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l6', name: 'Python 3.13 Features', description: 'What\'s new in the latest Python release, including the JIT compiler.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/python-software-foundation_python-313-jit-compiler-activity-7245432109876543210', stars: 1400, language: 'Code Snippets', tags: ['Python', 'Software'], owner: { login: 'PythonOrg', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l7', name: 'Transitioning to Product Management', description: 'Advice for engineers looking to move into PM roles.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/product-school_engineer-to-pm-transition-activity-7235432109876543210', stars: 3100, language: 'Article', tags: ['Product', 'Career Path'], owner: { login: 'ProductSchool', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l8', name: 'Microservices Anti-patterns', description: 'Common mistakes teams make when moving to distributed systems.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/microservices-arch_anti-patterns-guide-activity-7225432109876543210', stars: 5200, language: 'Video', tags: ['Architecture', 'Best Practices'], owner: { login: 'MicroArch', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l9', name: 'The Rise of Rust', description: 'Why companies like Google and Microsoft are adopting Rust for core dev.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/microsoft-azure_why-rust-is-the-future-activity-7215432109876543210', stars: 4200, language: 'Discussion', tags: ['Rust', 'Hardcore Dev'], owner: { login: 'Microsoft', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l10', name: 'Open Source contributing Guide', description: 'How to make your first meaningful contribution to a major repo.', platform: 'LinkedIn', url: 'https://www.linkedin.com/posts/open-source-initiative_how-to-contribute-activity-7205432109876543210', stars: 7600, language: 'Checklist', tags: ['Open Source', 'Community'], owner: { login: 'OSI', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
+        { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
+        { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
       ].map(mapToFrontendProject);
     }
 

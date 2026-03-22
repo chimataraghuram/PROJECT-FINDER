@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2 } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrending } from '../services/apiService';
+import { openSafe } from '../src/utils/urlHelper';
 
 interface TrendingProjectsProps {
     favorites: Project[];
@@ -177,7 +178,11 @@ const TrendingCard: React.FC<{
                     target="_blank" 
                     rel="noreferrer"
                     className="relative group/avatar"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openSafe(project.owner?.html_url);
+                    }}
                 >
                     <img 
                         src={project.owner?.avatar_url || 'https://github.com/identicons/google.png'} 
@@ -192,7 +197,11 @@ const TrendingCard: React.FC<{
                         target="_blank" 
                         rel="noreferrer"
                         className="text-xs font-bold text-white hover:text-orange-400 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openSafe(project.owner?.html_url);
+                        }}
                     >
                         @{project.owner?.login || 'unknown'}
                     </a>
@@ -235,8 +244,9 @@ const TrendingCard: React.FC<{
                         whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(234,88,12,0.4)" }}
                         whileTap={{ scale: 0.98 }}
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
-                          if (!project.url || project.url === '#') e.preventDefault();
+                          openSafe(project.url);
                         }}
                         className={`group/btn py-3.5 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-orange-600/30 overflow-hidden relative ${project.liveUrl ? 'px-4' : 'px-8'}`}
                     >
@@ -253,8 +263,9 @@ const TrendingCard: React.FC<{
                             whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(59,130,246,0.4)" }}
                             whileTap={{ scale: 0.98 }}
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
-                              if (!project.liveUrl || project.liveUrl === '#') e.preventDefault();
+                              openSafe(project.liveUrl);
                             }}
                             className="group/btn py-3.5 px-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-blue-600/30 overflow-hidden relative"
                         >

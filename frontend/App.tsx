@@ -13,6 +13,7 @@ import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { saveProject, fetchFavorites, fetchTrending, fetchSearch } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
+import { openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
 type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending';
@@ -620,10 +621,13 @@ const App: React.FC = () => {
                               </div>
 
                               <button 
-                                onClick={() => handleSearch(project.name)}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  openSafe(project.url);
+                                }}
                                 className="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-95 transition-all"
                               >
-                                Explore Project <Github size={18} />
+                                View Project <ExternalLink size={18} />
                               </button>
                               
                               {/* Decorative Glow */}
@@ -748,6 +752,10 @@ const App: React.FC = () => {
                                       <a
                                         key={idx}
                                         href={source.uri}
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          openSafe(source.uri);
+                                        }}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex items-center gap-4 p-3 bg-white/[0.03] backdrop-blur-md rounded-xl hover:bg-white/[0.07] border border-white/5 hover:border-orange-500/30 transition-all duration-300 group/source"

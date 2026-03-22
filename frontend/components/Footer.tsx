@@ -1,6 +1,7 @@
 import React from 'react';
 import { Github, Linkedin, Send, MessageCircle, ExternalLink, Sparkles, Search, BookOpen, Globe, Heart, Layout, FileCode, User, Flame, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { openSafe } from '../src/utils/urlHelper';
 import mascotLogo from '../src/assets/logos/logo_final_v6.png';
 
 interface FooterProps {
@@ -83,6 +84,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             </div>
                             <a
                                 href="https://github.com/chimataraghuram/PROJECT-FINDER"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  openSafe("https://github.com/chimataraghuram/PROJECT-FINDER");
+                                }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-300 group shadow-2xl hover:bg-white/10"
@@ -146,6 +151,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 <div className="grid grid-cols-1 gap-3 relative z-10">
                                     <motion.a 
                                         href="https://github.com/chimataraghuram"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          openSafe("https://github.com/chimataraghuram");
+                                        }}
                                         target="_blank"
                                         rel="noreferrer"
                                         whileHover={{ scale: 1.02, y: -2 }}
@@ -155,6 +164,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                     </motion.a>
                                     <motion.a 
                                         href="https://linkedin.com/in/chimataraghuram"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          openSafe("https://linkedin.com/in/chimataraghuram");
+                                        }}
                                         target="_blank"
                                         rel="noreferrer"
                                         whileHover={{ scale: 1.02, y: -2 }}
@@ -168,6 +181,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             {/* Portfolio Mini Card */}
                             <motion.a 
                                 href="https://chimataraghuram.github.io"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  openSafe("https://chimataraghuram.github.io");
+                                }}
                                 target="_blank"
                                 rel="noreferrer"
                                 whileHover={{ scale: 1.02, y: -2 }}
@@ -199,6 +216,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                         <motion.a
                                             key={idx}
                                             href={social.url}
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              openSafe(social.url);
+                                            }}
                                             target="_blank"
                                             rel="noreferrer"
                                             whileHover={{ scale: 1.05, y: -5 }}
