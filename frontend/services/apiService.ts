@@ -3,24 +3,33 @@ import { Project, SearchResult, GroundingSource } from "../types";
 const BACKEND_URL = 'https://project-finder-api.onrender.com/api';
 
 // Mapping helper to ensure UI stability
-const mapToFrontendProject = (item: any): Project => ({
-  id: item.id?.toString() || Math.random().toString(),
-  name: item.name || 'Unknown Project',
-  description: item.description || '',
-  platform: item.platform || 'GitHub',
-  url: item.html_url || '#',
-  stars: item.stargazers_count || 0,
-  language: item.language || 'Unknown',
-  tags: item.topics || [],
-  isPublisher: false,
-  owner: item.owner ? {
-    login: item.owner.login,
-    avatar_url: item.owner.avatar_url,
-    html_url: item.owner.html_url
-  } : null,
-  image: item.owner?.avatar_url || null,
-  readme: item.description || ''
-});
+const mapToFrontendProject = (item: any): Project => {
+  // Defensive mapping to handle both backend and hardcoded fallback shapes
+  const name = item.name || 'Unknown Project';
+  const platform = item.platform || 'GitHub';
+  const repoUrl = item.html_url || item.url || '#';
+  const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
+  const topics = item.topics || item.tags || [];
+  
+  return {
+    id: item.id?.toString() || Math.random().toString(),
+    name,
+    description: item.description || '',
+    platform,
+    url: repoUrl,
+    stars: stars,
+    language: item.language || 'Unknown',
+    tags: topics,
+    isPublisher: false,
+    owner: item.owner ? {
+      login: item.owner.login || 'Owner',
+      avatar_url: item.owner.avatar_url || '',
+      html_url: item.owner.html_url || item.html_url || '#'
+    } : { login: 'Community', avatar_url: '', html_url: '#' },
+    image: item.owner?.avatar_url || null,
+    readme: item.description || ''
+  };
+};
 
 // Service functions continue below...
 
@@ -34,8 +43,13 @@ export const searchProjects = async (query: string, category: string = 'All', pl
     if (!response.ok) throw new Error(`Backend search failed`);
     
     const data = await response.json();
-    console.log("BACKEND SEARCH RESULT COUNT:", data.length || 0);
-    const projects = (data || []).map(mapToFrontendProject);
+    console.log("BACKEND SEARCH RESULT COUNT:", Array.isArray(data) ? data.length : 0);
+    
+    if (!Array.isArray(data)) {
+        throw new Error("Backend returned invalid data format (expected array)");
+    }
+
+    const projects = data.map(mapToFrontendProject);
     
     // If backend returns 0 results for GitHub, try direct fallback to ensure discovery
     if (projects.length === 0 && platform.toLowerCase() === 'github') {
@@ -53,25 +67,25 @@ export const searchProjects = async (query: string, category: string = 'All', pl
     // No direct GitHub fallback allowed. Fall through to curated discovery.
 
     // High-quality discovery fallbacks for all platforms (Ensure 10 items)
-    let fallbackProjects: Project[] = [];
+    let fallbackProjects: any[] = [];
     if (platform.toLowerCase() === 'hugging face') {
       fallbackProjects = [
-        { id: 'hf-s1', name: `${query}-Model`, description: `Specialized AI model optimized for ${query} tasks.`, platform: 'Hugging Face', url: 'https://huggingface.co', stars: 2400, language: 'Python', tags: [query, 'AI'], owner: { login: 'HF-Hub', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } },
-        { id: 'hf-s2', name: `Universal-${query}`, description: `General purpose ${query} architecture with state-of-the-art weights.`, platform: 'Hugging Face', url: 'https://huggingface.co', stars: 1100, language: 'PyTorch', tags: [query, 'Transformer'], owner: { login: 'OpenSourceAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
+        { id: 'hf-s1', name: `${query}-Model`, description: `Specialized AI model optimized for ${query} tasks.`, platform: 'Hugging Face', html_url: 'https://huggingface.co', stargazers_count: 2400, language: 'Python', topics: [query, 'AI'], owner: { login: 'HF-Hub', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } },
+        { id: 'hf-s2', name: `Universal-${query}`, description: `General purpose ${query} architecture with state-of-the-art weights.`, platform: 'Hugging Face', html_url: 'https://huggingface.co', stargazers_count: 1100, language: 'PyTorch', topics: [query, 'Transformer'], owner: { login: 'OpenSourceAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
       ];
     } else if (platform.toLowerCase() === 'kaggle') {
       fallbackProjects = [
-        { id: 'ks-1', name: `Global ${query} Dataset`, description: `Aggregated data related to ${query} from multiple sources.`, platform: 'Kaggle', url: 'https://www.kaggle.com', stars: 3200, language: 'CSV', tags: [query, 'Data Science'], owner: { login: 'Kaggle_Admin', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+        { id: 'ks-1', name: `Global ${query} Dataset`, description: `Aggregated data related to ${query} from multiple sources.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com', stargazers_count: 3200, language: 'CSV', topics: [query, 'Data Science'], owner: { login: 'Kaggle_Admin', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
       ];
     } else if (platform.toLowerCase() === 'linkedin') {
       fallbackProjects = [
-        { id: 'ls-1', name: `Mastering ${query}`, description: `A professional guide and discussion on ${query} engineering.`, platform: 'LinkedIn', url: 'https://www.linkedin.com', stars: 8900, language: 'Article', tags: [query, 'LinkedIn'], owner: { login: 'LinkedIn_Expert', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
+        { id: 'ls-1', name: `Mastering ${query}`, description: `A professional guide and discussion on ${query} engineering.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com', stargazers_count: 8900, language: 'Article', topics: [query, 'LinkedIn'], owner: { login: 'LinkedIn_Expert', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
       ];
     } else {
       // Default fallback for GitHub or any other platform (Strictly local data)
       fallbackProjects = [
-        { id: 'gs-1', name: `${query}-Utility`, description: `A powerful open-source tool for ${query} optimization.`, platform: 'GitHub', url: 'https://github.com', stars: 5400, language: 'TypeScript', tags: [query, 'OSS'], owner: { login: 'OpenSourceMain', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
-        { id: 'gs-2', name: `${query}-Core`, description: `The foundational library for ${query} development systems.`, platform: 'GitHub', url: 'https://github.com', stars: 3200, language: 'JavaScript', tags: [query, 'Library'], owner: { login: 'CoreMaintainer', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } }
+        { id: 'gs-1', name: `${query}-Utility`, description: `A powerful open-source tool for ${query} optimization.`, platform: 'GitHub', html_url: 'https://github.com', stargazers_count: 5400, language: 'TypeScript', topics: [query, 'OSS'], owner: { login: 'OpenSourceMain', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
+        { id: 'gs-2', name: `${query}-Core`, description: `The foundational library for ${query} development systems.`, platform: 'GitHub', html_url: 'https://github.com', stargazers_count: 3200, language: 'JavaScript', topics: [query, 'Library'], owner: { login: 'CoreMaintainer', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } }
       ];
     }
 
@@ -101,8 +115,13 @@ export const fetchTrendingProjects = async (platform: string = 'GitHub', categor
     if (!response.ok) throw new Error(`Backend trending failed`);
 
     const data = await response.json();
-    console.log("BACKEND RESULT COUNT:", data.length || 0);
-    return (data || []).map(mapToFrontendProject);
+    console.log("BACKEND RESULT COUNT:", Array.isArray(data) ? data.length : 0);
+    
+    if (!Array.isArray(data)) {
+        throw new Error("Backend returned invalid trending format");
+    }
+
+    return data.map(mapToFrontendProject);
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
     
