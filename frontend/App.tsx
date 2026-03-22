@@ -213,7 +213,7 @@ const App: React.FC = () => {
     }
   }, [result, searchState.isLoading]);
 
-  const handleSearch = async (query: string, category: string = selectedCategory) => {
+  const handleSearch = async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
     if (!query.trim()) {
       // Return to home state if search is cleared
       setSearchState({ isLoading: false, error: null, hasSearched: false });
@@ -227,7 +227,7 @@ const App: React.FC = () => {
     setSearchState({ isLoading: true, error: null, hasSearched: true });
     setResult(null);
     try {
-      const data = await searchProjects(query, category);
+      const data = await searchProjects(query, category, platform);
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
     } catch (err: any) {
@@ -239,16 +239,16 @@ const App: React.FC = () => {
     }
   };
 
-  // Trigger search on category change for real-time results
+  // Trigger search on category or platform change for real-time results
   useEffect(() => {
     if (searchState.hasSearched) {
       const query = localStorage.getItem('last-search-query') || '';
       if (query) {
         setResult(null); // Immediate UI reset
-        handleSearch(query, selectedCategory);
+        handleSearch(query, selectedCategory, filterPlatform);
       }
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, filterPlatform]);
 
   const filteredProjects = result?.projects || [];
 
