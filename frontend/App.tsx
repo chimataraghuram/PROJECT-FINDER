@@ -360,28 +360,28 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* --- MOBILE NAVIGATION (Row 1 Only) --- */}
-          <div className="block md:hidden px-4 pt-6 pb-2 relative z-[100]">
-            {/* Row 1: Logo (Left) | Actions (Right) */}
+          {/* --- MOBILE HEADER (Logo Left | AI + User Right) --- */}
+          <div className="block md:hidden fixed top-0 left-0 right-0 z-[2000] px-4 py-3 bg-[#0f172a]/60 backdrop-blur-[40px] border-b border-white/5">
             <div className="flex items-center justify-between">
-              {/* Logo Island */}
+              {/* Logo (Left) */}
               <div 
-                className="p-1 px-1.5 bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl flex items-center justify-center cursor-pointer"
+                className="flex items-center gap-2 cursor-pointer"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
                   <img src={mascotLogo} className="w-8 h-8 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
                 </div>
+                <span className="text-sm font-black text-white tracking-tighter uppercase">Project Finder</span>
               </div>
 
-              {/* Action Island */}
-              <div className="p-1 px-1 bg-[#0f172a]/40 backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-1.5 shadow-2xl">
+              {/* Actions (Right) */}
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center transition-transform active:scale-90"
+                  className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center active:scale-90 transition-transform"
                 >
-                  <Bot className="w-5 h-5" />
+                  <Bot className="w-4.5 h-4.5" />
                 </button>
                 <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
               </div>
@@ -390,7 +390,7 @@ const App: React.FC = () => {
 
 
 
-          <main className="relative z-10 pt-[10px] md:pt-0">
+          <main className="relative z-10 pt-[60px] md:pt-0">
             {/* Global Mobile Sticky Logo Pill */}
 
             {/* Trending View */}
@@ -419,7 +419,7 @@ const App: React.FC = () => {
             {currentView === 'search' && (
 
               /* SEARCH VIEW */
-              <div className={`animate-fade-in home-content-wrapper pb-24 md:pb-0 ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
+              <div className={`animate-fade-in home-content-wrapper pb-32 md:pb-0 ${!searchState.hasSearched ? 'flex flex-col' : 'pt-4 md:pt-40'}`}>
                 {/* Hero Section (Phase 3 Simplified) */}
                 <section className={`transition-all duration-1000 ease-in-out px-4 relative overflow-hidden home-section ${searchState.hasSearched ? 'py-4 md:py-8' : 'pt-12 md:pt-32 pb-8 md:pb-20'}`}>
                   <div className="text-center mb-6 md:mb-16 space-y-8 md:space-y-8 relative z-10 max-w-6xl mx-auto">
@@ -765,12 +765,11 @@ const App: React.FC = () => {
                     </div>
                   </div>
                 )}
-
               </div>
             )}
 
             {currentView === 'favorites' && (
-              <div className="max-w-7xl mx-auto px-4 py-12 md:py-32 animate-fade-in relative z-10 pb-24 md:pb-0">
+              <div className="max-w-7xl mx-auto px-4 py-12 md:py-32 animate-fade-in relative z-10 pb-32 md:pb-0">
                 <div className="text-center mb-16 space-y-4">
                   <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
                     Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">Library</span>

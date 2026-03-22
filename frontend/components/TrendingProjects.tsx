@@ -340,7 +340,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     );
 
     return (
-        <div className="pt-32 pb-20 md:pt-40 px-4 max-w-7xl mx-auto min-h-screen relative z-10">
+        <div className="pt-32 pb-32 md:pt-40 px-4 max-w-7xl mx-auto min-h-screen relative z-10">
             <AnimatePresence>
                 {showToast && (
                     <motion.div 

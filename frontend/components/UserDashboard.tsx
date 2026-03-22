@@ -44,7 +44,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="max-w-7xl mx-auto px-4 py-12"
+      className="max-w-7xl mx-auto px-4 py-12 pb-32 md:pb-12"
     >
       {/* Profile Header */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-center gap-8 mb-12 glass-card p-8 rounded-[3rem]">
