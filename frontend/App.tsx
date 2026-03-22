@@ -75,16 +75,6 @@ const DEFAULT_FAVORITES: Project[] = [
     tags: ["Autonomous", "GPT-4", "Python"],
     stars: "160k",
     type: 'project'
-  },
-  {
-    id: 'def-6',
-    name: "chimataraghuram",
-    description: "Featured developer profile for Raghuram Chimata. Full-stack architect and creator of Project Finder.",
-    platform: 'GitHub',
-    url: "https://github.com/chimataraghuram",
-    tags: ["Developer", "Founder", "UI/UX"],
-    stars: "500",
-    type: 'readme'
   }
 ];
 
