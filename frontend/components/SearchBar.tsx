@@ -49,27 +49,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  const isFirstRender = useRef(true);
-
-  // Debounce search effect for real-time typing
-  useEffect(() => {
-    // Skip the very first automatic render trigger
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      // Don't auto-search if the typing is just 1 letter. Empty ('') is fine to reset home.
-      const trimmedQuery = query.trim();
-      if (!trimmedQuery || trimmedQuery.length >= 2) {
-        onSearch(trimmedQuery);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  // Removed debounced search effect for better typing experience. 
+  // Search now strictly requires Enter or 'Explore' button click.
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
