@@ -25,20 +25,16 @@ const mapToFrontendProject = (item: any): Project => ({
 // Service functions continue below...
 
 export const searchProjects = async (query: string, category: string = 'All'): Promise<SearchResult> => {
+  const timestamp = Date.now();
   try {
-    const url = `${BACKEND_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&timestamp=${Date.now()}`;
-    
-    console.log("BACKEND API CALLED:", url);
+    const url = `${BACKEND_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&timestamp=${timestamp}`;
+    console.log("BACKEND API TRYING:", url);
 
     const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Backend search failed`);
     
-    if (!response.ok) {
-      console.error(`[Backend API] Search failed with status: ${response.status}`);
-      throw new Error(`Failed to load projects`);
-    }
     const data = await response.json();
-    
-    console.log("RESULT COUNT:", data.length || 0);
+    console.log("BACKEND RESULT COUNT:", data.length || 0);
     const projects = (data || []).map(mapToFrontendProject);
     
     return {
@@ -47,30 +43,55 @@ export const searchProjects = async (query: string, category: string = 'All'): P
       groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
   } catch (error) {
-    console.error('[Backend API] Search error:', error);
-    return { summary: '', projects: [], groundingSources: [] };
+    console.warn('[Backend API] Search failed, falling back to direct GitHub API.', error);
+    // FALLBACK TO DIRECT GITHUB API
+    try {
+      const q = `${query} in:name,description stars:>10${category !== 'All' ? ` topic:${category.toLowerCase()}` : ''}`;
+      const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&timestamp=${timestamp}`;
+      console.log("FALLBACK API CALLED:", url);
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error("GitHub fallback failed");
+      const data = await res.json();
+      const projects = (data.items || []).map(mapToFrontendProject);
+      return {
+        summary: `Found ${projects.length} results via GitHub direct fallback.`,
+        projects,
+        groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+      };
+    } catch (fallbackError) {
+      console.error('All search attempts failed:', fallbackError);
+      return { summary: 'Unable to connect to GitHub API.', projects: [], groundingSources: [] };
+    }
   }
 };
 
 export const fetchTrendingProjects = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
+  const timestamp = Date.now();
   try {
-    const url = `${BACKEND_URL}/trending?category=${encodeURIComponent(category)}&timestamp=${Date.now()}`;
-
-    console.log("BACKEND API CALLED:", url);
+    const url = `${BACKEND_URL}/trending?category=${encodeURIComponent(category)}&timestamp=${timestamp}`;
+    console.log("BACKEND API TRYING:", url);
 
     const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Backend trending failed`);
 
-    if (!response.ok) {
-      console.error(`[Backend API] Trending fetch failed with status: ${response.status}`);
-      throw new Error(`Failed to load projects`);
-    }
     const data = await response.json();
-    
-    console.log("RESULT COUNT:", data.length || 0);
+    console.log("BACKEND RESULT COUNT:", data.length || 0);
     return (data || []).map(mapToFrontendProject);
   } catch (error) {
-    console.error('[Backend API] Trending fetch error:', error);
-    return [];
+    console.warn('[Backend API] Trending failed, falling back to direct GitHub API.', error);
+    // FALLBACK TO DIRECT GITHUB API
+    try {
+      const q = `stars:>500 created:>2024-01-01${category !== 'All' ? ` topic:${category.toLowerCase()}` : ''}`;
+      const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&timestamp=${timestamp}`;
+      console.log("FALLBACK API CALLED:", url);
+      const res = await fetch(url, { cache: 'no-store' });
+      if (!res.ok) throw new Error("GitHub fallback failed");
+      const data = await res.json();
+      return (data.items || []).map(mapToFrontendProject);
+    } catch (fallbackError) {
+      console.error('All trending attempts failed:', fallbackError);
+      return [];
+    }
   }
 };
 
