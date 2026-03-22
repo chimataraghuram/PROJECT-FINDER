@@ -99,41 +99,40 @@ Discover Real-World Open Source Projects 🚀
 
 ---
 
+## 🔍 Unified Discovery Engine
+Project Finder now features a **platform-aware Discovery Engine** that aggregates high-quality results from across the developer ecosystem:
+- **GitHub**: Real-time trending and star-filtered repository search.
+- **Hugging Face**: Live models and state-of-the-art AI discovery (Top 10 per query).
+- **Kaggle**: High-impact datasets and competition starters.
+- **LinkedIn**: Curated technical threads and professional insights.
+
+---
+
 ## 🔍 Features
 
 | | Feature | Description |
 |---|---|---|
-| 🔍 | **Smart Search** | Search across GitHub, Hugging Face, Kaggle, and LinkedIn simultaneously. |
-| ❤️ | **Save Favorites** | Securely save your favorite projects and profiles via Firebase integration. |
-| 🎨 | **README Gallery** | A curated visual gallery of the world's best GitHub profile designs. |
+| 🔍 | **Multi-Platform Search** | Search GitHub, Hugging Face, Kaggle, and LinkedIn with a single query. |
+| ❤️ | **Cloud Favorites** | Save your favorite projects to a persistent MongoDB database. |
+| 🚀 | **Live API Proxy** | Proxied GitHub/HF requests for high-frequency, authentic discovery. |
 | 📱 | **Responsive Design** | Pixel-perfect experience across mobile, tablet, and desktop. |
-| 🚀 | **Dynamic 3-Island Nav**| Modular layout with independent glass islands and dynamic scroll scaling. |
-| ⚡ | **Fast UI** | Blazing fast search and interactions powered by React and Framer Motion. |
-| 🤖 | **Techboy Assistant** | Your personal AI guide to help you find the right tools and projects. |
-| ⭐ | **Live Analytics** | Seamlessly extract exact source intelligence and repository metrics. |
+| ⚡ | **Full-Stack Performance** | Blazing fast responses via Node.js backend hosted on Render. |
 
 ---
 
 ## 🧩 Problem Solved
 
-Finding the right project ideas on GitHub can be overwhelming, especially for students and beginner developers. With millions of repositories available, it becomes difficult to identify relevant, high-quality, and practical projects to learn from or build. Many learners struggle to discover projects that match their skills, interests, or goals.
-
-Techboy Project Finder solves this problem by providing a fast and user-friendly platform to explore real-world open source projects. By integrating real-time data from GitHub, it allows users to easily search, filter, and discover trending projects, helping them learn faster, build effectively, and contribute to open source with confidence.
+Finding the right project ideas on GitHub can be overwhelming. Techboy Project Finder solves this by providing a unified, real-time interface to explore high-quality repositories and models across multiple platforms, saving you hours of research.
 
 ---
-
-## 💡 Solution
-
-Techboy Project Finder addresses this problem by providing a streamlined platform to discover real-world open source projects directly from GitHub. By integrating the GitHub API, the application delivers real-time search and trending repositories, allowing users to quickly find relevant projects based on their interests and skill levels. The intuitive and responsive interface simplifies exploration, enabling students and developers to easily browse, analyze, and select projects for learning, building, or contributing. This reduces the time and effort required to find meaningful projects and enhances the overall learning experience.
-
----
-
 
 ## 🛠️ Tech Stack
 
-- **Backend**: [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)
-- **Database**: [MongoDB](https://www.mongodb.com/)
-- **Authentication**: JWT (JSON Web Tokens)
+- **Frontend**: [React v18](https://reactjs.org/), [Framer Motion](https://www.framer.com/motion/)
+- **Backend**: [Node.js](https://nodejs.org/) (Express) hosted on [Render](https://render.com/)
+- **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas)
+- **APIs**: GitHub Search V3, Hugging Face Models API
+- **Authentication**: JWT (Secure state management)
 
 ---
 
