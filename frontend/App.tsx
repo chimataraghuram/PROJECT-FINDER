@@ -443,7 +443,7 @@ const App: React.FC = () => {
                          <span>All Projects</span>
                       </motion.button>
 
-                      <p className="text-gray-400 text-[10px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 hidden md:block">
+                      <p className="text-gray-400 text-[11px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 text-center">
                         The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
                       </p>
                     </div>
