@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { SearchBar, CATEGORIES } from './components/SearchBar';
 import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
@@ -213,7 +213,7 @@ const App: React.FC = () => {
     }
   }, [result, searchState.isLoading]);
 
-  const handleSearch = async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
+  const handleSearch = useCallback(async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
     const trimmedQuery = query.trim();
     
     if (!trimmedQuery) {
@@ -238,18 +238,8 @@ const App: React.FC = () => {
         hasSearched: true 
       });
     }
-  };
-
-  // Trigger search on category or platform change for real-time results
-  useEffect(() => {
-    if (searchState.hasSearched) {
-      const query = localStorage.getItem('last-search-query') || '';
-      if (query) {
-        setResult(null); // Immediate UI reset
-        handleSearch(query, selectedCategory, filterPlatform);
-      }
-    }
   }, [selectedCategory, filterPlatform]);
+
 
   const filteredProjects = result?.projects || [];
 
