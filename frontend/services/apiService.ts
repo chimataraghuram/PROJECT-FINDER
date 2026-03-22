@@ -22,44 +22,24 @@ const mapToFrontendProject = (item: any): Project => ({
   readme: item.description || ''
 });
 
-const getGitHubTopic = (category: string) => {
-  const mapping: Record<string, string> = {
-    'AI': 'ai',
-    'Web': 'web-dev',
-    'App': 'app-dev',
-    'ML': 'machine-learning',
-    'Fun': 'fun'
-  };
-  return mapping[category] || category.toLowerCase();
-};
+// Service functions continue below...
 
 export const searchProjects = async (query: string, category: string = 'All'): Promise<SearchResult> => {
   try {
-    const token = import.meta.env.VITE_GITHUB_TOKEN;
-    const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json',
-    };
-    if (token && token !== 'your_token_here') {
-      headers['Authorization'] = `token ${token}`;
-    }
-
-    const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
-    // User requested query: q=${userInput} in:name,description stars:>10
-    const q = `${query} in:name,description stars:>10${topic}`;
-    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q).replace(/%20/g, '+')}&sort=stars&order=desc&timestamp=${Date.now()}`;
+    const url = `${BACKEND_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&timestamp=${Date.now()}`;
     
-    console.log("API CALLED:", url);
+    console.log("BACKEND API CALLED:", url);
 
-    const response = await fetch(url, { headers, cache: 'no-store' });
+    const response = await fetch(url, { cache: 'no-store' });
     
     if (!response.ok) {
-      console.error(`[GitHub API] Search failed with status: ${response.status}`);
+      console.error(`[Backend API] Search failed with status: ${response.status}`);
       throw new Error(`Failed to load projects`);
     }
     const data = await response.json();
     
-    console.log("RESULT COUNT:", data.items?.length || 0);
-    const projects = (data.items || []).map(mapToFrontendProject);
+    console.log("RESULT COUNT:", data.length || 0);
+    const projects = (data || []).map(mapToFrontendProject);
     
     return {
       summary: `Found ${projects.length} results via GitHub real-time search${category !== 'All' ? ` in ${category}` : ''}.`,
@@ -67,40 +47,29 @@ export const searchProjects = async (query: string, category: string = 'All'): P
       groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
   } catch (error) {
-    console.error('[GitHub API] Search error:', error);
+    console.error('[Backend API] Search error:', error);
     return { summary: '', projects: [], groundingSources: [] };
   }
 };
 
 export const fetchTrendingProjects = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
   try {
-    const token = import.meta.env.VITE_GITHUB_TOKEN;
-    const headers: HeadersInit = {
-      'Accept': 'application/vnd.github.v3+json',
-    };
-    if (token && token !== 'your_token_here') {
-      headers['Authorization'] = `token ${token}`;
-    }
+    const url = `${BACKEND_URL}/trending?category=${encodeURIComponent(category)}&timestamp=${Date.now()}`;
 
-    const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
-    // User requested query: q=stars:>500 created:>2024-01-01
-    const q = `stars:>500 created:>2024-01-01${topic}`;
-    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q).replace(/%20/g, '+')}&sort=stars&order=desc&timestamp=${Date.now()}`;
+    console.log("BACKEND API CALLED:", url);
 
-    console.log("API CALLED:", url);
-
-    const response = await fetch(url, { headers, cache: 'no-store' });
+    const response = await fetch(url, { cache: 'no-store' });
 
     if (!response.ok) {
-      console.error(`[GitHub API] Trending fetch failed with status: ${response.status}`);
+      console.error(`[Backend API] Trending fetch failed with status: ${response.status}`);
       throw new Error(`Failed to load projects`);
     }
     const data = await response.json();
     
-    console.log("RESULT COUNT:", data.items?.length || 0);
-    return (data.items || []).map(mapToFrontendProject);
+    console.log("RESULT COUNT:", data.length || 0);
+    return (data || []).map(mapToFrontendProject);
   } catch (error) {
-    console.error('[GitHub API] Trending fetch error:', error);
+    console.error('[Backend API] Trending fetch error:', error);
     return [];
   }
 };

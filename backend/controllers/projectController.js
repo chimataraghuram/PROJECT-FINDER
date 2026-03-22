@@ -1,44 +1,72 @@
 import axios from 'axios';
 import FavoriteProject from '../models/FavoriteProject.js';
 
+// Helper for GitHub topic mapping
+const getGitHubTopic = (category) => {
+  const map = {
+    'AI': 'ai+OR+topic:machine-learning+OR+topic:artificial-intelligence',
+    'Web': 'web-development+OR+topic:frontend+OR+topic:backend',
+    'Mobile': 'mobile+OR+topic:android+OR+topic:ios+OR+topic:react-native',
+    'Data': 'data-science+OR+topic:data-analysis+OR+topic:visualization',
+    'Game': 'game-dev+OR+topic:unity+OR+topic:unreal-engine',
+    'Tools': 'dev-tools+OR+topic:cli+OR+topic:automation',
+    'Agent': 'ai-agents+OR+topic:agents+OR+topic:llm-apps'
+  };
+  return map[category] || category.toLowerCase();
+};
+
 // Proxy GitHub Trending
 export const getTrendingProjects = async (req, res) => {
-  const { category = 'All' } = req.query;
+  const { category = 'All', timestamp } = req.query;
   try {
-    let query = 'stars:>5000';
-    if (category !== 'All') {
-      const categoryMap = {
-        'AI': 'topic:machine-learning',
-        'Web': 'topic:frontend',
-        'ML': 'topic:machine-learning',
-      };
-      query += ` ${categoryMap[category] || category}`;
-    }
+    const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
+    // Optimized Phase 7 Query
+    const q = `stars:>500+created:>2024-01-01${topic}`;
+    
+    console.log("BACKEND API CALLED (Trending):", `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc`);
 
     const response = await axios.get(
-      `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=12`,
-      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=30`,
+      { 
+        headers: { 
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+        } 
+      }
     );
 
-    // Map to the format the frontend expects internally (or we will map it in apiService.ts)
-    // To minimize UI disturbance, we'll return a clean JSON and let the frontend map it.
     res.json(response.data.items);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("GITHUB PROXY ERROR:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed to load projects" });
   }
 };
 
 // Proxy GitHub Search
 export const searchProjects = async (req, res) => {
-  const { q } = req.query;
+  const { q, category = 'All', timestamp } = req.query;
+  if (!q) return res.status(400).json({ message: "Query is required" });
+
   try {
+    const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
+    // Optimized Phase 7 Query
+    const query = `${q}+in:name,description+stars:>10${topic}`;
+
+    console.log("BACKEND API CALLED (Search):", `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc`);
+
     const response = await axios.get(
-      `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=15`,
-      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30`,
+      { 
+        headers: { 
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+        } 
+      }
     );
     res.json(response.data.items);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("GITHUB PROXY ERROR:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed to load projects" });
   }
 };
 
@@ -109,7 +137,12 @@ export const searchUsers = async (req, res) => {
   try {
     const response = await axios.get(
       `https://api.github.com/search/users?q=${encodeURIComponent(q)}&per_page=12`,
-      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      { 
+        headers: { 
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+        } 
+      }
     );
     res.json(response.data.items);
   } catch (error) {
@@ -123,7 +156,12 @@ export const getProjectReadme = async (req, res) => {
   try {
     const response = await axios.get(
       `https://api.github.com/repos/${owner}/${repo}/readme`,
-      { headers: { 'Accept': 'application/vnd.github.v3.raw' } }
+      { 
+        headers: { 
+          'Accept': 'application/vnd.github.v3.raw',
+          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+        } 
+      }
     );
     res.send(response.data);
   } catch (error) {
@@ -137,7 +175,12 @@ export const getUserProfile = async (req, res) => {
   try {
     const response = await axios.get(
       `https://api.github.com/users/${username}`,
-      { headers: { 'Accept': 'application/vnd.github.v3+json' } }
+      { 
+        headers: { 
+          'Accept': 'application/vnd.github.v3+json',
+          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+        } 
+      }
     );
     res.json(response.data);
   } catch (error) {
