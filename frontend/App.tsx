@@ -37,14 +37,33 @@ const DEFAULT_FAVORITES: Project[] = [
     type: 'project'
   },
   {
-    id: 'def-portfolio',
-    name: "Developer Portfolio",
-    description: "The official portfolio of Chimata Raghuram. Featuring high-end UI/UX designs and full-stack AI implementations.",
+    id: 'def-openclaw',
+    name: "OpenClaw",
+    description: "The leading open-source personal TECHBOY AI Assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord.",
     platform: 'GitHub',
-    url: "https://github.com/chimataraghuram/Portfolio",
-    tags: ["Portfolio", "Next.js", "Three.js"],
-    stars: "850",
-    isPublisher: true,
+    url: "https://github.com/OpenClaw/OpenClaw",
+    tags: ["AI AGENT", "AUTONOMOUS", "PYTHON"],
+    stars: "12.5k",
+    type: 'project'
+  },
+  {
+    id: 'def-nanoclaw',
+    name: "NanoClaw",
+    description: "A security-first, lightweight alternative to OpenClaw. Runs AI actions in isolated containers for maximum safety.",
+    platform: 'GitHub',
+    url: "https://github.com/NanoClaw/NanoClaw",
+    tags: ["SECURE AI", "SANDBOXED", "TYPESCRIPT"],
+    stars: "8.2k",
+    type: 'project'
+  },
+  {
+    id: 'def-picoclaw',
+    name: "PicoClaw",
+    description: "Ultra-fast, edge-optimized AI assistant for mobile devices. Highly efficient and runs completely on-device.",
+    platform: 'GitHub',
+    url: "https://github.com/PicoClaw/PicoClaw",
+    tags: ["MOBILE AI", "EDGE", "SWIFT"],
+    stars: "4.1k",
     type: 'project'
   },
   {
