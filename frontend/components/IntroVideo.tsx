@@ -59,6 +59,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                             }
                         }}
                         className="w-full h-full object-contain object-center"
+                        style={{ transform: 'scale(1.1)' }}
                     />
                 </motion.div>
 
