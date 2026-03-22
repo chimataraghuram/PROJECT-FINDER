@@ -275,25 +275,15 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [activePlatform, setActivePlatform] = useState('GitHub');
-    const [activeCategory, setActiveCategory] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
-    const CATEGORIES = [
-      { id: 'All', label: 'All Projects', icon: Globe },
-      { id: 'AI', label: 'AI', icon: Bot },
-      { id: 'Web', label: 'Web Dev', icon: Code },
-      { id: 'App', label: 'App Dev', icon: Rocket },
-      { id: 'ML', label: 'Machine Learning', icon: Brain },
-      { id: 'Fun', label: 'Fun Projects', icon: Sparkles },
-    ];
 
-    const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory) => {
+    const loadTrending = useCallback(async (platform = activePlatform) => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchTrendingProjects(platform, category);
+            const data = await fetchTrendingProjects(platform, 'All');
             if (!data || data.length === 0) {
                 setProjects([]);
             } else {
@@ -305,19 +295,19 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
             setLoading(false);
             setIsRefreshing(false);
         }
-    }, [activePlatform, activeCategory]);
+    }, [activePlatform]);
 
     useEffect(() => {
-        loadTrending(activePlatform, activeCategory);
+        loadTrending(activePlatform);
 
         // Auto-refresh every 10 minutes to respect API rate limits
         const interval = setInterval(() => {
-            console.log(`Auto-refreshing trending data for ${activePlatform}/${activeCategory}...`);
-            loadTrending(activePlatform, activeCategory);
+            console.log(`Auto-refreshing trending data for ${activePlatform}...`);
+            loadTrending(activePlatform);
         }, 600000);
 
         return () => clearInterval(interval);
-    }, [activePlatform, activeCategory, loadTrending]);
+    }, [activePlatform, loadTrending]);
 
     const handleRefresh = () => {
         setIsRefreshing(true);
@@ -326,12 +316,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
 
     const handlePlatformChange = (p: string) => {
         setActivePlatform(p);
-        loadTrending(p, activeCategory);
-    };
-
-    const handleCategoryChange = (c: string) => {
-        setActiveCategory(c);
-        loadTrending(activePlatform, c);
+        loadTrending(p);
     };
 
     const handleShare = (url: string) => {
@@ -340,11 +325,6 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
         setTimeout(() => setShowToast(false), 3000);
     };
 
-    const filteredProjects = projects.filter(p => 
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
 
     return (
         <div className="pt-32 pb-32 md:pt-40 px-4 max-w-7xl mx-auto min-h-screen relative z-10">
@@ -420,58 +400,13 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                     </motion.button>
                 </div>
 
-                {/* Search & Categories */}
-                <div className="mt-8 flex flex-col items-center gap-6">
-                    {/* Inner Search Bar */}
-                    <div className="relative w-full max-w-md group">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 group-focus-within:text-orange-500 transition-colors" />
-                        <input
-                            type="text"
-                            placeholder="Find specific topics, datasets, or tags..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-[#0f172a]/50 border border-white/10 rounded-full py-3.5 pl-14 pr-12 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-500/50 focus:bg-[#0f172a] focus:ring-1 focus:ring-orange-500/50 transition-all font-medium backdrop-blur-md shadow-inner"
-                        />
-                        {searchQuery && (
-                            <button
-                                onClick={() => setSearchQuery('')}
-                                className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white hover:bg-white/10 p-1 rounded-full transition-all"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Tech Filters */}
-                    <div className="flex flex-wrap justify-center gap-3">
-                        <div className="w-full flex items-center justify-center gap-2 mb-2">
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Filter by Tech</span>
-                        </div>
-                    {CATEGORIES.map((c) => (
-                        <motion.button
-                            key={c.id}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleCategoryChange(c.id)}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
-                                activeCategory === c.id
-                                ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
-                                : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border-white/5'
-                            }`}
-                        >
-                            <c.icon size={14} />
-                            {c.label}
-                        </motion.button>
-                    ))}
-                    </div>
-                </div>
             </div>
 
             <div className="flex items-center gap-4 mb-12">
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="flex items-center gap-2 px-8 py-3 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-2xl">
                     <Flame size={14} className="text-orange-500 animate-pulse" />
-                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
+                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform}</span>
                     <div className="ml-2 px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/30">
                         <span className="text-[8px] font-black text-orange-500">REAL-TIME</span>
                     </div>
@@ -495,7 +430,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                     </div>
                 ) : (
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project, index) => (
+                        {projects.map((project, index) => (
                             <TrendingCard 
                                 key={project.id || `${project.name}-${index}`} 
                                 project={project}
@@ -512,15 +447,15 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 )}
             </div>
 
-            {!loading && filteredProjects.length === 0 && (
+            {!loading && projects.length === 0 && (
                 <div className="text-center py-20 bg-white/5 rounded-[2.5rem] border border-dashed border-white/10">
                     <Rocket size={48} className="text-gray-700 mx-auto mb-6 opacity-20" />
-                    <p className="text-gray-500 font-bold text-xl uppercase tracking-tighter">No trending projects found matching your search</p>
+                    <p className="text-gray-500 font-bold text-xl uppercase tracking-tighter">No trending projects found</p>
                     <button 
-                        onClick={() => setSearchQuery('')}
+                        onClick={handleRefresh}
                         className="mt-6 text-orange-500 font-black uppercase tracking-widest text-xs hover:underline"
                     >
-                        Clear Search
+                        Try Refreshing Feed
                     </button>
                 </div>
             )}
