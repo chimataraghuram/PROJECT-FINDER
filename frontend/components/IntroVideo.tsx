@@ -45,7 +45,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                     initial={{ scale: 0.7, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, type: "spring", stiffness: 120, damping: 15 }}
-                    className="w-40 h-40 md:w-56 md:h-56 rounded-[24px] overflow-hidden mb-14 md:mb-20 shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(249,115,22,0.2)] flex items-center justify-center bg-black"
+                    className="w-48 h-48 md:w-64 md:h-64 rounded-[24px] overflow-hidden mb-14 md:mb-20 shadow-[0_20px_60px_rgba(0,0,0,0.5),0_0_40px_rgba(249,115,22,0.2)] flex items-center justify-center bg-black"
                 >
                     <video 
                         src={introVideo} 
