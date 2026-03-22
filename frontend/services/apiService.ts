@@ -1,4 +1,4 @@
-﻿import { Project, SearchResult, GroundingSource } from "../types";
+import { Project, SearchResult, GroundingSource } from "../types";
 
 const BASE_URL = 'https://project-finder-api.onrender.com/api';
 
@@ -17,6 +17,7 @@ const mapToFrontendProject = (item: any): Project => {
     description: item.description || '',
     platform,
     url: repoUrl,
+    liveUrl: item.homepage || item.liveUrl || item.demoUrl || null,
     stars: stars,
     language: item.language || 'Unknown',
     tags: topics,
@@ -70,22 +71,22 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     let fallbackProjects: any[] = [];
     if (platform.toLowerCase() === 'hugging face') {
       fallbackProjects = [
-        { id: 'hf-s1', name: `${query}-Model`, description: `Specialized AI model optimized for ${query} tasks.`, platform: 'Hugging Face', html_url: 'https://huggingface.co', stargazers_count: 2400, language: 'Python', topics: [query, 'AI'], owner: { login: 'HF-Hub', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } },
-        { id: 'hf-s2', name: `Universal-${query}`, description: `General purpose ${query} architecture with state-of-the-art weights.`, platform: 'Hugging Face', html_url: 'https://huggingface.co', stargazers_count: 1100, language: 'PyTorch', topics: [query, 'Transformer'], owner: { login: 'OpenSourceAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
+        { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [query, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } },
+        { id: 'hf-s2', name: `Llama-3-Instruct`, description: `State-of-the-art large language model weights and optimization guide.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'Meta-Llama', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
       ];
     } else if (platform.toLowerCase() === 'kaggle') {
       fallbackProjects = [
-        { id: 'ks-1', name: `Global ${query} Dataset`, description: `Aggregated data related to ${query} from multiple sources.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com', stargazers_count: 3200, language: 'CSV', topics: [query, 'Data Science'], owner: { login: 'Kaggle_Admin', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+        { id: 'ks-1', name: `Titanic: Machine Learning from Disaster`, description: `The legendary Titanic ML competition dataset and starter guide.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/c/titanic', stargazers_count: 8200, language: 'CSV', topics: [query, 'Data Science'], owner: { login: 'Kaggle_Data', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
       ];
     } else if (platform.toLowerCase() === 'linkedin') {
       fallbackProjects = [
-        { id: 'ls-1', name: `Mastering ${query}`, description: `A professional guide and discussion on ${query} engineering.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com', stargazers_count: 8900, language: 'Article', topics: [query, 'LinkedIn'], owner: { login: 'LinkedIn_Expert', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
+        { id: 'ls-1', name: `State of Open Source 2024`, description: `A professional analysis of open source trends and growth metrics.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/pulse/state-open-source-2024-report-github-insights/', stargazers_count: 15400, language: 'Article', topics: [query, 'LinkedIn'], owner: { login: 'TechInsights', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
       ];
     } else {
       // Default fallback for GitHub or any other platform (Strictly local data)
       fallbackProjects = [
-        { id: 'gs-1', name: `${query}-Utility`, description: `A powerful open-source tool for ${query} optimization.`, platform: 'GitHub', html_url: 'https://github.com', stargazers_count: 5400, language: 'TypeScript', topics: [query, 'OSS'], owner: { login: 'OpenSourceMain', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
-        { id: 'gs-2', name: `${query}-Core`, description: `The foundational library for ${query} development systems.`, platform: 'GitHub', html_url: 'https://github.com', stargazers_count: 3200, language: 'JavaScript', topics: [query, 'Library'], owner: { login: 'CoreMaintainer', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } }
+        { id: 'gs-1', name: `React`, description: `A JavaScript library for building user interfaces.`, platform: 'GitHub', html_url: 'https://github.com/facebook/react', stargazers_count: 220000, language: 'TypeScript', topics: [query, 'Framework'], homepage: 'https://react.dev', owner: { login: 'Facebook', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/facebook' } },
+        { id: 'gs-2', name: `Auto-GPT`, description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: 'https://github.com/Significant-Gravitas/Auto-GPT', stargazers_count: 160000, language: 'Python', topics: [query, 'AI'], homepage: 'https://agpt.co', owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/Significant-Gravitas' } }
       ];
     }
 

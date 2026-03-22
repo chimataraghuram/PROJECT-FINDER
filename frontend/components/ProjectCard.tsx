@@ -319,10 +319,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${project.liveUrl || project.demoUrl ? 'sm:w-1/2' : 'w-full'}`}
             >
               <span className="truncate">
-                {project.url.includes('dataset') ? 'Explore Dataset' :
-                  isLinkedIn ? 'View on LinkedIn' : 'Explore Project'}
+                {project.platform === 'Kaggle' ? 'View Dataset' :
+                  isLinkedIn ? 'View on LinkedIn' : 
+                  project.liveUrl || project.demoUrl ? 'View Repo' : 'Explore Project'}
               </span>
-              <Github className="w-4 h-4 shrink-0" />
+              {isLinkedIn ? <Linkedin className="w-4 h-4 shrink-0" /> : 
+               isKaggle ? <ExternalLink className="w-4 h-4 shrink-0" /> :
+               <Github className="w-4 h-4 shrink-0" />}
             </a>
 
             {(project.liveUrl || project.demoUrl) && (
