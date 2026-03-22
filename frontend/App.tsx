@@ -452,22 +452,38 @@ const App: React.FC = () => {
                     </h1>
                     
                     <div className="flex flex-col items-center gap-6">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => { setSelectedCategory('All'); handleSearch(''); }} 
-                        className="px-10 py-4 bg-orange-600 border border-orange-500 text-white rounded-full font-black uppercase tracking-widest shadow-[0_0_30px_rgba(234,88,12,0.5)] flex items-center gap-3 transition-all duration-300 active:scale-95 md:hidden"
-                      >
-                         <Layout className="w-5 h-5" />
-                         <span>All Projects</span>
-                      </motion.button>
-
-                      <p className="text-gray-400 text-[11px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 text-center">
+                      <p className="text-gray-400 text-[11px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 text-center order-1">
                         The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
+                      </p>
+
+                      {/* Mobile Category Filters */}
+                      <div className="md:hidden w-full px-4 order-2 mt-2">
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {CATEGORIES.map((cat) => (
+                            <button
+                              key={cat.id}
+                              onClick={() => {
+                                setSelectedCategory(cat.id);
+                                if (cat.id === 'All') handleSearch('');
+                              }}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
+                                selectedCategory === cat.id
+                                  ? 'bg-orange-600 border-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]'
+                                  : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'
+                              }`}
+                            >
+                              <cat.icon className="w-3.5 h-3.5" />
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <p className="hidden md:block text-gray-400 text-sm md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 order-3">
+                        The ultimate discovery hub for developers.
                       </p>
                     </div>
                   </div>
-
 
                   <SearchBar 
                     onSearch={handleSearch} 
@@ -477,26 +493,6 @@ const App: React.FC = () => {
                     onSurpriseMe={handleSurpriseMe}
                     hideCategoriesOnMobile={true}
                   />
-
-                  {/* Mobile Mobile-Only Category Section (Below Search) */}
-                  <div className="md:hidden mt-8 px-4">
-                    <div className="flex flex-wrap justify-center gap-3">
-                      {CATEGORIES.filter(cat => cat.id !== 'All').map((cat) => (
-                        <button
-                          key={cat.id}
-                          onClick={() => setSelectedCategory(cat.id)}
-                          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
-                            selectedCategory === cat.id
-                              ? 'bg-[#1e293b]/80 border-orange-500 text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
-                              : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'
-                          }`}
-                        >
-                          <cat.icon className="w-3.5 h-3.5" />
-                          {cat.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
 
                   {/* Hero Suggestions - Trending Now */}
                   {!searchState.hasSearched && (
