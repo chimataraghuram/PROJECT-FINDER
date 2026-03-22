@@ -658,9 +658,17 @@ const App: React.FC = () => {
                         {/* Project Grid */}
                         <div>
                           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-                            <h2 className="text-xl md:text-2xl font-bold text-white pl-1 border-l-4 border-orange-500">
-                              Found Resources ({filteredProjects.length})
-                            </h2>
+                            <div className="flex flex-col gap-1.5">
+                              <h2 className="text-xl md:text-2xl font-black text-white px-4 py-2 bg-white/5 rounded-2xl border border-white/10 w-fit tracking-tight">
+                                Results for <span className="text-orange-500">"{localStorage.getItem('last-search-query') || 'All Projects'}"</span>
+                              </h2>
+                              <div className="flex items-center gap-2 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                                <Search size={10} className="text-orange-500" />
+                                <span>Found {filteredProjects.length} repositories</span>
+                                <span className="w-1 h-1 rounded-full bg-orange-500/20" />
+                                <span className="text-orange-500/80 animate-pulse">Updated just now</span>
+                              </div>
+                            </div>
                             <div className="flex flex-col sm:flex-row gap-3">
                               <div className="bg-gray-800/50 p-1 rounded-lg border border-gray-700 flex flex-wrap gap-1">
                                 {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => (

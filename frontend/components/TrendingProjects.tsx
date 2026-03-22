@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles } from 'lucide-react';
+import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2 } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrendingProjects } from '../services/apiService';
 
@@ -420,7 +420,16 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="flex items-center gap-2 px-8 py-3 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-2xl">
                     <Flame size={14} className="text-orange-500 animate-pulse" />
-                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
+                    <div className="flex flex-col md:flex-row items-center gap-3">
+                        <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
+                        {!loading && projects.length > 0 && (
+                            <div className="flex items-center gap-3 pl-3 border-l border-white/10">
+                                <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{projects.length} repositories</span>
+                                <span className="w-1 h-1 rounded-full bg-orange-500/20" />
+                                <span className="text-[8px] font-black text-orange-500/60 uppercase tracking-widest animate-pulse">Updated just now</span>
+                            </div>
+                        )}
+                    </div>
                     <div className="ml-2 px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/30">
                         <span className="text-[8px] font-black text-orange-500">REAL-TIME</span>
                     </div>
@@ -455,7 +464,16 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {loading ? (
-                    Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)
+                    <div className="col-span-full">
+                        <div className="flex flex-col items-center justify-center py-20 bg-white/[0.02] rounded-[2.5rem] border border-dashed border-white/5 mb-12 animate-pulse">
+                            <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-6" />
+                            <h3 className="text-xl font-black text-white uppercase tracking-widest">Fetching projects from GitHub...</h3>
+                            <p className="text-gray-500 text-xs mt-2 uppercase tracking-[0.2em]">Accessing live repository data</p>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                            {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
+                        </div>
+                    </div>
                 ) : error ? (
                     <div className="col-span-full text-center py-20 bg-red-500/5 rounded-[2.5rem] border border-dashed border-red-500/20">
                         <Shield size={48} className="text-red-500/30 mx-auto mb-6" />
