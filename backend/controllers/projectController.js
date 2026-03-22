@@ -20,7 +20,8 @@ export const getTrendingProjects = async (req, res) => {
   const { platform = 'GitHub', category = 'All', timestamp } = req.query;
   
   try {
-    if (platform.toLowerCase() === 'github') {
+    const activePlatform = platform.toLowerCase();
+    if (activePlatform === 'github' || activePlatform === 'all') {
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
       const q = `stars:>500+created:>2024-01-01${topic}`;
       const response = await axios.get(
@@ -106,7 +107,8 @@ export const searchProjects = async (req, res) => {
   if (!q) return res.status(400).json({ message: "Query is required" });
 
   try {
-    if (platform.toLowerCase() === 'github') {
+    const activePlatform = platform.toLowerCase();
+    if (activePlatform === 'github' || activePlatform === 'all') {
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
       const query = `${q}+in:name,description+stars:>10${topic}`;
       const response = await axios.get(
