@@ -155,7 +155,17 @@ const App: React.FC = () => {
     const token = localStorage.getItem('project-finder-token');
     if (token && currentUser) {
       fetchFavorites(token).then(favs => {
-        if (favs.length > 0) setFavorites(favs);
+        if (favs && favs.length > 0) {
+          setFavorites(prev => {
+            const merged = [...favs];
+            DEFAULT_FAVORITES.forEach(def => {
+              if (!merged.some(f => f.url === def.url)) {
+                merged.push(def);
+              }
+            });
+            return merged;
+          });
+        }
       });
     }
 
