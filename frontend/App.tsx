@@ -394,28 +394,27 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* --- MOBILE HEADER (Logo Left | AI + User Right) --- */}
-          <div className="block md:hidden fixed top-0 left-0 right-0 z-[2000] px-4 py-3 bg-[#0f172a]/60 backdrop-blur-[40px] border-b border-white/5">
+          <div className="block md:hidden fixed top-0 left-0 right-0 z-[2000] px-4 py-2 bg-[#0f172a]/80 backdrop-blur-[40px] border-b border-white/10">
             <div className="flex items-center justify-between">
               {/* Logo (Left) */}
               <div 
-                className="flex items-center gap-2 cursor-pointer"
+                className="flex items-center gap-1.5 cursor-pointer"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
-                  <img src={mascotLogo} className="w-8 h-8 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
+                  <img src={mascotLogo} className="w-7 h-7 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
                 </div>
-                <span className="text-sm font-black text-white tracking-tighter uppercase">Project Finder</span>
+                <span className="text-xs font-black text-white tracking-tighter uppercase">Project Finder</span>
               </div>
 
               {/* Actions (Right) */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-8 h-8 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center active:scale-90 transition-transform"
                 >
-                  <Bot className="w-4.5 h-4.5" />
+                  <Bot className="w-4 h-4" />
                 </button>
                 <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
               </div>
@@ -885,9 +884,9 @@ const App: React.FC = () => {
               setIsOpen={setIsAIAssistantOpen} 
             />
 
-            {/* --- MOBILE BOTTOM NAVIGATION (Phase 4) --- */}
-            <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] w-full px-6 flex justify-center pointer-events-none">
-              <nav className="inline-flex p-1.5 bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-8 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] pointer-events-auto">
+            {/* --- MOBILE BOTTOM NAVIGATION --- */}
+            <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] w-full px-4 flex justify-center pointer-events-none">
+              <nav className="inline-flex p-1 bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-auto">
                 {[
                   { id: 'search', icon: Search },
                   { id: 'trending', icon: TrendingUp },
@@ -899,13 +898,13 @@ const App: React.FC = () => {
                     <button
                       key={item.id}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`relative p-3 rounded-full transition-all duration-300 ${
+                      className={`relative p-2.5 rounded-full transition-all duration-300 ${
                         isActive 
-                          ? `bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.5)] scale-110` 
+                          ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)] scale-110` 
                           : 'text-gray-400 hover:bg-white/5 opacity-70'
                       }`}
                     >
-                      <Icon className="w-6 h-6" />
+                      <Icon className="w-5 h-5" />
                       {isActive && (
                         <motion.div 
                           layoutId="activeNav"
