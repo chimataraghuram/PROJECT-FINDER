@@ -117,6 +117,8 @@ Project Finder now features a **platform-aware Discovery Engine** that aggregate
 | 🚀 | **Live API Proxy** | Proxied GitHub/HF requests for high-frequency, authentic discovery. |
 | 📱 | **Responsive Design** | Pixel-perfect experience across mobile, tablet, and desktop. |
 | ⚡ | **Full-Stack Performance** | Blazing fast responses via Node.js backend hosted on Render. |
+| 🛡️ | **Stability Hardened** | Optimized render cycle and memoized search logic for zero-loop reliability. |
+| ✨ | **Premium Splash** | Perfectly fitted and centered 4K-ready brand animation on startup. |
 
 ---
 
