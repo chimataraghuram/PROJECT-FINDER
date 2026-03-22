@@ -114,11 +114,11 @@ const App: React.FC = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const handleSurpriseMe = () => {
+  const handleSurpriseMe = useCallback(() => {
     const pools = ['AI', 'React', 'Python', 'Agent', 'Automation', 'CLI', 'Web3', 'Tailwind', 'Next.js'];
     const randomQuery = pools[Math.floor(Math.random() * pools.length)];
     handleSearch(randomQuery);
-  };
+  }, [handleSearch]);
 
   const [currentUser, setCurrentUser] = useState<any>(() => {
     const savedUser = localStorage.getItem('project-finder-user');
@@ -502,7 +502,7 @@ const App: React.FC = () => {
                   </div>
 
                   <SearchBar 
-                    onSearch={(q) => handleSearch(q)} 
+                    onSearch={handleSearch} 
                     isLoading={searchState.isLoading}
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
