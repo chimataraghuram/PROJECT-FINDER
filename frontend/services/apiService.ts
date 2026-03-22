@@ -1,6 +1,6 @@
 import { Project, SearchResult, GroundingSource } from "../types";
 
-const BACKEND_URL = 'http://localhost:5000/api';
+const BACKEND_URL = 'https://project-finder-api.onrender.com/api';
 
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => ({
