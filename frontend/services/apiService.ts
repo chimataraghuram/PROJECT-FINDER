@@ -46,18 +46,21 @@ export const searchProjects = async (query: string, category: string = 'All'): P
     const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
     // Improve query: include stars:>100 for more relevant results if just a keyword
     const q = `${query}${topic}${query && !query.includes('stars:') ? ' stars:>100' : ''}`;
+    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&_ts=${Date.now()}`;
     
-    console.log(`[GitHub API] Searching for: "${q}" (Category: ${category})`);
+    console.log(`[GitHub API] Initializing Real-time Search...`);
+    console.log(`[GitHub API] Request URL: ${url}`);
+    console.log(`[GitHub API] Category: ${category}, Query: "${query}"`);
 
-    const response = await fetch(
-      `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc`,
-      { headers, cache: 'no-store' }
-    );
+    const response = await fetch(url, { headers, cache: 'no-store' });
     
-    if (!response.ok) throw new Error(`Search failed: ${response.statusText}`);
+    if (!response.ok) {
+      console.error(`[GitHub API] Search failed with status: ${response.status} (${response.statusText})`);
+      throw new Error(`Search failed: ${response.statusText}`);
+    }
     const data = await response.json();
     
-    console.log(`[GitHub API] Found ${data.total_count} total results. Returning top ${data.items?.length || 0}.`);
+    console.log(`[GitHub API] SUCCESS: Found ${data.total_count} total results. Returning top ${data.items?.length || 0}.`);
     const projects = (data.items || []).map(mapToFrontendProject);
     
     return {
@@ -83,18 +86,20 @@ export const fetchTrendingProjects = async (platform: string = 'GitHub', categor
 
     const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
     const q = `stars:>5000${topic}`;
+    const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&_ts=${Date.now()}`;
 
-    console.log(`[GitHub API] Fetching Trending: "${q}"`);
+    console.log(`[GitHub API] Fetching Trending Projects (Real-time)...`);
+    console.log(`[GitHub API] Request URL: ${url}`);
 
-    const response = await fetch(
-      `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc`,
-      { headers, cache: 'no-store' }
-    );
+    const response = await fetch(url, { headers, cache: 'no-store' });
 
-    if (!response.ok) throw new Error(`Trending fetch failed: ${response.statusText}`);
+    if (!response.ok) {
+      console.error(`[GitHub API] Trending fetch failed with status: ${response.status} (${response.statusText})`);
+      throw new Error(`Trending fetch failed: ${response.statusText}`);
+    }
     const data = await response.json();
     
-    console.log(`[GitHub API] Trending response captured. Loaded ${data.items?.length || 0} projects.`);
+    console.log(`[GitHub API] SUCCESS: Trending response received. Loaded ${data.items?.length || 0} projects.`);
     return (data.items || []).map(mapToFrontendProject);
   } catch (error) {
     console.error('[GitHub API] Trending fetch error:', error);
