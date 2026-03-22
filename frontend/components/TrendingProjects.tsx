@@ -242,7 +242,7 @@ const TrendingCard: React.FC<{
                     >
                         <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
                         <config.icon size={16} className="relative z-10" /> 
-                        <span className="relative z-10">{project.liveUrl ? 'Repo' : config.label}</span>
+                        <span className="relative z-10">{project.liveUrl ? 'View Repo' : config.label}</span>
                     </motion.a>
 
                     {project.liveUrl && (
