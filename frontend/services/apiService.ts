@@ -1,6 +1,6 @@
-import { Project, SearchResult, GroundingSource } from "../types";
+﻿import { Project, SearchResult, GroundingSource } from "../types";
 
-const BACKEND_URL = 'https://project-finder-api.onrender.com/api';
+const BASE_URL = 'https://project-finder-api.onrender.com/api';
 
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => {
@@ -33,10 +33,10 @@ const mapToFrontendProject = (item: any): Project => {
 
 // Service functions continue below...
 
-export const searchProjects = async (query: string, category: string = 'All', platform: string = 'GitHub'): Promise<SearchResult> => {
+export const fetchSearch = async (query: string, category: string = 'All', platform: string = 'GitHub'): Promise<SearchResult> => {
   const timestamp = Date.now();
   try {
-    const url = `${BACKEND_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}&timestamp=${timestamp}`;
+    const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}&timestamp=${timestamp}`;
     console.log("BACKEND API TRYING (Search):", url);
 
     const response = await fetch(url, { cache: 'no-store' });
@@ -105,10 +105,10 @@ export const searchProjects = async (query: string, category: string = 'All', pl
   }
 };
 
-export const fetchTrendingProjects = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
+export const fetchTrending = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
   const timestamp = Date.now();
   try {
-    const url = `${BACKEND_URL}/trending?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}&timestamp=${timestamp}`;
+    const url = `${BASE_URL}/trending?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}&timestamp=${timestamp}`;
     console.log("BACKEND API TRYING:", url);
 
     const response = await fetch(url, { cache: 'no-store' });
@@ -175,7 +175,7 @@ export const fetchTrendingProjects = async (platform: string = 'GitHub', categor
       { id: 'gt4', name: 'FastAPI', description: 'Modern, fast (high-performance), web framework for building APIs with Python.', platform: 'GitHub', url: 'https://github.com/tiangolo/fastapi', stars: 65000, language: 'Python', tags: ['API', 'Speed'], owner: { login: 'tiangolo', avatar_url: 'https://github.com/identicons/google.png' } },
       { id: 'gt5', name: 'Excalidraw', description: 'Virtual whiteboard for sketching hand-drawn like diagrams.', platform: 'GitHub', url: 'https://github.com/excalidraw/excalidraw', stars: 72000, language: 'TypeScript', tags: ['Drawing', 'Collaboration'], owner: { login: 'excalidraw', avatar_url: 'https://github.com/identicons/google.png' } },
       { id: 'gt6', name: 'Prisma', description: 'Next-generation ORM for Node.js & TypeScript.', platform: 'GitHub', url: 'https://github.com/prisma/prisma', stars: 35000, language: 'TypeScript', tags: ['ORM', 'Database'], owner: { login: 'prisma', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt7', name: 'Zustand', description: '🐻 Bear necessities for state management in React.', platform: 'GitHub', url: 'https://github.com/pmndrs/zustand', stars: 40000, language: 'TypeScript', tags: ['State', 'React'], owner: { login: 'pmndrs', avatar_url: 'https://github.com/identicons/google.png' } },
+      { id: 'gt7', name: 'Zustand', description: 'ðŸ» Bear necessities for state management in React.', platform: 'GitHub', url: 'https://github.com/pmndrs/zustand', stars: 40000, language: 'TypeScript', tags: ['State', 'React'], owner: { login: 'pmndrs', avatar_url: 'https://github.com/identicons/google.png' } },
       { id: 'gt8', name: 'Shadcn/UI', description: 'Beautifully designed components built with Radix UI and Tailwind CSS.', platform: 'GitHub', url: 'https://github.com/shadcn/ui', stars: 58000, language: 'TypeScript', tags: ['UI', 'Components'], owner: { login: 'shadcn', avatar_url: 'https://github.com/identicons/google.png' } },
       { id: 'gt9', name: 'Bun', description: 'Incredibly fast JavaScript runtime, bundler, test runner, and package manager.', platform: 'GitHub', url: 'https://github.com/oven-sh/bun', stars: 68000, language: 'Zig', tags: ['Runtime', 'JS'], owner: { login: 'oven', avatar_url: 'https://github.com/identicons/google.png' } },
       { id: 'gt10', name: 'Turborepo', description: 'The high-performance build system for JavaScript and TypeScript monorepos.', platform: 'GitHub', url: 'https://github.com/vercel/turborepo', stars: 22000, language: 'Go', tags: ['Build', 'Monorepo'], owner: { login: 'vercel', avatar_url: 'https://github.com/identicons/google.png' } }
@@ -185,7 +185,7 @@ export const fetchTrendingProjects = async (platform: string = 'GitHub', categor
 
 export const searchGitHubReadmes = async (category: string = 'All'): Promise<Project[]> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/search/readmes?category=${encodeURIComponent(category)}`);
+    const response = await fetch(`${BASE_URL}/search/readmes?category=${encodeURIComponent(category)}`);
     if (!response.ok) throw new Error('README search failed');
     const data = await response.json();
     return data.map(mapToFrontendProject);
@@ -197,7 +197,7 @@ export const searchGitHubReadmes = async (category: string = 'All'): Promise<Pro
 
 export const searchGitHubUsers = async (query: string): Promise<Project[]> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/search/users?q=${encodeURIComponent(query)}`);
+    const response = await fetch(`${BASE_URL}/search/users?q=${encodeURIComponent(query)}`);
     if (!response.ok) throw new Error('User search failed');
     const data = await response.json();
     return data.map(mapToFrontendProject);
@@ -212,7 +212,7 @@ export const fetchProjectReadme = async (url: string): Promise<string> => {
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     if (!match) return '';
     const [_, owner, repo] = match;
-    const response = await fetch(`${BACKEND_URL}/readme/${owner}/${repo}`);
+    const response = await fetch(`${BASE_URL}/readme/${owner}/${repo}`);
     if (!response.ok) return '';
     return await response.text();
   } catch (error) {
@@ -223,7 +223,7 @@ export const fetchProjectReadme = async (url: string): Promise<string> => {
 
 export const fetchGitHubUserProfile = async (username: string): Promise<any> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/user/${username}`);
+    const response = await fetch(`${BASE_URL}/user/${username}`);
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {
@@ -234,7 +234,7 @@ export const fetchGitHubUserProfile = async (username: string): Promise<any> => 
 
 export const saveProject = async (project: Project, token: string): Promise<Project | null> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/save`, {
+    const response = await fetch(`${BASE_URL}/save`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ export const saveProject = async (project: Project, token: string): Promise<Proj
 
 export const fetchFavorites = async (token: string): Promise<Project[]> => {
   try {
-    const response = await fetch(`${BACKEND_URL}/user/favorites`, {
+    const response = await fetch(`${BASE_URL}/user/favorites`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -276,7 +276,7 @@ export const fetchFavorites = async (token: string): Promise<Project[]> => {
 };
 
 export const loginUser = async (email: string, password: string): Promise<any> => {
-  const response = await fetch(`${BACKEND_URL}/auth/login`, {
+  const response = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -289,7 +289,7 @@ export const loginUser = async (email: string, password: string): Promise<any> =
 };
 
 export const signupUser = async (username: string, email: string, password: string): Promise<any> => {
-  const response = await fetch(`${BACKEND_URL}/auth/signup`, {
+  const response = await fetch(`${BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password })

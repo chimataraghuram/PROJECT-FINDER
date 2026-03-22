@@ -9,6 +9,7 @@ interface SearchBarProps {
   selectedCategory?: string;
   onSurpriseMe?: () => void;
   hideCategoriesOnMobile?: boolean;
+  className?: string;
 }
 
 const QUICK_TAGS = [
@@ -44,17 +45,26 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onCategoryChange, 
   selectedCategory = 'All',
   onSurpriseMe,
-  hideCategoriesOnMobile = false
+  hideCategoriesOnMobile = false,
+  className = ""
 }) => {
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  // Removed debounced search effect for better typing experience. 
-  // Search now strictly requires Enter or 'Explore' button click.
+  // Implement debounced search as per Phase 15 requirements
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Trigger search if query is not empty, or reset if it was cleared
+      // This matches the user's 'if (query) { fetchSearch } else { fetchTrending }' logic
+      onSearch(query);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query, onSearch]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (query.trim()) onSearch(query);
+    onSearch(query);
   };
 
   const handleSurprise = () => {
@@ -69,7 +79,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
+    <div className={`w-full max-w-4xl mx-auto px-4 ${className}`}>
       
       {/* Category Chips */}
       <div className={`flex flex-wrap items-center justify-center gap-2 mb-8 animate-fade-in ${hideCategoriesOnMobile ? 'hidden md:flex' : 'flex'}`}>

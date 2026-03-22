@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2 } from 'lucide-react';
 import { Project } from '../types';
-import { fetchTrendingProjects } from '../services/apiService';
+import { fetchTrending } from '../services/apiService';
 
 interface TrendingProjectsProps {
     favorites: Project[];
@@ -292,7 +292,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchTrendingProjects(platform, category);
+            const data = await fetchTrending(platform, category);
             if (!data || data.length === 0) {
                 setProjects([]);
             } else {

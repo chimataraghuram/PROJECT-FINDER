@@ -11,7 +11,7 @@ import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
-import { searchProjects, fetchTrendingProjects, saveProject, fetchFavorites } from './services/apiService';
+import { saveProject, fetchFavorites, fetchTrending, fetchSearch } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
@@ -133,7 +133,7 @@ const App: React.FC = () => {
 
   const [homeTrending, setHomeTrending] = useState<Project[]>([]);
   useEffect(() => {
-    fetchTrendingProjects('GitHub', 'All').then(data => {
+    fetchTrending('GitHub', 'All').then(data => {
       if (data && data.length > 0) setHomeTrending(data.slice(0, 2));
     });
   }, []);
@@ -214,27 +214,28 @@ const App: React.FC = () => {
   }, [result, searchState.isLoading]);
 
   const handleSearch = async (query: string, category: string = selectedCategory, platform: string = filterPlatform) => {
-    if (!query.trim()) {
-      // Return to home state if search is cleared
-      setSearchState({ isLoading: false, error: null, hasSearched: false });
+    const trimmedQuery = query.trim();
+    
+    if (!trimmedQuery) {
       setResult(null);
+      setSearchState({ isLoading: false, error: null, hasSearched: false });
       localStorage.removeItem('last-search-query');
       return;
     }
 
-    localStorage.setItem('last-search-query', query);
-
     setSearchState({ isLoading: true, error: null, hasSearched: true });
     setResult(null);
+    localStorage.setItem('last-search-query', trimmedQuery);
+
     try {
-      const data = await searchProjects(query, category, platform);
+      const data = await fetchSearch(trimmedQuery, category, platform);
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
     } catch (err: any) {
-      setSearchState({
-        isLoading: false,
-        error: err.message || "An error occurred",
-        hasSearched: true
+      setSearchState({ 
+        isLoading: false, 
+        error: err.message || 'The gateway to this platform is temporarily congested. Please try again.',
+        hasSearched: true 
       });
     }
   };
@@ -511,12 +512,13 @@ const App: React.FC = () => {
                   </div>
 
                   <SearchBar 
-                    onSearch={handleSearch} 
+                    onSearch={(q) => handleSearch(q)} 
                     isLoading={searchState.isLoading}
                     selectedCategory={selectedCategory}
                     onCategoryChange={setSelectedCategory}
                     onSurpriseMe={handleSurpriseMe}
                     hideCategoriesOnMobile={true}
+                    className="max-w-4xl mx-auto"
                   />
 
                   {/* Hero Suggestions - Trending Now */}
