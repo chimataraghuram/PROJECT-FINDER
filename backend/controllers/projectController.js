@@ -29,7 +29,7 @@ export const getTrendingProjects = async (req, res) => {
         { 
           headers: { 
             'Accept': 'application/vnd.github.v3+json',
-            'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+            ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
           } 
         }
       );
@@ -116,7 +116,7 @@ export const searchProjects = async (req, res) => {
         { 
           headers: { 
             'Accept': 'application/vnd.github.v3+json',
-            'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+            ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
           } 
         }
       );
@@ -243,7 +243,7 @@ export const searchUsers = async (req, res) => {
       { 
         headers: { 
           'Accept': 'application/vnd.github.v3+json',
-          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+          ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
         } 
       }
     );
@@ -262,7 +262,7 @@ export const getProjectReadme = async (req, res) => {
       { 
         headers: { 
           'Accept': 'application/vnd.github.v3.raw',
-          'Authorization': process.env.GITHUB_TOKEN ? `token ${process.env.GITHUB_TOKEN}` : ''
+          ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
         } 
       }
     );
