@@ -122,6 +122,18 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
         throw new Error("Backend returned invalid trending format");
     }
 
+    // DATA QUALITY GUARD: If backend returns generic placeholders or lacks demos for platforms where we have them
+    const isGeneric = data.some(item => 
+      (item.html_url === 'https://www.kaggle.com/datasets') || 
+      (item.html_url === 'https://www.linkedin.com') ||
+      (platform.toLowerCase() === 'hugging face' && !item.homepage) // Force fallback for HF to get demos
+    );
+
+    if (isGeneric) {
+      console.warn(`[Backend API] ${platform} returned low-quality or generic data, using curated fallbacks.`);
+      throw new Error("Low quality data detected"); 
+    }
+
     return data.map(mapToFrontendProject);
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
