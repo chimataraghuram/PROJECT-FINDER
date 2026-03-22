@@ -777,7 +777,7 @@ const App: React.FC = () => {
                     <div className="flex flex-col items-center mb-12">
                       <div className="flex items-center gap-4 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 mb-4 animate-pulse">
                         <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
-                        <span className="text-orange-500 font-black uppercase tracking-[0.2em] text-xs">Accessing GitHub & AI Repositories</span>
+                        <span className="text-orange-500 font-black uppercase tracking-[0.2em] text-xs">Fetching projects from GitHub...</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -791,7 +791,7 @@ const App: React.FC = () => {
                 {searchState.error && (
                   <div className="max-w-3xl mx-auto px-4 mb-12">
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-red-300 text-center text-sm md:text-base">
-                      {searchState.error}
+                      Failed to load projects
                     </div>
                   </div>
                 )}

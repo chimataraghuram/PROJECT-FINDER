@@ -275,48 +275,62 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [activePlatform, setActivePlatform] = useState('GitHub');
+    const [activeCategory, setActiveCategory] = useState('All');
     const [error, setError] = useState<string | null>(null);
 
     const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
+    const CATEGORIES = [
+      { id: 'All', label: 'All Projects', icon: Globe },
+      { id: 'AI', label: 'AI', icon: Bot },
+      { id: 'Web', label: 'Web Dev', icon: Code },
+      { id: 'App', label: 'App Dev', icon: Rocket },
+      { id: 'ML', label: 'Machine Learning', icon: Brain },
+      { id: 'Fun', label: 'Fun Projects', icon: Sparkles },
+    ];
 
-    const loadTrending = useCallback(async (platform = activePlatform) => {
+    const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory) => {
         setLoading(true);
         setError(null);
         try {
-            const data = await fetchTrendingProjects(platform, 'All');
+            const data = await fetchTrendingProjects(platform, category);
             if (!data || data.length === 0) {
                 setProjects([]);
             } else {
                 setProjects(data);
             }
-        } catch (e) {
-            setError("Unable to load trending projects");
+        } catch (e: any) {
+            setError(e.message || "Failed to load projects");
         } finally {
             setLoading(false);
             setIsRefreshing(false);
         }
-    }, [activePlatform]);
+    }, [activePlatform, activeCategory]);
 
     useEffect(() => {
-        loadTrending(activePlatform);
+        loadTrending(activePlatform, activeCategory);
 
         // Auto-refresh every 10 minutes to respect API rate limits
         const interval = setInterval(() => {
-            console.log(`Auto-refreshing trending data for ${activePlatform}...`);
-            loadTrending(activePlatform);
+            console.log(`Auto-refreshing trending data for ${activePlatform}/${activeCategory}...`);
+            loadTrending(activePlatform, activeCategory);
         }, 600000);
 
         return () => clearInterval(interval);
-    }, [activePlatform, loadTrending]);
+    }, [activePlatform, activeCategory, loadTrending]);
 
     const handleRefresh = () => {
         setIsRefreshing(true);
-        loadTrending(activePlatform); // Ensure it uses activePlatform
+        loadTrending(activePlatform, activeCategory);
     };
 
     const handlePlatformChange = (p: string) => {
         setActivePlatform(p);
-        loadTrending(p);
+        loadTrending(p, activeCategory);
+    };
+
+    const handleCategoryChange = (c: string) => {
+        setActiveCategory(c);
+        loadTrending(activePlatform, c);
     };
 
     const handleShare = (url: string) => {
@@ -406,9 +420,34 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="flex items-center gap-2 px-8 py-3 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-2xl">
                     <Flame size={14} className="text-orange-500 animate-pulse" />
-                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform}</span>
+                    <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
                     <div className="ml-2 px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/30">
                         <span className="text-[8px] font-black text-orange-500">REAL-TIME</span>
+                    </div>
+                </div>
+
+                {/* Tech Filters - Restored for Phase 6 */}
+                <div className="mt-8 flex flex-col items-center gap-6">
+                    <div className="flex flex-wrap justify-center gap-3">
+                        <div className="w-full flex items-center justify-center gap-2 mb-2">
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Filter by Tech</span>
+                        </div>
+                    {CATEGORIES.map((c) => (
+                        <motion.button
+                            key={c.id}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleCategoryChange(c.id)}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                activeCategory === c.id
+                                ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
+                                : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border-white/5'
+                            }`}
+                        >
+                            <c.icon size={14} />
+                            {c.label}
+                        </motion.button>
+                    ))}
                     </div>
                 </div>
                 <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -447,10 +486,23 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 )}
             </div>
 
+            {error && (
+                <div className="text-center py-20 bg-red-500/5 rounded-[2.5rem] border border-dashed border-red-500/10 mb-12">
+                    <Shield size={48} className="text-red-900/20 mx-auto mb-6" />
+                    <p className="text-red-500 font-bold text-xl uppercase tracking-tighter">Failed to load projects</p>
+                    <button 
+                        onClick={handleRefresh}
+                        className="mt-6 text-orange-500 font-black uppercase tracking-widest text-xs hover:underline"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            )}
+
             {!loading && projects.length === 0 && (
                 <div className="text-center py-20 bg-white/5 rounded-[2.5rem] border border-dashed border-white/10">
                     <Rocket size={48} className="text-gray-700 mx-auto mb-6 opacity-20" />
-                    <p className="text-gray-500 font-bold text-xl uppercase tracking-tighter">No trending projects found</p>
+                    <p className="text-gray-500 font-bold text-xl uppercase tracking-tighter">No results found</p>
                     <button 
                         onClick={handleRefresh}
                         className="mt-6 text-orange-500 font-black uppercase tracking-widest text-xs hover:underline"
