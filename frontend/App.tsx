@@ -110,8 +110,16 @@ const App: React.FC = () => {
 
   const [favorites, setFavorites] = useState<Project[]>(() => {
     const saved = localStorage.getItem('project-finder-favorites');
-    if (saved) return JSON.parse(saved);
-    return DEFAULT_FAVORITES;
+    let current = saved ? JSON.parse(saved) : DEFAULT_FAVORITES;
+    
+    // Merge defaults to ensure requested projects are always available initially
+    const merged = [...current];
+    DEFAULT_FAVORITES.forEach(def => {
+      if (!merged.some(f => f.url === def.url)) {
+        merged.push(def);
+      }
+    });
+    return merged;
   });
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
