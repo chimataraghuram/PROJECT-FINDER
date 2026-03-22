@@ -22,33 +22,82 @@ const mapToFrontendProject = (item: any): Project => ({
   readme: item.description || ''
 });
 
-export const searchProjects = async (query: string): Promise<SearchResult> => {
+const getGitHubTopic = (category: string) => {
+  const mapping: Record<string, string> = {
+    'AI': 'ai',
+    'Web': 'web-dev',
+    'App': 'app-dev',
+    'ML': 'machine-learning',
+    'Fun': 'fun'
+  };
+  return mapping[category] || category.toLowerCase();
+};
+
+export const searchProjects = async (query: string, category: string = 'All'): Promise<SearchResult> => {
   try {
-    const response = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`);
-    if (!response.ok) throw new Error('Search failed');
+    const token = import.meta.env.VITE_GITHUB_TOKEN;
+    const headers: HeadersInit = {
+      'Accept': 'application/vnd.github.v3+json',
+    };
+    if (token && token !== 'your_token_here') {
+      headers['Authorization'] = `token ${token}`;
+    }
+
+    const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
+    // Improve query: include stars:>100 for more relevant results if just a keyword
+    const q = `${query}${topic}${query && !query.includes('stars:') ? ' stars:>100' : ''}`;
+    
+    console.log(`[GitHub API] Searching for: "${q}" (Category: ${category})`);
+
+    const response = await fetch(
+      `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc`,
+      { headers, cache: 'no-store' }
+    );
+    
+    if (!response.ok) throw new Error(`Search failed: ${response.statusText}`);
     const data = await response.json();
+    
+    console.log(`[GitHub API] Found ${data.total_count} total results. Returning top ${data.items?.length || 0}.`);
     const projects = (data.items || []).map(mapToFrontendProject);
+    
     return {
-      summary: `Found ${projects.length} results via GitHub real-time search.`,
+      summary: `Found ${projects.length} results via GitHub real-time search${category !== 'All' ? ` in ${category}` : ''}.`,
       projects,
       groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
   } catch (error) {
-    console.error('Search error:', error);
+    console.error('[GitHub API] Search error:', error);
     return { summary: '', projects: [], groundingSources: [] };
   }
 };
 
-export const fetchTrendingProjects = async (platform: string = 'All', category: string = 'All'): Promise<Project[]> => {
+export const fetchTrendingProjects = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
   try {
-    // Using GitHub Search API for trending: stars > 5000 and sorted by stars
-    const query = category !== 'All' ? `${category} stars:>5000` : 'stars:>5000';
-    const response = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc`);
-    if (!response.ok) throw new Error('Trending fetch failed');
+    const token = import.meta.env.VITE_GITHUB_TOKEN;
+    const headers: HeadersInit = {
+      'Accept': 'application/vnd.github.v3+json',
+    };
+    if (token && token !== 'your_token_here') {
+      headers['Authorization'] = `token ${token}`;
+    }
+
+    const topic = category !== 'All' ? ` topic:${getGitHubTopic(category)}` : '';
+    const q = `stars:>5000${topic}`;
+
+    console.log(`[GitHub API] Fetching Trending: "${q}"`);
+
+    const response = await fetch(
+      `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc`,
+      { headers, cache: 'no-store' }
+    );
+
+    if (!response.ok) throw new Error(`Trending fetch failed: ${response.statusText}`);
     const data = await response.json();
+    
+    console.log(`[GitHub API] Trending response captured. Loaded ${data.items?.length || 0} projects.`);
     return (data.items || []).map(mapToFrontendProject);
   } catch (error) {
-    console.error('Trending fetch error:', error);
+    console.error('[GitHub API] Trending fetch error:', error);
     return [];
   }
 };

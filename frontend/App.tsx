@@ -131,6 +131,13 @@ const App: React.FC = () => {
   const [comparisonQueue, setComparisonQueue] = useState<Project[]>([]);
   const [isComparisonOpen, setIsComparisonOpen] = useState(false);
 
+  const [homeTrending, setHomeTrending] = useState<Project[]>([]);
+  useEffect(() => {
+    fetchTrendingProjects('GitHub', 'All').then(data => {
+      if (data && data.length > 0) setHomeTrending(data.slice(0, 2));
+    });
+  }, []);
+
   const toggleComparison = (project: Project) => {
     setComparisonQueue(prev => {
       const exists = prev.find(p => p.id === project.id);
@@ -206,19 +213,21 @@ const App: React.FC = () => {
     }
   }, [result, searchState.isLoading]);
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, category: string = selectedCategory) => {
     if (!query.trim()) {
       // Return to home state if search is cleared
       setSearchState({ isLoading: false, error: null, hasSearched: false });
       setResult(null);
+      localStorage.removeItem('last-search-query');
       return;
     }
 
+    localStorage.setItem('last-search-query', query);
+
     setSearchState({ isLoading: true, error: null, hasSearched: true });
     setResult(null);
-    // Preserving filterPlatform so users can search within a specific tab
     try {
-      const data = await searchProjects(query);
+      const data = await searchProjects(query, category);
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
     } catch (err: any) {
@@ -230,13 +239,18 @@ const App: React.FC = () => {
     }
   };
 
-  const filteredProjects = result?.projects.filter(project => {
-    const matchesPlatform = filterPlatform === 'All' || project.platform === filterPlatform;
-    const matchesCategory = selectedCategory === 'All' || 
-      project.tags.some(t => t.toLowerCase().includes(selectedCategory.toLowerCase())) ||
-      project.description.toLowerCase().includes(selectedCategory.toLowerCase());
-    return matchesPlatform && matchesCategory;
-  }) || [];
+  // Trigger search on category change for real-time results
+  useEffect(() => {
+    if (searchState.hasSearched) {
+      const query = localStorage.getItem('last-search-query') || '';
+      if (query) {
+        setResult(null); // Immediate UI reset
+        handleSearch(query, selectedCategory);
+      }
+    }
+  }, [selectedCategory]);
+
+  const filteredProjects = result?.projects || [];
 
   const [isCompact, setIsCompact] = useState(false);
   useEffect(() => {
@@ -472,7 +486,10 @@ const App: React.FC = () => {
                               key={cat.id}
                               onClick={() => {
                                 setSelectedCategory(cat.id);
-                                if (cat.id === 'All') handleSearch('');
+                                if (searchState.hasSearched) {
+                                  const query = localStorage.getItem('last-search-query') || '';
+                                  if (query) handleSearch(query, cat.id);
+                                }
                               }}
                               className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
                                 selectedCategory === cat.id
@@ -524,28 +541,7 @@ const App: React.FC = () => {
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
-                        {[
-                          {
-                            id: 'trend-1',
-                            name: "OpenClaw",
-                            description: "The leading open-source personal TECHBOY AI Assistant. Autonomous agents that connect to WhatsApp, Slack, and Discord to solve complex tasks directly via chat.",
-                            platform: 'GitHub' as const,
-                            url: "https://github.com/OpenClaw/OpenClaw",
-                            tags: ["AI AGENT", "AUTONOMOUS", "PYTHON"],
-                            stars: "12.5k",
-                            type: 'project' as const
-                          },
-                          {
-                            id: 'trend-2',
-                            name: "NanoClaw",
-                            description: "A security-first, lightweight alternative to OpenClaw. Runs AI actions in isolated containers (Docker) for maximum safety and data privacy.",
-                            platform: 'GitHub' as const,
-                            url: "https://github.com/NanoClaw/NanoClaw",
-                            tags: ["SECURE AI", "SANDBOXED", "TYPESCRIPT"],
-                            stars: "8.2k",
-                            type: 'project' as const
-                          }
-                        ].map((project, idx) => {
+                        {homeTrending.length > 0 ? homeTrending.map((project, idx) => {
                           const isFav = favorites.some(f => f.url === project.url);
                           
                           return (
@@ -641,7 +637,7 @@ const App: React.FC = () => {
                               <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/20 transition-all" />
                             </motion.div>
                           );
-                        })}
+                        }) : null}
                       </div>
                     </motion.div>
                   )}
@@ -696,14 +692,25 @@ const App: React.FC = () => {
                               ))}
                             </div>
                           ) : (
-                            <div className="text-center py-12 text-gray-500 bg-gray-900/50 rounded-xl border border-dashed border-gray-700">
-                              <p>No projects match your current filters.</p>
-                              <button
-                                onClick={() => { setFilterPlatform('All'); }}
-                                className="mt-2 text-blue-400 hover:underline text-sm"
-                              >
-                                Clear filters
-                              </button>
+                            <div className="flex flex-col items-center justify-center py-20 bg-gray-900/40 border-2 border-dashed border-white/5 rounded-[2.5rem] text-center px-8">
+                                <div className="p-4 bg-orange-500/10 rounded-full mb-6">
+                                   <Search className="w-8 h-8 text-gray-600" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 uppercase tracking-tight">No results found</h3>
+                                <p className="text-gray-500 text-sm max-w-sm mb-8 leading-relaxed">
+                                  We couldn't find any resources matching your search. Try adjusting your query or filters.
+                                </p>
+                                <button
+                                  onClick={() => { 
+                                     setSelectedCategory('All');
+                                     setFilterPlatform('All');
+                                     const lastQ = localStorage.getItem('last-search-query') || '';
+                                     if (lastQ) handleSearch(lastQ, 'All');
+                                  }}
+                                  className="px-8 py-3 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-all font-black uppercase tracking-widest text-[10px]"
+                                >
+                                  Clear Search Parameters
+                                </button>
                             </div>
                           )}
                         </div>

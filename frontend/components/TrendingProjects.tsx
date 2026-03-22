@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X } from 'lucide-react';
+import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrendingProjects } from '../services/apiService';
 
@@ -280,7 +280,14 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [error, setError] = useState<string | null>(null);
 
     const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
-    const CATEGORIES = ['All', 'AI', 'Web', 'ML'];
+    const CATEGORIES = [
+      { id: 'All', label: 'All Projects', icon: Globe },
+      { id: 'AI', label: 'AI', icon: Bot },
+      { id: 'Web', label: 'Web Dev', icon: Code },
+      { id: 'App', label: 'App Dev', icon: Rocket },
+      { id: 'ML', label: 'Machine Learning', icon: Brain },
+      { id: 'Fun', label: 'Fun Projects', icon: Sparkles },
+    ];
 
     const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory) => {
         setLoading(true);
@@ -288,7 +295,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
         try {
             const data = await fetchTrendingProjects(platform, category);
             if (!data || data.length === 0) {
-                setError("Unable to load trending projects");
+                setProjects([]);
             } else {
                 setProjects(data);
             }
@@ -442,17 +449,18 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                         </div>
                     {CATEGORIES.map((c) => (
                         <motion.button
-                            key={c}
+                            key={c.id}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleCategoryChange(c)}
-                            className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
-                                activeCategory === c
+                            onClick={() => handleCategoryChange(c.id)}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
+                                activeCategory === c.id
                                 ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
                                 : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border-white/5'
                             }`}
                         >
-                            {c}
+                            <c.icon size={14} />
+                            {c.label}
                         </motion.button>
                     ))}
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useEffect, useRef } from 'react';
-import { Search, Loader2, Sparkles, Zap, Smartphone, Globe, Brain, Terminal, Layout } from 'lucide-react';
+import { Search, Loader2, Sparkles, Zap, Smartphone, Globe, Brain, Terminal, Layout, Bot, Code, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SearchBarProps {
@@ -30,12 +30,12 @@ const QUICK_TAGS = [
 ];
 
 export const CATEGORIES = [
-  { id: 'All', label: 'All Projects', icon: Layout },
-  { id: 'AI', label: 'AI', icon: Brain },
-  { id: 'Web Dev', label: 'Web Dev', icon: Globe },
-  { id: 'App Dev', label: 'App Dev', icon: Smartphone },
-  { id: 'Machine Learning', label: 'Machine Learning', icon: Terminal },
-  { id: 'Fun Projects', label: 'Fun Projects', icon: Sparkles },
+  { id: 'All', label: 'All Projects', icon: Globe },
+  { id: 'AI', label: 'AI', icon: Bot },
+  { id: 'Web', label: 'Web Dev', icon: Code },
+  { id: 'App', label: 'App Dev', icon: Rocket },
+  { id: 'ML', label: 'Machine Learning', icon: Brain },
+  { id: 'Fun', label: 'Fun Projects', icon: Sparkles },
 ];
 
 export const SearchBar: React.FC<SearchBarProps> = ({ 
@@ -65,7 +65,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       if (!trimmedQuery || trimmedQuery.length >= 2) {
         onSearch(trimmedQuery);
       }
-    }, 400);
+    }, 300);
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
