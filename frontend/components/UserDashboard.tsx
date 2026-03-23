@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { Project } from '../types';
-import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart } from 'lucide-react';
+import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink } from 'lucide-react';
 
 interface UserDashboardProps {
   user: User;
@@ -146,7 +146,20 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                     </div>
                     <div>
                       <h4 className="font-bold text-white mb-0.5">{project.name}</h4>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Saved 2 hours ago</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-widest">Saved recently</p>
+                        {project.liveUrl && project.liveUrl !== '#' && (
+                          <a 
+                            href={project.liveUrl}
+                            onClick={(e) => { e.stopPropagation(); }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-[9px] font-black text-orange-500 hover:text-orange-400 uppercase tracking-widest bg-orange-500/10 px-2 py-0.5 rounded-md"
+                          >
+                            Live <ExternalLink size={10} />
+                          </a>
+                        )}
+                      </div>
                     </div>
                     <Search className="w-4 h-4 text-gray-600 ml-auto group-hover:text-white transition-colors" />
                   </div>

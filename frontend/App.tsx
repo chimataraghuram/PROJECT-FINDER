@@ -32,6 +32,7 @@ const DEFAULT_FAVORITES: Project[] = [
     description: "The ultimate project discovery engine for students and data scientists. Modern UI, AI-powered summaries, and multi-platform search.",
     platform: 'GitHub',
     url: "https://github.com/chimataraghuram/PROJECT-FINDER",
+    liveUrl: "https://chimataraghuram.github.io/PROJECT-FINDER/",
     tags: ["React", "Vite", "Tailwind", "Firebase"],
     stars: "1.2k",
     isPublisher: true,
@@ -106,8 +107,12 @@ const App: React.FC = () => {
     // Merge defaults to ensure requested projects are always available initially
     const merged = [...current];
     DEFAULT_FAVORITES.forEach(def => {
-      if (!merged.some(f => f.url === def.url)) {
+      const existingIdx = merged.findIndex(f => f.url === def.url);
+      if (existingIdx === -1) {
         merged.push(def);
+      } else if (def.liveUrl && !merged[existingIdx].liveUrl) {
+        // REPAIR: Enrich existing saved project with liveUrl from defaults
+        merged[existingIdx] = { ...merged[existingIdx], liveUrl: def.liveUrl };
       }
     });
     return merged;
@@ -600,15 +605,29 @@ const App: React.FC = () => {
                                 ))}
                               </div>
 
-                              <button 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  openSafe(project.url);
-                                }}
-                                className="w-full py-5 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-[0.2em] text-sm flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:scale-[1.02] active:scale-95 transition-all"
-                              >
-                                View Project <ExternalLink size={18} />
-                              </button>
+                              <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    openSafe(project.url);
+                                  }}
+                                  className={`py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-2 hover:bg-white/10 transition-all ${project.liveUrl && project.liveUrl !== '#' ? 'sm:w-1/2' : 'w-full'}`}
+                                >
+                                  View Repo <Github size={14} />
+                                </button>
+                                
+                                {project.liveUrl && project.liveUrl !== '#' && (
+                                  <button 
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      openSafe(project.liveUrl);
+                                    }}
+                                    className="sm:w-1/2 py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 transition-all"
+                                  >
+                                    Live Demo <ExternalLink size={14} />
+                                  </button>
+                                )}
+                              </div>
                               
                               {/* Decorative Glow */}
                               <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/20 transition-all" />

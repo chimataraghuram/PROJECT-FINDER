@@ -296,7 +296,7 @@ const TrendingCard: React.FC<{
                         <span className="relative z-10">{config.label}</span>
                     </motion.a>
 
-                    {project.liveUrl && (
+                    {project.liveUrl && project.liveUrl !== '#' && (
                         <motion.a 
                             href={project.liveUrl}
                             target="_blank"
