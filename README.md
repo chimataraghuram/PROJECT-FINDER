@@ -117,16 +117,81 @@ The Ultimate Research & Discovery Engine 🚀
 
 ---
 
-## 🔍 Unified Discovery Engine
-Project Finder features a **platform-aware Discovery Engine** with intelligent category-weighted searching across the entire developer ecosystem:
-- **GitHub**: Real-time trending and star-filtered repository discovery.
-- **Hugging Face**: Native AI model discovery with high-density "View Model" profiles.
-- **Kaggle**: High-impact dataset and competition discovery with native "View Dataset" profiles.
-- **LinkedIn**: Technical post and professional project discovery with native "View Post" profile styling.
+<br/>
 
-### 🧠 Intelligent Search Experience
-- **Explicit Triggering**: Search logic is now optimized for user intent—preventing automatic triggering while typing and allowing for precise controls via "Enter", the "Explore" button, or platform/category filters.
-- **Contextual Discovery**: The search engine correctly handles category transitions, ensuring that filters like "AI/ML" or "Web Dev" update existing search results instantly.
+## 🔍 Unified Discovery Engine
+
+<p style="color: #64748b; font-size: 1.05rem; margin-bottom: 30px;">
+Project Finder features a <strong>platform-aware Discovery Engine</strong> with intelligent category-weighted searching across the entire developer ecosystem:
+</p>
+
+<table width="100%" style="border-collapse: collapse; border: none; margin-bottom: 40px;">
+  <tr>
+    <td width="50%" style="padding: 10px; border: none;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
+        <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+          <img src="https://img.icons8.com/material-outlined/24/ffffff/github.png" width="20"/> GitHub
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+          Real-time trending and star-filtered repository discovery across million of sources.
+        </p>
+      </div>
+    </td>
+    <td width="50%" style="padding: 10px; border: none;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
+        <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">🤗</span> Hugging Face
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+          Native AI model discovery with high-density "View Model" interactive profiles.
+        </p>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" style="padding: 10px; border: none;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
+        <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+          <img src="https://img.icons8.com/color/24/000000/kaggle.png" width="20"/> Kaggle
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+          High-impact dataset discovery with native "View Dataset" optimized profile views.
+        </p>
+      </div>
+    </td>
+    <td width="50%" style="padding: 10px; border: none;">
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
+        <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+          <img src="https://img.icons8.com/color/24/000000/linkedin.png" width="20"/> LinkedIn
+        </h3>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+          Professional project discovery with native "View Post" social profile styling.
+        </p>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<br/>
+
+## 🧠 Intelligent Search Experience
+
+<div style="background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #f97316; padding: 30px; border-radius: 0 20px 20px 0; margin-bottom: 40px;">
+  <div style="margin-bottom: 25px;">
+    <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 01</h4>
+    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Explicit Intent Triggering</h3>
+    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+      Search logic is optimized for <strong>user intent</strong>—preventing automatic triggering while typing and allowing for precise controls via "Enter", the "Explore" button, or platform/category filters.
+    </p>
+  </div>
+  <div>
+    <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 02</h4>
+    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Contextual Discovery</h3>
+    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+      The search engine correctly handles category transitions, ensuring that filters like <strong>AI/ML</strong> or <strong>Web Dev</strong> update existing search results instantly with zero latency.
+    </p>
+  </div>
+</div>
 
 ---
 
