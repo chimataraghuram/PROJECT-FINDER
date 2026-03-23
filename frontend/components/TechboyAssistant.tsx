@@ -5,6 +5,7 @@ import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getLocalAIResponse } from '../services/aiLogic';
+import { fetchAIResponse } from '../services/apiService';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -94,16 +95,38 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         if (!customPrompt) setInput('');
         setIsTyping(true);
 
-        // Simulated Thinking Delay (500ms) for natural feel
-        setTimeout(() => {
-            const response = getLocalAIResponse(promptToUse, lastProject);
+        try {
+            // 🤖 ATTEMPT BACKEND LLM (OpenRouter/Gemini)
+            const context = {
+                search: currentSearch,
+                project: lastProject ? {
+                    name: lastProject.name,
+                    description: lastProject.description,
+                    language: lastProject.language
+                } : null
+            };
+
+            const response = await fetchAIResponse(promptToUse, context);
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
                 content: response, 
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
             }]);
+        } catch (error) {
+            console.warn("Backend AI failed, falling back to local rule-based logic:", error);
+            
+            // 🧠 FALLBACK TO LOCAL RULE-BASED LOGIC
+            // Add a small delay for natural feel if falling back
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const localResponse = getLocalAIResponse(promptToUse, lastProject);
+            setMessages(prev => [...prev, { 
+                role: 'assistant', 
+                content: localResponse, 
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+            }]);
+        } finally {
             setIsTyping(false);
-        }, 500);
+        }
     };
 
     const clearChat = () => {

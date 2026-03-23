@@ -429,3 +429,22 @@ export const createChatStream = async function* (history: any[], message: string
 };
 
 
+const AI_API_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api/ai' 
+  : 'https://project-finder-api.onrender.com/api/ai';
+
+export const fetchAIResponse = async (prompt: string, context: any): Promise<string> => {
+  try {
+    const response = await fetch(AI_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, context })
+    });
+    if (!response.ok) throw new Error("AI request failed");
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error("AI Error:", error);
+    throw error; // Let the component handle the fallback
+  }
+};

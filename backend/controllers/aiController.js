@@ -1,9 +1,11 @@
+import axios from 'axios';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from 'dotenv';
 dotenv.config();
 
 // Initialize Gemini API (if key is present)
 const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+const openRouterKey = process.env.OPENROUTER_API_KEY;
 
 /**
  * TECHBOY AI Smart Assistant Controller
@@ -16,35 +18,55 @@ export const getAIResponse = async (req, res) => {
         return res.status(400).json({ response: "Please provide a valid prompt for TECHBOY AI." });
     }
 
-    const lowerPrompt = prompt.toLowerCase();
+    // Specialized system context for LLM
+    const systemContext = `You are TECHBOY AI, a premium, high-density smart developer assistant inside the PROJECT-FINDER platform. 
+    You specialize in project discovery, repository deep-dives, and providing guidance to developers.
+    Always keep your tone professional, encouraging, and highly technical.
+    Use GitHub-flavored markdown for formatting (bold, lists, etc.).
+    
+    CURRENT CONTEXT:
+    - User is searching for: "${context?.search || "general tech"}"
+    - Currently focused project: ${context?.project ? JSON.stringify(context.project) : "None selected"}
+    
+    Always prioritize explaining the focused project if the user asks for details.`;
 
-    // 🚀 USE REAL LLM IF API KEY IS AVAILABLE
+    // 🚀 USE OPENROUTER (Priority)
+    if (openRouterKey) {
+        try {
+            const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
+                model: "meta-llama/llama-3.1-8b-instruct:free", // Using a solid free/cheap model
+                messages: [
+                    { role: "system", content: systemContext },
+                    { role: "user", content: prompt }
+                ]
+            }, {
+                headers: {
+                    "Authorization": `Bearer ${openRouterKey}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://github.com/chimataraghuram/PROJECT-FINDER", // Optional for OpenRouter rankings
+                    "X-Title": "Techboy Project Finder"
+                }
+            });
+
+            const text = response.data.choices[0].message.content;
+            return res.json({ response: text });
+        } catch (error) {
+            console.error("OpenRouter API Error:", error.response?.data || error.message);
+            // Fallthrough to Gemini if OpenRouter fails
+        }
+    }
+
+    // 🚀 USE GEMINI (Fallback)
     if (genAI) {
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            
-            // Build specialized system context
-            let systemContext = `You are TECHBOY AI, a premium, high-density smart developer assistant inside the PROJECT-FINDER platform. 
-            You specialize in project discovery, repository deep-dives, and providing guidance to developers.
-            Always keep your tone professional, encouraging, and highly technical.
-            Use GitHub-flavored markdown for formatting (bold, lists, etc.).
-            
-            CURRENT CONTEXT:
-            - User is searching for: "${context?.search || "general tech"}"
-            - Currently focused project: ${context?.project ? JSON.stringify(context.project) : "None selected"}
-            
-            Always prioritize explaining the focused project if the user asks for details.`;
-
             const fullPrompt = `${systemContext}\n\nUSER PROMPT: ${prompt}`;
-            
             const result = await model.generateContent(fullPrompt);
-            const response = await result.response;
-            const text = response.text();
-            
-            return res.json({ response: text });
+            const geminiResponse = await result.response;
+            return res.json({ response: geminiResponse.text() });
         } catch (error) {
             console.error("Gemini API Error:", error);
-            // Fallthrough to fallback logic if Gemini fails
+            // Fallthrough to rule-based fallback
         }
     }
 
