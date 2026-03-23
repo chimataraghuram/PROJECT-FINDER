@@ -180,10 +180,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
 
                             {/* Portfolio Mini Card */}
                             <motion.a 
-                                href="https://chimataraghuram.github.io"
+                                href="https://chimataraghuram.github.io/PORTFOLIO/"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  openSafe("https://chimataraghuram.github.io");
+                                  openSafe("https://chimataraghuram.github.io/PORTFOLIO/");
                                 }}
                                 target="_blank"
                                 rel="noreferrer"
@@ -210,7 +210,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                     {[
                                         { icon: <Linkedin size={18} />, url: 'https://linkedin.com/in/chimataraghuram', label: 'LinkedIn' },
                                         { icon: <Github size={18} />, url: 'https://github.com/chimataraghuram', label: 'GitHub' },
-                                        { icon: <Globe size={18} />, url: 'https://chimataraghuram.github.io', label: 'Portfolio' },
+                                        { icon: <Globe size={18} />, url: 'https://chimataraghuram.github.io/PORTFOLIO/', label: 'Portfolio' },
                                         { icon: <Send size={18} />, url: 'https://t.me/raghu', label: 'Telegram' }
                                     ].map((social, idx) => (
                                         <motion.a
