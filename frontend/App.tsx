@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { SearchBar, CATEGORIES } from './components/SearchBar';
+import { SearchBar } from './components/SearchBar';
 import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
 import { Project, SearchResult, SearchState } from './types';
@@ -480,26 +480,6 @@ const App: React.FC = () => {
                         The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
                       </p>
 
-                      {/* Mobile Category Filters */}
-                      <div className="md:hidden w-full px-4 order-2 mt-2">
-                        <div className="flex flex-wrap justify-center gap-2">
-                          {CATEGORIES.map((cat) => (
-                            <button
-                              key={cat.id}
-                              onClick={() => handleCategoryChange(cat.id)}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
-                                selectedCategory === cat.id
-                                  ? 'bg-orange-600 border-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]'
-                                  : 'bg-white/5 border-white/10 text-gray-500 hover:border-white/20'
-                              }`}
-                            >
-                              <cat.icon className="w-3.5 h-3.5" />
-                              {cat.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
                       <p className="hidden md:block text-gray-400 text-sm md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 order-3">
                         The ultimate discovery hub for developers.
                       </p>
@@ -509,11 +489,8 @@ const App: React.FC = () => {
                   <SearchBar 
                     onSearch={handleSearch} 
                     isLoading={searchState.isLoading}
-                    selectedCategory={selectedCategory}
-                    onCategoryChange={handleCategoryChange}
                     onSurpriseMe={handleSurpriseMe}
-                    hideCategoriesOnMobile={true}
-                    className="max-w-4xl mx-auto"
+                    className="max-w-6xl mx-auto"
                   />
 
                   {/* Hero Suggestions - Trending Now */}
