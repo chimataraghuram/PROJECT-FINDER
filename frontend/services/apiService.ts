@@ -60,7 +60,7 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
 
   const timestamp = Date.now();
   try {
-    const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}&timestamp=${timestamp}`;
+    const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}`;
     console.log("BACKEND API TRYING (Search):", url);
 
     const response = await fetch(url, { cache: 'no-store' });
