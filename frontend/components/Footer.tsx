@@ -15,14 +15,14 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
     const activeLabels = labels || { discover: "Search Projects", trending: "Trending Projects", saved: "Starred" };
 
     return (
-        <footer className="relative mt-32 pb-16 overflow-hidden border-t border-white/5 bg-transparent backdrop-blur-sm">
+        <footer className="relative mt-16 pb-16 overflow-hidden border-t border-white/5 bg-[#0f172a]/40 backdrop-blur-md">
             {/* Background elements - Subtle glows to enhance but not hide particles */}
             <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
             <div className="absolute -bottom-40 -left-20 w-80 h-80 bg-orange-600/5 blur-[100px] rounded-full pointer-events-none" />
             <div className="absolute -bottom-40 -right-20 w-80 h-80 bg-blue-600/5 blur-[100px] rounded-full pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 pt-24 pb-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-20 mb-20">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10 pt-16 pb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-20 mb-4">
 
                     {/* Pillar 1: Innovation Architecture (5 columns) */}
                     <div className="lg:col-span-5 flex flex-col items-start gap-10">
@@ -233,11 +233,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                {/* Footer Bottom Bar */}
-                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+                {/* Footer Bottom Bar - Unified */}
+                <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <div className="flex items-center gap-4">
                             <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest opacity-40">
