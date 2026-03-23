@@ -114,14 +114,14 @@ Project Finder features a **platform-aware Discovery Engine** with intelligent c
 
 ## ✨ Features
 
-| 🤖 | **TECHBOY AI** | Advanced pro-grade AI analysis (OpenRouter/Gemini), providing architectural reviews and technical heuristics. |
-| 👑 | **Platform Profiles**| Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn. |
-| 📊 | **Comparison Studio** | Side-by-side comparison of multiple repositories to evaluate complexity and tech stack. |
-| 🌍 | **Multi-Platform** | Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view. |
-| ☁️ | **Cloud Sync** | Secure user authentication and project saving via MongoDB and Firebase. |
-| 📱 | **High-Density UI** | Premium glassmorphic interface with mobile-first optimizations for desktop-class research. |
-| 🚀 | **Live API Proxy** | Proxied requests for high-frequency, authentic discovery with zero-loop reliability. |
-| 🎥 | **Intro Experience** | Premium video onboarding and smooth Framer Motion transitions. |
+- 🤖 **TECHBOY AI**: Advanced pro-grade AI analysis (OpenRouter/Gemini), providing architectural reviews and technical heuristics.
+- 👑 **Platform Profiles**: Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn.
+- 📊 **Comparison Studio**: Side-by-side comparison of multiple repositories to evaluate complexity and tech stack.
+- 🌍 **Multi-Platform**: Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view.
+- ☁️ **Cloud Sync**: Secure user authentication and project saving via MongoDB and Firebase.
+- 📱 **High-Density UI**: Premium glassmorphic interface with mobile-first optimizations for desktop-class research.
+- 🚀 **Live API Proxy**: Proxied requests for high-frequency, authentic discovery with zero-loop reliability.
+- 🎥 **Intro Experience**: Premium video onboarding and smooth Framer Motion transitions.
 
 ---
 
