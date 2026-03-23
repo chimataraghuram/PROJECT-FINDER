@@ -28,40 +28,18 @@ The Ultimate Research & Discovery Engine 🚀
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=500&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;AI-Powered+Project+Summaries;Multi-Platform+Discovery)](https://git.io/typing-svg)
 
-<table align="center" style="border-collapse: collapse; margin: 30px 0; max-width: 800px; width: 100%; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); border-radius: 20px; overflow: hidden;">
-  <tr>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Framework</p>
-      <img src="https://img.shields.io/badge/React%2019-%2320232a.svg?style=flat-square&logo=react&logoColor=%2361DAFB" height="25" />
-    </td>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Server</p>
-      <img src="https://img.shields.io/badge/Node.js-%23339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" height="25" />
-    </td>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">AI Engine</p>
-      <img src="https://img.shields.io/badge/OpenRouter-%237C3AED.svg?style=flat-square&logo=openai&logoColor=white" height="25" />
-    </td>
-  </tr>
-  <tr>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Database</p>
-      <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=flat-square&logo=mongodb&logoColor=white" height="25" />
-    </td>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Styling</p>
-      <img src="https://img.shields.io/badge/Tailwind-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white" height="25" />
-    </td>
-    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
-      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Motion</p>
-      <img src="https://img.shields.io/badge/Framer-%23bc0fe4.svg?style=flat-square&logo=framer&logoColor=white" height="25" />
-    </td>
-  </tr>
-</table>
-
 <p align="center" style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: #cbd5e1; font-size: 1.05rem;">
   <strong>Project Finder</strong> is a premium, high-density research engine designed to help developers and students discover real-world open source projects in seconds. Powered by the GitHub V3 API and integrated with <strong>TECHBOY AI</strong>, the platform provides a unified interface to explore trending repositories, AI models, and technical datasets across the global developer ecosystem.
 </p>
+
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 30px;">
+  <img src="https://img.shields.io/badge/React%2019-%2320232a.svg?style=flat-square&logo=react&logoColor=%2361DAFB" height="25" />
+  <img src="https://img.shields.io/badge/Node.js-%23339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" height="25" />
+  <img src="https://img.shields.io/badge/OpenRouter-%237C3AED.svg?style=flat-square&logo=openai&logoColor=white" height="25" />
+  <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=flat-square&logo=mongodb&logoColor=white" height="25" />
+  <img src="https://img.shields.io/badge/Tailwind-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white" height="25" />
+  <img src="https://img.shields.io/badge/Framer-%23bc0fe4.svg?style=flat-square&logo=framer&logoColor=white" height="25" />
+</div>
 
 </div>
 
