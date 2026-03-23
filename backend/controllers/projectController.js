@@ -110,9 +110,11 @@ export const searchProjects = async (req, res) => {
     const activePlatform = platform.toLowerCase();
     if (activePlatform === 'github' || activePlatform === 'all') {
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
-      const query = `${q}+in:name,description+stars:>10${topic}`;
+      const query = `${q}+in:name,description${topic}`;
+      const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30&timestamp=${Date.now()}`;
+      console.log("BACKEND GITHUB SEARCH URL:", url);
       const response = await axios.get(
-        `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30`,
+        url,
         { 
           headers: { 
             'Accept': 'application/vnd.github.v3+json',

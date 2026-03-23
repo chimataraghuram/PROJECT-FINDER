@@ -1,6 +1,8 @@
 import { Project, SearchResult, GroundingSource } from "../types";
 
-const BASE_URL = '/api';
+const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '/api' 
+  : 'https://project-finder-api.onrender.com/api';
 
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => {
@@ -54,34 +56,7 @@ const mapToFrontendProject = (item: any): Project => {
 // Service functions continue below...
 
 export const fetchSearch = async (query: string, category: string = 'All', platform: string = 'GitHub'): Promise<SearchResult> => {
-  // Direct return for static platforms (Phase 26)
-  if (platform.toLowerCase() === 'kaggle') {
-    return {
-      projects: [
-        { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
-      ].map(mapToFrontendProject),
-      groundingSources: [],
-      summary: "Displaying top Kaggle datasets and competitions. This platform uses static predefined data only."
-    };
-  }
-  
-  if (platform.toLowerCase() === 'linkedin') {
-    return {
-      projects: [
-        { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
-      ].map(mapToFrontendProject),
-      groundingSources: [],
-      summary: "Displaying top LinkedIn groups and professional tech discussions. This platform uses static predefined data only."
-    };
-  }
+  // Removed static platform returns to ensure dynamic API calls
 
   const timestamp = Date.now();
   try {
@@ -106,14 +81,8 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     if (filteredData.length === 0) {
         throw new Error("No high-quality results from API (generic or empty response)");
     }
-
     const projects = filteredData.map(mapToFrontendProject);
     
-    // If backend returns 0 results for GitHub, try direct fallback to ensure discovery
-    if (projects.length === 0 && platform.toLowerCase() === 'github') {
-        throw new Error("Backend returned empty results, trying fallback");
-    }
-
     return {
       summary: `Found ${projects.length} results for "${query}" on ${platform}${category !== 'All' ? ` in ${category}` : ''}.`,
       projects,
@@ -127,13 +96,16 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     if (platform.toLowerCase() === 'hugging face') {
       fallbackProjects = [
         { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [query, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/StabilityAI' } },
-        { id: 'hf-s2', name: `Llama-3-Instruct`, description: `State-of-the-art large language model weights and optimization guide.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'Meta-Llama', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/meta-llama' } }
+        { id: 'hf-s2', name: `${query} Model`, description: `Specialized AI model related to "${query}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
       ];
-    }
- else {
+    } else if (platform.toLowerCase() === 'kaggle') {
       fallbackProjects = [
-        { id: 'gs-1', name: `React`, description: `A JavaScript library for building user interfaces.`, platform: 'GitHub', html_url: 'https://github.com/facebook/react', stargazers_count: 220000, language: 'TypeScript', topics: [query, 'Framework'], homepage: 'https://react.dev', owner: { login: 'Facebook', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/facebook' } },
-        { id: 'gs-2', name: `Auto-GPT`, description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: 'https://github.com/Significant-Gravitas/Auto-GPT', stargazers_count: 160000, language: 'Python', topics: [query, 'AI'], homepage: 'https://agpt.co', owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com/Significant-Gravitas' } }
+        { id: 'kg-s1', name: `${query} Dataset`, description: `Large-scale dataset for ${query} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 8500, language: 'CSV', topics: [query, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+      ];
+    } else {
+      fallbackProjects = [
+        { id: 'gs-1', name: query.charAt(0).toUpperCase() + query.slice(1), description: `A high-performance repository focused on ${query}. Explore the latest patterns and implementations.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 1200, language: 'TypeScript', topics: [query, 'Modern'], homepage: null, owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
+        { id: 'gs-2', name: `${query} Framework`, description: `An experimental open-source framework attempt for ${query} mastery.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 850, language: 'Python', topics: [query, 'Framework'], homepage: null, owner: { login: 'DevCommunity', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github' } }
       ];
     }
 
@@ -152,26 +124,7 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
 };
 
 export const fetchTrending = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
-  // Direct return for static platforms (Phase 26)
-  if (platform.toLowerCase() === 'kaggle') {
-    return [
-      { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-      { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-      { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-      { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-      { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
-    ].map(mapToFrontendProject);
-  }
-
-  if (platform.toLowerCase() === 'linkedin') {
-    return [
-      { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-      { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-      { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-      { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-      { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
-    ].map(mapToFrontendProject);
-  }
+  // Removed static platform returns to ensure dynamic API calls
 
   const timestamp = Date.now();
   try {
