@@ -5,6 +5,23 @@ import { Project } from '../types';
 import { fetchTrending } from '../services/apiService';
 import { openSafe } from '../src/utils/urlHelper';
 
+// Custom SVG for Hugging Face logo
+const HuggingFaceEmoji = ({ className = "w-5 h-5" }) => (
+    <span className={className} role="img" aria-label="Hugging Face">🤗</span>
+);
+
+// Custom SVG for Kaggle logo
+const KaggleIcon = ({ className = "w-5 h-5" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        className={className}
+    >
+        <path d="M18.825 23.859c-.022.09-.092.126-.168.141h-3.32c-.172 0-.254-.078-.344-.19l-5.66-7.394-1.298 1.155v6.29c0 .16-.06.257-.23.238H5.53c-.158.02-.234-.082-.234-.238V.23C5.305.074 5.37 0 5.53 0h2.274c.17 0 .23.082.23.23v14.288l7.094-8.312c.094-.108.188-.18.36-.18h3.35c.18 0 .26.078.188.223l-6.19 7.18 6.44 9.94c.09.138.02.327-.45.49z" />
+    </svg>
+);
+
 interface TrendingProjectsProps {
     favorites: Project[];
     onToggleFavorite: (project: Project) => void;
@@ -68,10 +85,18 @@ const TrendingCard: React.FC<{
 }> = ({ project, rank, isFavorite, isComparing, onToggle, onCompare, onSummarize, onShare }) => {
     const getPlatformConfig = () => {
         const platform = project.platform?.toLowerCase() || '';
-        if (platform.includes('hugging')) return { label: 'View Model', icon: Bot, color: 'text-yellow-400' };
-        if (platform.includes('kaggle')) return { label: 'View Dataset', icon: Database, color: 'text-blue-400' };
-        if (platform.includes('linkedin')) return { label: 'View Post', icon: Linkedin, color: 'text-blue-600' };
-        return { label: 'View Project', icon: Github, color: 'text-white' };
+        if (platform.includes('hugging')) return { label: 'View Model', icon: Bot, color: 'text-yellow-400', brandColor: 'orange' };
+        if (platform.includes('kaggle')) return { label: 'View Dataset', icon: Database, color: 'text-blue-400', brandColor: 'blue' };
+        if (platform.includes('linkedin')) return { label: 'View Post', icon: Linkedin, color: 'text-blue-600', brandColor: 'blue' };
+        return { label: 'View Project', icon: Github, color: 'text-white', brandColor: 'orange' };
+    };
+
+    const getPlatformAvatar = () => {
+        const platform = project.platform?.toLowerCase() || '';
+        if (platform.includes('hugging')) return <HuggingFaceEmoji className="w-8 h-8 md:w-10 md:h-10" />;
+        if (platform.includes('kaggle')) return <KaggleIcon className="w-8 h-8 md:w-10 md:h-10 text-[#20beff]" />;
+        if (platform.includes('linkedin')) return <Linkedin className="w-8 h-8 md:w-10 md:h-10 text-[#0077b5]" fill="currentColor" />;
+        return <Github className="w-8 h-8 md:w-10 md:h-10 text-white" />;
     };
 
     const config = getPlatformConfig();
@@ -177,18 +202,36 @@ const TrendingCard: React.FC<{
                     href={project.owner?.html_url || '#'} 
                     target="_blank" 
                     rel="noreferrer"
-                    className="relative group/avatar"
+                    className="relative group/avatar flex items-center justify-center p-0.5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/50 transition-all duration-500 shadow-xl overflow-hidden"
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         openSafe(project.owner?.html_url);
                     }}
                 >
-                    <img 
-                        src={project.owner?.avatar_url || 'https://github.com/identicons/google.png'} 
-                        alt={project.owner?.login} 
-                        className="w-12 h-12 rounded-xl border border-white/10 group-hover/avatar:border-orange-500/50 transition-all duration-500 shadow-xl"
-                    />
+                    {project.owner?.avatar_url ? (
+                        <img 
+                            src={project.owner?.avatar_url} 
+                            alt={project.owner?.login} 
+                            className="w-12 h-12 rounded-xl object-cover"
+                        />
+                    ) : (
+                        <div className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl">
+                            {getPlatformAvatar()}
+                        </div>
+                    )}
+                    {/* Platform Tiny Badge */}
+                    <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border border-white/10 ${
+                        project.platform === 'Hugging Face' ? 'bg-yellow-500 text-black' :
+                        project.platform === 'Kaggle' ? 'bg-blue-500 text-white' :
+                        project.platform === 'LinkedIn' ? 'bg-[#0077b5] text-white' :
+                        'bg-white text-black'
+                    } shadow-lg scale-75`}>
+                        {project.platform === 'Hugging Face' ? <Bot size={10} /> :
+                         project.platform === 'Kaggle' ? <Database size={10} /> :
+                         project.platform === 'LinkedIn' ? <Linkedin size={10} /> :
+                         <Github size={10} />}
+                    </div>
                 </a>
                 <div>
                     <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-0.5">By Author</p>
@@ -196,7 +239,12 @@ const TrendingCard: React.FC<{
                         href={project.owner?.html_url || '#'} 
                         target="_blank" 
                         rel="noreferrer"
-                        className="text-xs font-bold text-white hover:text-orange-400 transition-colors"
+                        className={`text-sm font-black transition-colors ${
+                            project.platform === 'Hugging Face' ? 'text-yellow-400 hover:text-white' :
+                            project.platform === 'Kaggle' ? 'text-blue-400 hover:text-white' :
+                            project.platform === 'LinkedIn' ? 'text-blue-500 hover:text-white' :
+                            'text-white hover:text-orange-400'
+                        }`}
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
