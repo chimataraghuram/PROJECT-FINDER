@@ -180,14 +180,10 @@ We love contributions! Help make **Project Finder** even better by following the
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.
 
-You are free to use, modify, and contribute to this project. However, proper attribution must be given to the original author.
-
-⚠️ **Note:**
-This project is created for learning and development purposes.
-If you use or modify this project, you must provide proper credit.
-Do not claim this work as your own.
+> [!IMPORTANT]
+> You are free to use, modify, and contribute to this project. However, **proper attribution must be given to the original author**. This project is created for learning and development purposes—do not claim this work as your own.
 
 ---
 
