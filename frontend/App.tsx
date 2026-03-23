@@ -258,7 +258,11 @@ const App: React.FC = () => {
 
 
 
-  const filteredProjects = result?.projects || [];
+  const filteredProjects = useMemo(() => {
+    if (!result?.projects) return [];
+    if (filterPlatform === 'All') return result.projects;
+    return result.projects.filter(p => p.platform === filterPlatform);
+  }, [result, filterPlatform]);
 
   const [isCompact, setIsCompact] = useState(false);
   useEffect(() => {
@@ -687,12 +691,14 @@ const App: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                               {filteredProjects.map((project, index) => (
                                 <ProjectCard
-                                  key={`${project.name}-${index}`}
+                                  key={`${project.id}-${index}`}
                                   index={index}
                                   project={project}
                                   isFavorite={favorites.some(f => f.url === project.url)}
                                   onToggleFavorite={toggleFavorite}
                                   onView={setLastViewedProject}
+                                  onToggleCompare={toggleComparison}
+                                  isComparing={comparisonQueue.some(p => p.id === project.id)}
                                 />
                               ))}
                             </div>
@@ -825,6 +831,8 @@ const App: React.FC = () => {
                         isFavorite={true}
                         onToggleFavorite={toggleFavorite}
                         onView={setLastViewedProject}
+                        onToggleCompare={toggleComparison}
+                        isComparing={comparisonQueue.some(p => p.id === project.id)}
                       />
                     ))}
                   </div>
