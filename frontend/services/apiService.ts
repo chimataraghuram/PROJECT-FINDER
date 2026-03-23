@@ -391,3 +391,39 @@ export const summarizeProject = (name: string, description: string, readme: stri
     techStack: foundTech.slice(0, 5)
   };
 };
+export const createChatStream = async function* (history: any[], message: string, isFastMode: boolean = false) {
+  const timestamp = Date.now();
+  try {
+    const response = await fetch(`${BASE_URL}/chat?timestamp=${timestamp}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history, message, isFastMode })
+    });
+
+    if (response.ok && response.body) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        yield decoder.decode(value, { stream: true });
+      }
+      return;
+    }
+    throw new Error('Chat API not available');
+  } catch (error) {
+    console.warn("[Chat API] Backend failed, using local simulation", error);
+    
+    // Fallback simulation (Simulated Streaming)
+    const mockResponses = [
+      "Hello! I am TECHBOY AI, your research assistant. ",
+      "I see you're interested in building something great. ",
+      "How can I help you explore projects today?"
+    ];
+    
+    for (const chunk of mockResponses) {
+      await new Promise(r => setTimeout(r, 400));
+      yield chunk;
+    }
+  }
+};
