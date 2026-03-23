@@ -101,6 +101,24 @@ export const getTrendingProjects = async (req, res) => {
   }
 };
 
+// Global Search Cache (In-Memory)
+const searchCache = new Map();
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+// Helper to get cached result
+const getCachedResult = (key) => {
+  const cached = searchCache.get(key);
+  if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+    return cached.data;
+  }
+  return null;
+};
+
+// Helper to set cache
+const setCachedResult = (key, data) => {
+  searchCache.set(key, { data, timestamp: Date.now() });
+};
+
 // Proxy Multi-Platform Search
 export const searchProjects = async (req, res) => {
   const { q, platform = 'GitHub', category = 'All', timestamp } = req.query;
@@ -109,20 +127,31 @@ export const searchProjects = async (req, res) => {
   try {
     const activePlatform = platform.toLowerCase();
     if (activePlatform === 'github' || activePlatform === 'all') {
+      const cacheKey = `github:${q}:${category}`;
+      const cached = getCachedResult(cacheKey);
+      if (cached) {
+        console.log("SERVING FROM BACKEND CACHE:", cacheKey);
+        return res.json(cached);
+      }
+
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
       const query = `${q}+in:name,description${topic}`;
       const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30`;
+      
       console.log("BACKEND GITHUB SEARCH URL:", url);
       const response = await axios.get(
         url,
         { 
           headers: { 
-            'Accept': 'application/vnd.github.v3+json',
+            'Accept': 'application/vnd.github+json',
             ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
           } 
         }
       );
-      return res.json(response.data.items);
+
+      const items = response.data.items;
+      setCachedResult(cacheKey, items);
+      return res.json(items);
     }
 
     if (platform.toLowerCase() === 'hugging face') {
