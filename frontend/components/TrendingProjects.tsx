@@ -88,7 +88,7 @@ const TrendingCard: React.FC<{
         if (platform.includes('hugging')) return { label: 'View Model', icon: Bot, color: 'text-yellow-400', brandColor: 'orange' };
         if (platform.includes('kaggle')) return { label: 'View Dataset', icon: Database, color: 'text-blue-400', brandColor: 'blue' };
         if (platform.includes('linkedin')) return { label: 'View Post', icon: Linkedin, color: 'text-blue-600', brandColor: 'blue' };
-        return { label: 'View Project', icon: Github, color: 'text-white', brandColor: 'orange' };
+        return { label: 'View Repo', icon: Github, color: 'text-white', brandColor: 'orange' };
     };
 
     const getPlatformAvatar = () => {

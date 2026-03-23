@@ -332,7 +332,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 <span className="truncate">
                   {project.platform === 'Kaggle' ? 'View Dataset' :
                     isLinkedIn ? 'View on LinkedIn' : 
-                    (project.liveUrl && project.liveUrl !== '#') ? 'View Repo' : 'Explore Project'}
+                    (isGithub || (project.liveUrl && project.liveUrl !== '#')) ? 'View Repo' : 'Explore Project'}
                 </span>
                 {isLinkedIn ? <Linkedin className="w-4 h-4 shrink-0" /> : 
                  isKaggle ? <ExternalLink className="w-4 h-4 shrink-0" /> :
