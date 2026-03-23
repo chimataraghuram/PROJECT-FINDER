@@ -93,10 +93,10 @@ const TrendingCard: React.FC<{
 
     const getPlatformAvatar = () => {
         const platform = project.platform?.toLowerCase() || '';
-        if (platform.includes('hugging')) return <HuggingFaceEmoji className="w-8 h-8 md:w-10 md:h-10" />;
-        if (platform.includes('kaggle')) return <KaggleIcon className="w-8 h-8 md:w-10 md:h-10 text-[#20beff]" />;
-        if (platform.includes('linkedin')) return <Linkedin className="w-8 h-8 md:w-10 md:h-10 text-[#0077b5]" fill="currentColor" />;
-        return <Github className="w-8 h-8 md:w-10 md:h-10 text-white" />;
+        if (platform.includes('hugging')) return <HuggingFaceEmoji className="w-7 h-7 md:w-9 md:h-9" />;
+        if (platform.includes('kaggle')) return <KaggleIcon className="w-6 h-6 md:w-8 md:h-8 text-[#20beff]" />;
+        if (platform.includes('linkedin')) return <Linkedin className="w-6 h-6 md:w-8 md:h-8 text-[#0077b5]" fill="currentColor" />;
+        return <Github className="w-6 h-6 md:w-8 md:h-8 text-white" />;
     };
 
     const config = getPlatformConfig();
@@ -209,11 +209,17 @@ const TrendingCard: React.FC<{
                         openSafe(project.owner?.html_url);
                     }}
                 >
-                    {project.owner?.avatar_url ? (
+                    {project.owner?.avatar_url && !project.owner.login?.toLowerCase().includes('community') && !project.owner.login?.toLowerCase().includes('linkedin') && !project.owner.login?.toLowerCase().includes('kaggle') ? (
                         <img 
                             src={project.owner?.avatar_url} 
                             alt={project.owner?.login} 
                             className="w-12 h-12 rounded-xl object-cover"
+                            onError={(e) => {
+                                // Fallback if image fails to load
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center', 'bg-white/5');
+                                // This is a bit hacky in React, but simple for this case
+                            }}
                         />
                     ) : (
                         <div className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl">
@@ -221,16 +227,16 @@ const TrendingCard: React.FC<{
                         </div>
                     )}
                     {/* Platform Tiny Badge */}
-                    <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border border-white/10 ${
+                    <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-[#020617] ${
                         project.platform === 'Hugging Face' ? 'bg-yellow-500 text-black' :
-                        project.platform === 'Kaggle' ? 'bg-blue-500 text-white' :
+                        project.platform === 'Kaggle' ? 'bg-[#20beff] text-white' :
                         project.platform === 'LinkedIn' ? 'bg-[#0077b5] text-white' :
                         'bg-white text-black'
-                    } shadow-lg scale-75`}>
-                        {project.platform === 'Hugging Face' ? <Bot size={10} /> :
-                         project.platform === 'Kaggle' ? <Database size={10} /> :
-                         project.platform === 'LinkedIn' ? <Linkedin size={10} /> :
-                         <Github size={10} />}
+                    } shadow-xl scale-90 z-30`}>
+                        {project.platform === 'Hugging Face' ? <Bot size={12} strokeWidth={3} /> :
+                         project.platform === 'Kaggle' ? <Database size={12} strokeWidth={3} /> :
+                         project.platform === 'LinkedIn' ? <Linkedin size={12} strokeWidth={3} /> :
+                         <Github size={12} strokeWidth={3} />}
                     </div>
                 </a>
                 <div>
