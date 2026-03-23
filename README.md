@@ -100,23 +100,26 @@ The Ultimate Research & Discovery Engine for Modern Developers 🚀
 ---
 
 ## 🔍 Unified Discovery Engine
-Project Finder features a **platform-aware Discovery Engine** that aggregates high-quality results from across the developer ecosystem:
-- **GitHub**: Real-time trending and star-filtered repository search.
-- **Hugging Face**: Live models and state-of-the-art AI discovery.
-- **Kaggle**: High-impact datasets and competition starters.
-- **LinkedIn**: Technical threads and professional project insights.
+Project Finder features a **platform-aware Discovery Engine** with intelligent category-weighted searching across the entire developer ecosystem:
+- **GitHub**: Real-time trending and star-filtered repository discovery.
+- **Hugging Face**: Native AI model discovery with high-density "View Model" profiles.
+- **Kaggle**: High-impact dataset and competition discovery with native "View Dataset" profiles.
+- **LinkedIn**: Technical post and professional project discovery with native "View Post" profile styling.
+
+### 🧠 Intelligent Search Experience
+- **Explicit Triggering**: Search logic is now optimized for user intent—preventing automatic triggering while typing and allowing for precise controls via "Enter", the "Explore" button, or platform/category filters.
+- **Contextual Discovery**: The search engine correctly handles category transitions, ensuring that filters like "AI/ML" or "Web Dev" update existing search results instantly.
 
 ---
 
 ## ✨ Features
 
-| | Feature | Description |
-|---|---|---|
-| 🤖 | **TECHBOY AI** | Smart project analyzer and assistant powered by OpenRouter (Gemini fallback). |
-| 📊 | **Comparison Studio** | Side-by-side comparison of multiple repositories to evaluate complexity. |
-| 🌍 | **Multi-Platform** | Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn. |
+| 🤖 | **TECHBOY AI** | Advanced pro-grade AI analysis (OpenRouter/Gemini), providing architectural reviews and technical heuristics. |
+| 👑 | **Platform Profiles**| Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn. |
+| 📊 | **Comparison Studio** | Side-by-side comparison of multiple repositories to evaluate complexity and tech stack. |
+| 🌍 | **Multi-Platform** | Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view. |
 | ☁️ | **Cloud Sync** | Secure user authentication and project saving via MongoDB and Firebase. |
-| 📱 | **Responsive UI** | High-density glassmorphic design optimized for mobile and desktop. |
+| 📱 | **High-Density UI** | Premium glassmorphic interface with mobile-first optimizations for desktop-class research. |
 | 🚀 | **Live API Proxy** | Proxied requests for high-frequency, authentic discovery with zero-loop reliability. |
 | 🎥 | **Intro Experience** | Premium video onboarding and smooth Framer Motion transitions. |
 
