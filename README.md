@@ -168,14 +168,13 @@ Project Finder features a **platform-aware Discovery Engine** with intelligent c
 
 ## 🤝 Contributing
 
-Contributions are always welcome! If you'd like to improve **Project Finder**, follow these steps:
+We love contributions! Help make **Project Finder** even better by following these simple steps:
 
-1. Fork the repository
-2. Create a new branch (`feature/your-feature-name`)
-3. Make your changes
-4. Commit your changes
-5. Push to your branch
-6. Open a Pull Request
+- 🍴 **Fork** the repository to your own account.
+- 🌿 **Create** a new branch for your feature (`git checkout -b feature/amazing-feature`).
+- 🛠️ **Commit** your changes with descriptive messages.
+- 🚀 **Push** to your branch (`git push origin feature/amazing-feature`).
+- 📥 **Open** a Pull Request and describe your improvements.
 
 ---
 
