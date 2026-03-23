@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useEffect, useRef } from 'react';
-import { Search, Loader2, Sparkles, Zap, Globe, Brain, Terminal, Layout, Bot, Code, Rocket, MessageCircle, FolderPlus, Play, ShieldCheck, Smartphone, Target, Cpu, RefreshCw, Eye, Link } from 'lucide-react';
+import { Search, Loader2, Zap, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SearchBarProps {
@@ -13,21 +13,21 @@ interface SearchBarProps {
 }
 
 const QUICK_TAGS = [
-  { label: 'Chatbot', icon: MessageCircle },
-  { label: 'Portfolio', icon: FolderPlus },
-  { label: 'Netflix Clone', icon: Play },
-  { label: 'OpenClaw', icon: Bot },
-  { label: 'NanoClaw', icon: ShieldCheck },
-  { label: 'PicoClaw', icon: Smartphone },
-  { label: 'MegaClaw', icon: Target },
-  { label: 'OppoClaw', icon: RefreshCw },
-  { label: 'HyperClaw', icon: Zap },
-  { label: 'Llama 3', icon: Brain },
-  { label: 'Auto-GPT', icon: Bot },
-  { label: 'Stable Diffusion', icon: Sparkles },
-  { label: 'Computer Vision', icon: Eye },
-  { label: 'React 19', icon: Code },
-  { label: 'Blockchain', icon: Link },
+  { label: 'Chatbot', icon: '💬' },
+  { label: 'Portfolio', icon: '📁' },
+  { label: 'Netflix Clone', icon: '🎬' },
+  { label: 'OpenClaw', icon: '🤖' },
+  { label: 'NanoClaw', icon: '🛡️' },
+  { label: 'PicoClaw', icon: '📱' },
+  { label: 'MegaClaw', icon: '💾' },
+  { label: 'OppoClaw', icon: '🔄' },
+  { label: 'HyperClaw', icon: '⚡' },
+  { label: 'Llama 3', icon: '🧠' },
+  { label: 'Auto-GPT', icon: '🤖' },
+  { label: 'Stable Diffusion', icon: '✨' },
+  { label: 'Computer Vision', icon: '👁️' },
+  { label: 'React 19', icon: '⚛️' },
+  { label: 'Blockchain', icon: '🔗' },
 ];
 
 export const SearchBar: React.FC<SearchBarProps> = ({ 
@@ -113,8 +113,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* Enlarged Quick Discovery Tags */}
       <div className="mt-8 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
         <div className="flex items-center gap-2 text-gray-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
-          <Sparkles className="w-4 h-4 text-orange-500/80" />
-          <span>Trending Heuristics</span>
+          <TrendingUp className="w-4 h-4 text-orange-500/80" />
+          <span>Trending projects</span>
         </div>
 
         <div className="flex flex-wrap gap-3 justify-center max-w-5xl">
@@ -127,7 +127,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
               className="group flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.1] hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-300 text-xs md:text-sm font-black whitespace-nowrap backdrop-blur-md shadow-lg"
             >
-              <tag.icon size={14} className="group-hover:rotate-12 transition-transform" />
+              <span className="text-sm md:text-base group-hover:scale-125 transition-transform duration-300">{tag.icon}</span>
               <span className="uppercase tracking-wider">{tag.label}</span>
             </motion.button>
           ))}
