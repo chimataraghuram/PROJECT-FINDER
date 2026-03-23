@@ -209,23 +209,10 @@ const TrendingCard: React.FC<{
                         openSafe(project.owner?.html_url);
                     }}
                 >
-                    {project.owner?.avatar_url && !project.owner.login?.toLowerCase().includes('community') && !project.owner.login?.toLowerCase().includes('linkedin') && !project.owner.login?.toLowerCase().includes('kaggle') ? (
-                        <img 
-                            src={project.owner?.avatar_url} 
-                            alt={project.owner?.login} 
-                            className="w-12 h-12 rounded-xl object-cover"
-                            onError={(e) => {
-                                // Fallback if image fails to load
-                                (e.target as HTMLImageElement).style.display = 'none';
-                                (e.target as HTMLImageElement).parentElement?.classList.add('flex', 'items-center', 'justify-center', 'bg-white/5');
-                                // This is a bit hacky in React, but simple for this case
-                            }}
-                        />
-                    ) : (
-                        <div className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl">
-                            {getPlatformAvatar()}
-                        </div>
-                    )}
+                    {/* We now prioritize the platform logo as the main "profile" for trending cards as requested */}
+                    <div className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl">
+                        {getPlatformAvatar()}
+                    </div>
                     {/* Platform Tiny Badge */}
                     <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-[#020617] ${
                         project.platform === 'Hugging Face' ? 'bg-yellow-500 text-black' :
