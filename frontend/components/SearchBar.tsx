@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useEffect, useRef } from 'react';
-import { Search, Loader2, Sparkles, Zap, Smartphone, Globe, Brain, Terminal, Layout, Bot, Code, Rocket } from 'lucide-react';
+import { Search, Loader2, Sparkles, Zap, Globe, Brain, Terminal, Layout, Bot, Code, Rocket, MessageCircle, FolderPlus, Play, ShieldCheck, Smartphone, Target, Cpu, RefreshCw, Eye, Link } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SearchBarProps {
@@ -13,21 +13,21 @@ interface SearchBarProps {
 }
 
 const QUICK_TAGS = [
-  { label: 'Chatbot', emoji: '💬' },
-  { label: 'Portfolio', emoji: '📁' },
-  { label: 'Netflix Clone', emoji: '🎥' },
-  { label: 'OpenClaw', emoji: '🦾' },
-  { label: 'NanoClaw', emoji: '🔬' },
-  { label: 'PicoClaw', emoji: '⚡' },
-  { label: 'MegaClaw', emoji: '🐘' },
-  { label: 'OppoClaw', emoji: '🌀' },
-  { label: 'HyperClaw', emoji: '🏎️' },
-  { label: 'Llama 3', emoji: '🦙' },
-  { label: 'Auto-GPT', emoji: '🤖' },
-  { label: 'Stable Diffusion', emoji: '🎨' },
-  { label: 'Computer Vision', emoji: '👁️' },
-  { label: 'React 19', emoji: '⚛️' },
-  { label: 'Blockchain', emoji: '⛓️' },
+  { label: 'Chatbot', icon: MessageCircle },
+  { label: 'Portfolio', icon: FolderPlus },
+  { label: 'Netflix Clone', icon: Play },
+  { label: 'OpenClaw', icon: Bot },
+  { label: 'NanoClaw', icon: ShieldCheck },
+  { label: 'PicoClaw', icon: Smartphone },
+  { label: 'MegaClaw', icon: Target },
+  { label: 'OppoClaw', icon: RefreshCw },
+  { label: 'HyperClaw', icon: Zap },
+  { label: 'Llama 3', icon: Brain },
+  { label: 'Auto-GPT', icon: Bot },
+  { label: 'Stable Diffusion', icon: Sparkles },
+  { label: 'Computer Vision', icon: Eye },
+  { label: 'React 19', icon: Code },
+  { label: 'Blockchain', icon: Link },
 ];
 
 export const SearchBar: React.FC<SearchBarProps> = ({ 
@@ -127,7 +127,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
               className="group flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.1] hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-300 text-xs md:text-sm font-black whitespace-nowrap backdrop-blur-md shadow-lg"
             >
-              <span className="text-base group-hover:rotate-12 transition-transform">{tag.emoji}</span>
+              <tag.icon size={14} className="group-hover:rotate-12 transition-transform" />
               <span className="uppercase tracking-wider">{tag.label}</span>
             </motion.button>
           ))}
