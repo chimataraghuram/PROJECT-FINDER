@@ -111,7 +111,7 @@ export const searchProjects = async (req, res) => {
     if (activePlatform === 'github' || activePlatform === 'all') {
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
       const query = `${q}+in:name,description${topic}`;
-      const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30&timestamp=${Date.now()}`;
+      const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30`;
       console.log("BACKEND GITHUB SEARCH URL:", url);
       const response = await axios.get(
         url,

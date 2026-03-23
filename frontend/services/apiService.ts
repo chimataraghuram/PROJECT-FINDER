@@ -107,16 +107,16 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
         { id: 'li-s1', name: `${query} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${query}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/', stargazers_count: 25000, language: 'Community', topics: [query, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
       ];
     } else if (platform.toLowerCase() === 'all') {
-      // Mixed platform fallback for "All" - Prioritize real repo paths over search links
+      // Mixed platform fallback for "All" - Use search links for more relevance
       fallbackProjects = [
-        { id: 'as-1', name: `${query} Core`, description: `The primary open-source implementation for ${query}.`, platform: 'GitHub', html_url: `https://github.com/trending`, stargazers_count: 1500, language: 'TypeScript', topics: [query], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png' } },
+        { id: 'as-1', name: query.charAt(0).toUpperCase() + query.slice(1) + ' Core', description: `The primary open-source implementation for ${query}.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 1500, language: 'TypeScript', topics: [query], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png' } },
         { id: 'as-2', name: `${query} Analysis`, description: `Deep dive dataset and analysis for ${query} enthusiasts.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 900, language: 'Python', topics: [query], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
         { id: 'as-3', name: `${query} Pretrained`, description: `Latest pretrained models for ${query} applications.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 2200, language: 'PyTorch', topics: [query], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg' } }
       ];
     } else {
       fallbackProjects = [
-        { id: 'gs-1', name: query.charAt(0).toUpperCase() + query.slice(1), description: `A high-performance repository focused on ${query}. Explore the latest patterns and implementations.`, platform: 'GitHub', html_url: `https://github.com/trending`, stargazers_count: 1200, language: 'TypeScript', topics: [query, 'Modern'], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
-        { id: 'gs-2', name: `${query} Framework`, description: `An experimental open-source framework attempt for ${query} mastery.`, platform: 'GitHub', html_url: `https://github.com/trending`, stargazers_count: 850, language: 'Python', topics: [query, 'Framework'], owner: { login: 'DevCommunity', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github' } }
+        { id: 'gs-1', name: query.charAt(0).toUpperCase() + query.slice(1) + ' Hub', description: `A high-performance repository focused on ${query}. Explore the latest patterns and implementations.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 1200, language: 'TypeScript', topics: [query, 'Modern'], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
+        { id: 'gs-2', name: `${query} Framework`, description: `An experimental open-source framework attempt for ${query} mastery.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 850, language: 'Python', topics: [query, 'Framework'], owner: { login: 'DevCommunity', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github' } }
       ];
     }
 
