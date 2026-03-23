@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { fetchAIResponse } from '../services/apiService';
+import { getLocalAIResponse } from '../services/aiLogic';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -86,7 +86,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
 
     const handleSend = async (customPrompt?: string) => {
         const promptToUse = customPrompt || input;
-        if (!promptToUse.trim()) return;
+        if (!promptToUse.trim() || isTyping) return;
 
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
@@ -94,28 +94,16 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         if (!customPrompt) setInput('');
         setIsTyping(true);
 
-        const context = {
-            search: currentSearch,
-            project: lastProject,
-            availableProjects: projects.slice(0, 5).map(p => ({ name: p.name, desc: p.description }))
-        };
-
-        try {
-            const response = await fetchAIResponse(promptToUse, context);
+        // Simulated Thinking Delay (500ms) for natural feel
+        setTimeout(() => {
+            const response = getLocalAIResponse(promptToUse, lastProject);
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
                 content: response, 
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
             }]);
-        } catch (error) {
-            setMessages(prev => [...prev, { 
-                role: 'assistant', 
-                content: "I encountered a glitch in my neuro-processors. Please try again!", 
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-            }]);
-        } finally {
             setIsTyping(false);
-        }
+        }, 500);
     };
 
     const clearChat = () => {
