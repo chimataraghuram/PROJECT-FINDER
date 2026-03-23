@@ -30,11 +30,13 @@ export const getAIResponse = async (req, res) => {
     
     Always prioritize explaining the focused project if the user asks for details.`;
 
+    const lowerPrompt = prompt.toLowerCase();
+
     // 🚀 USE OPENROUTER (Priority)
     if (openRouterKey) {
         try {
             const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-                model: "meta-llama/llama-3.1-8b-instruct:free", // Using a solid free/cheap model
+                model: "meta-llama/llama-3-8b-instruct:free", 
                 messages: [
                     { role: "system", content: systemContext },
                     { role: "user", content: prompt }
@@ -43,16 +45,17 @@ export const getAIResponse = async (req, res) => {
                 headers: {
                     "Authorization": `Bearer ${openRouterKey}`,
                     "Content-Type": "application/json",
-                    "HTTP-Referer": "https://github.com/chimataraghuram/PROJECT-FINDER", // Optional for OpenRouter rankings
+                    "HTTP-Referer": "https://github.com/chimataraghuram/PROJECT-FINDER",
                     "X-Title": "Techboy Project Finder"
                 }
             });
 
-            const text = response.data.choices[0].message.content;
-            return res.json({ response: text });
+            if (response.data?.choices?.[0]?.message?.content) {
+                const text = response.data.choices[0].message.content;
+                return res.json({ response: text });
+            }
         } catch (error) {
             console.error("OpenRouter API Error:", error.response?.data || error.message);
-            // Fallthrough to Gemini if OpenRouter fails
         }
     }
 
@@ -66,7 +69,6 @@ export const getAIResponse = async (req, res) => {
             return res.json({ response: geminiResponse.text() });
         } catch (error) {
             console.error("Gemini API Error:", error);
-            // Fallthrough to rule-based fallback
         }
     }
 
