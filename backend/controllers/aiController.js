@@ -1,13 +1,54 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Initialize Gemini API (if key is present)
+const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+
 /**
  * TECHBOY AI Smart Assistant Controller
  * Handles smart project suggestions, repo explanations, and beginner guidance.
  */
-
 export const getAIResponse = async (req, res) => {
     const { prompt, context } = req.body;
+    
+    if (!prompt || !prompt.trim()) {
+        return res.status(400).json({ response: "Please provide a valid prompt for TECHBOY AI." });
+    }
+
     const lowerPrompt = prompt.toLowerCase();
 
-    // 🧠 INTELLIGENCE LOGIC (Simulated Smart Logic for DEV Assistance)
+    // 🚀 USE REAL LLM IF API KEY IS AVAILABLE
+    if (genAI) {
+        try {
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            
+            // Build specialized system context
+            let systemContext = `You are TECHBOY AI, a premium, high-density smart developer assistant inside the PROJECT-FINDER platform. 
+            You specialize in project discovery, repository deep-dives, and providing guidance to developers.
+            Always keep your tone professional, encouraging, and highly technical.
+            Use GitHub-flavored markdown for formatting (bold, lists, etc.).
+            
+            CURRENT CONTEXT:
+            - User is searching for: "${context?.search || "general tech"}"
+            - Currently focused project: ${context?.project ? JSON.stringify(context.project) : "None selected"}
+            
+            Always prioritize explaining the focused project if the user asks for details.`;
+
+            const fullPrompt = `${systemContext}\n\nUSER PROMPT: ${prompt}`;
+            
+            const result = await model.generateContent(fullPrompt);
+            const response = await result.response;
+            const text = response.text();
+            
+            return res.json({ response: text });
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            // Fallthrough to fallback logic if Gemini fails
+        }
+    }
+
+    // 🧠 FALLBACK / SIMULATED LOGIC (DEV Assistance)
     let aiOutput = "";
 
     // REPO EXPLANATION
@@ -64,11 +105,6 @@ export const getAIResponse = async (req, res) => {
     else {
         aiOutput = "I've analyzed your request. I specialize in project discovery, repository deep-dives, and developer guidance. \n\n" +
                    "Try asking: 'Explain this project' or 'Suggest a React project'.";
-    }
-
-    // Handle rapid error cases or empty prompts
-    if (!prompt.trim()) {
-        return res.status(400).json({ response: "Please provide a valid prompt for TECHBOY AI." });
     }
 
     res.json({ response: aiOutput });
