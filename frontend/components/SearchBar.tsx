@@ -51,16 +51,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
-  // Implement debounced search as per Phase 15 requirements
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Trigger search if query is not empty, or reset if it was cleared
-      // This matches the user's 'if (query) { fetchSearch } else { fetchTrending }' logic
-      onSearch(query);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query, onSearch]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

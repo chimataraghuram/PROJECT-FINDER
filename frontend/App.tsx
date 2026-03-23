@@ -142,6 +142,15 @@ const App: React.FC = () => {
     }
   }, [selectedCategory, filterPlatform]);
 
+  const handleCategoryChange = useCallback((category: string) => {
+    setSelectedCategory(category);
+    // Trigger search with new category if we have an active search query
+    const lastQuery = localStorage.getItem('last-search-query');
+    if (lastQuery) {
+      handleSearch(lastQuery, category);
+    }
+  }, [handleSearch]);
+
   const handleSurpriseMe = useCallback(() => {
     const pools = ['AI', 'React', 'Python', 'Agent', 'Automation', 'CLI', 'Web3', 'Tailwind', 'Next.js'];
     const randomQuery = pools[Math.floor(Math.random() * pools.length)];
@@ -477,13 +486,7 @@ const App: React.FC = () => {
                           {CATEGORIES.map((cat) => (
                             <button
                               key={cat.id}
-                              onClick={() => {
-                                setSelectedCategory(cat.id);
-                                if (searchState.hasSearched) {
-                                  const query = localStorage.getItem('last-search-query') || '';
-                                  if (query) handleSearch(query, cat.id);
-                                }
-                              }}
+                              onClick={() => handleCategoryChange(cat.id)}
                               className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-300 border ${
                                 selectedCategory === cat.id
                                   ? 'bg-orange-600 border-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]'
@@ -507,7 +510,7 @@ const App: React.FC = () => {
                     onSearch={handleSearch} 
                     isLoading={searchState.isLoading}
                     selectedCategory={selectedCategory}
-                    onCategoryChange={setSelectedCategory}
+                    onCategoryChange={handleCategoryChange}
                     onSurpriseMe={handleSurpriseMe}
                     hideCategoriesOnMobile={true}
                     className="max-w-4xl mx-auto"
@@ -708,10 +711,8 @@ const App: React.FC = () => {
                                 </p>
                                 <button
                                   onClick={() => { 
-                                     setSelectedCategory('All');
                                      setFilterPlatform('All');
-                                     const lastQ = localStorage.getItem('last-search-query') || '';
-                                     if (lastQ) handleSearch(lastQ, 'All');
+                                     handleCategoryChange('All');
                                   }}
                                   className="px-8 py-3 bg-white/5 border border-white/10 text-white rounded-xl hover:bg-white/10 transition-all font-black uppercase tracking-widest text-[10px]"
                                 >
