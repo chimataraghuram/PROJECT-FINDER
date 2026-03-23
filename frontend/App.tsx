@@ -670,19 +670,35 @@ const App: React.FC = () => {
                               </div>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-3">
-                              <div className="bg-gray-800/50 p-1 rounded-lg border border-gray-700 flex flex-wrap gap-1">
-                                {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => (
-                                  <button
-                                    key={p}
-                                    onClick={() => setFilterPlatform(p)}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${filterPlatform === p
-                                      ? 'bg-orange-600 text-white shadow-sm'
-                                      : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                              <div className="bg-[#1e293b]/60 backdrop-blur-3xl p-1.5 rounded-2xl border border-white/10 flex flex-wrap gap-1 shadow-2xl">
+                                {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => {
+                                  const isActive = filterPlatform === p;
+                                  const Icon = p === 'All' ? Globe : p === 'GitHub' ? Github : p === 'Hugging Face' ? Brain : p === 'Kaggle' ? BarChart3 : Linkedin;
+                                  
+                                  return (
+                                    <button
+                                      key={p}
+                                      onClick={() => {
+                                        setFilterPlatform(p);
+                                        const lastQuery = localStorage.getItem('last-search-query');
+                                        if (lastQuery) handleSearch(lastQuery, selectedCategory, p);
+                                      }}
+                                      className={`relative px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 flex items-center gap-2 group/plat ${
+                                        isActive ? 'text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
                                       }`}
-                                  >
-                                    {p}
-                                  </button>
-                                ))}
+                                    >
+                                      {isActive && (
+                                        <motion.div
+                                          layoutId="activePlatform"
+                                          className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 rounded-xl shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+                                          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                      )}
+                                      <Icon size={14} className={`relative z-10 transition-transform duration-300 group-hover/plat:scale-110 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'}`} />
+                                      <span className="relative z-10 hidden sm:inline-block">{p}</span>
+                                    </button>
+                                  );
+                                })}
                               </div>
                             </div>
                           </div>

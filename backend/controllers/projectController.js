@@ -121,83 +121,96 @@ const setCachedResult = (key, data) => {
 
 // Proxy Multi-Platform Search
 export const searchProjects = async (req, res) => {
-  const { q, platform = 'GitHub', category = 'All', timestamp } = req.query;
+  const { q, platform = 'GitHub', category = 'All' } = req.query;
   if (!q) return res.status(400).json({ message: "Query is required" });
 
   try {
     const activePlatform = platform.toLowerCase();
-    if (activePlatform === 'github' || activePlatform === 'all') {
-      const cacheKey = `github:${q}:${category}`;
-      const cached = getCachedResult(cacheKey);
-      if (cached) {
-        console.log("SERVING FROM BACKEND CACHE:", cacheKey);
-        return res.json(cached);
-      }
+    
+    // 1. Define Search Tasks
+    const tasks = [];
 
-      const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
-      const query = `${q}+in:name,description${topic}`;
-      const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=30`;
-      
-      console.log("BACKEND GITHUB SEARCH URL:", url);
-      const response = await axios.get(
-        url,
-        { 
+    // GitHub Task
+    if (activePlatform === 'github' || activePlatform === 'all') {
+      tasks.push((async () => {
+        const cacheKey = `github:${q}:${category}`;
+        const cached = getCachedResult(cacheKey);
+        if (cached) return cached;
+
+        const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
+        const query = `${q}+in:name,description${topic}`;
+        const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=${activePlatform === 'all' ? 10 : 30}`;
+        
+        const response = await axios.get(url, { 
           headers: { 
             'Accept': 'application/vnd.github+json',
             ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
           } 
-        }
-      );
-
-      const items = response.data.items;
-      setCachedResult(cacheKey, items);
-      return res.json(items);
+        });
+        const items = response.data.items.map(item => ({ ...item, platform: 'GitHub' }));
+        setCachedResult(cacheKey, items);
+        return items;
+      })());
     }
 
-    if (platform.toLowerCase() === 'hugging face') {
-      const response = await axios.get(
-        `https://huggingface.co/api/models?search=${encodeURIComponent(q)}&sort=downloads&direction=-1&limit=10`,
-        { headers: { 'User-Agent': 'Project-Finder/1.0' } }
-      );
-      const items = response.data.map(m => ({
-        id: m.modelId,
-        name: m.modelId.split('/').pop(),
-        description: `Search result for "${q}" on Hugging Face.`,
-        html_url: `https://huggingface.co/${m.modelId}`,
-        stargazers_count: m.likes || 0,
-        language: m.pipeline_tag || 'AI Model',
-        topics: [m.pipeline_tag, 'AI'].filter(Boolean),
-        owner: {
-          login: m.author || 'HuggingFace',
-          avatar_url: `https://huggingface.co/front/assets/huggingface_logo-noborder.svg`,
-        },
-        platform: 'Hugging Face'
-      }));
-      return res.json(items);
+    // Hugging Face Task
+    if (activePlatform === 'hugging face' || activePlatform === 'all') {
+      tasks.push((async () => {
+        const response = await axios.get(
+          `https://huggingface.co/api/models?search=${encodeURIComponent(q)}&sort=downloads&direction=-1&limit=10`,
+          { headers: { 'User-Agent': 'Project-Finder/1.0' } }
+        );
+        return response.data.map(m => ({
+          id: m.modelId,
+          name: m.modelId.split('/').pop(),
+          description: `Search result for "${q}" on Hugging Face.`,
+          html_url: `https://huggingface.co/${m.modelId}`,
+          stargazers_count: m.likes || 0,
+          language: m.pipeline_tag || 'AI Model',
+          topics: [m.pipeline_tag, 'AI'].filter(Boolean),
+          owner: {
+            login: m.author || 'HuggingFace',
+            avatar_url: `https://huggingface.co/front/assets/huggingface_logo-noborder.svg`,
+          },
+          platform: 'Hugging Face'
+        }));
+      })());
     }
 
-    if (platform.toLowerCase() === 'kaggle') {
-      // High-quality discovery sets for Kaggle search
-      const items = [
-        { id: 'ks1', name: `${q} Dataset Pack`, description: `Comprehensive collection of data related to ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 3400, language: 'CSV / JSON', topics: [q, 'Data Science'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
-        { id: 'ks2', name: `${q} Analysis 2024`, description: `In-depth exploratory data analysis and notebooks for ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 1200, language: 'Notebook', topics: [q, 'Analytics'], owner: { login: 'DataExpert', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
-        { id: 'ks3', name: `Top ${q} Sources`, description: `Aggregated data sources and benchmarks for ${q} research.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 850, language: 'Data', topics: [q, 'Research'], owner: { login: 'QuantTeam', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
-        { id: 'ks4', name: `Modern ${q} Trends`, description: `Historical and current trends dataset for ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 2100, language: 'SQL', topics: [q, 'Trends'], owner: { login: 'MarketAnalyst', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
-        { id: 'ks5', name: `${q} Training Set`, description: `Cleaned and labeled training data for ${q} models.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 5600, language: 'Binary', topics: [q, 'ML Training'], owner: { login: 'AICorp', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' }
-      ];
-      return res.json(items.concat(items.map(i => ({...i, id: i.id + '_2'}))).slice(0, 10)); // Provide 10 items
+    // Kaggle Task
+    if (activePlatform === 'kaggle' || activePlatform === 'all') {
+      tasks.push((async () => {
+        const items = [
+          { id: 'ks1', name: `${q} Dataset Pack`, description: `Comprehensive collection of data related to ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 3400, language: 'CSV / JSON', topics: [q, 'Data Science'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
+          { id: 'ks2', name: `${q} Analysis 2024`, description: `In-depth exploratory data analysis and notebooks for ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 1200, language: 'Notebook', topics: [q, 'Analytics'], owner: { login: 'DataExpert', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
+          { id: 'ks3', name: `Top ${q} Sources`, description: `Aggregated data sources and benchmarks for ${q} research.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 850, language: 'Data', topics: [q, 'Research'], owner: { login: 'QuantTeam', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
+          { id: 'ks4', name: `Modern ${q} Trends`, description: `Historical and current trends dataset for ${q}.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 2100, language: 'SQL', topics: [q, 'Trends'], owner: { login: 'MarketAnalyst', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' },
+          { id: 'ks5', name: `${q} Training Set`, description: `Cleaned and labeled training data for ${q} models.`, html_url: 'https://www.kaggle.com/datasets', stargazers_count: 5600, language: 'Binary', topics: [q, 'ML Training'], owner: { login: 'AICorp', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' }, platform: 'Kaggle' }
+        ];
+        return items.concat(items.map(i => ({...i, id: i.id + '_2'}))).slice(0, 10);
+      })());
     }
 
-    if (platform.toLowerCase() === 'linkedin') {
-      const items = [
-        { id: 'ls1', name: `Insights into ${q}`, description: `Expert perspective on the latest developments in ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 12000, language: 'Article', topics: [q, 'LinkedIn'], owner: { login: 'IndustryLeader', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' },
-        { id: 'ls2', name: `${q} Mastery Guide`, description: `A comprehensive roadmap for professionals in ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 8900, language: 'Course', topics: [q, 'Skillup'], owner: { login: 'LearningPath', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' },
-        { id: 'ls3', name: `${q} Career Tips`, description: `Advice for landing high-paying roles involving ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 5400, language: 'Post', topics: [q, 'Job Search'], owner: { login: 'CareerCoach', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' }
-      ];
-      return res.json(items.concat(items.map(i => ({...i, id: i.id + '_2'})).concat(items.slice(0, 4).map(i => ({...i, id: i.id + '_3'})))).slice(0, 10)); // Provide 10 items
+    // LinkedIn Task
+    if (activePlatform === 'linkedin' || activePlatform === 'all') {
+      tasks.push((async () => {
+        const items = [
+          { id: 'ls1', name: `Insights into ${q}`, description: `Expert perspective on the latest developments in ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 12000, language: 'Article', topics: [q, 'LinkedIn'], owner: { login: 'IndustryLeader', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' },
+          { id: 'ls2', name: `${q} Mastery Guide`, description: `A comprehensive roadmap for professionals in ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 8900, language: 'Course', topics: [q, 'Skillup'], owner: { login: 'LearningPath', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' },
+          { id: 'ls3', name: `${q} Career Tips`, description: `Advice for landing high-paying roles involving ${q}.`, html_url: 'https://www.linkedin.com', stargazers_count: 5400, language: 'Post', topics: [q, 'Job Search'], owner: { login: 'CareerCoach', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' }
+        ];
+        return items.concat(items.map(i => ({...i, id: i.id + '_2'})).concat(items.slice(0, 4).map(i => ({...i, id: i.id + '_3'})))).slice(0, 10);
+      })());
     }
 
-    res.json([]);
+    // 2. Execute Tasks in Parallel
+    const results = await Promise.allSettled(tasks);
+    const flattenedResults = results
+      .filter(r => r.status === 'fulfilled')
+      .map(r => r.value)
+      .flat();
+
+    res.json(flattenedResults);
   } catch (error) {
     console.error(`${platform.toUpperCase()} SEARCH ERROR:`, error.response?.data || error.message);
     res.status(500).json({ message: `Failed to search ${platform}` });
