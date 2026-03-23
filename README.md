@@ -1,53 +1,71 @@
 <div align="center">
 
-<img src="./frontend/src/assets/logos/logo_final_v6.png" width="120"
+<img src="./frontend/src/assets/logos/logo_final_v6.png" width="130"
 style="border-radius: 50%; 
-box-shadow: 0 0 40px rgba(255,140,66,0.6); 
-margin-bottom: 20px;" />
+box-shadow: 0 0 50px rgba(249,115,22,0.4); 
+margin-bottom: 25px;
+border: 1px solid rgba(255,255,255,0.1);" />
 
-<h1 style="
-color: #ff8c42;
-font-weight: 800;
-letter-spacing: 2px;
-margin-bottom: 10px;
-">
-🔍 PROJECT FINDER
+<h1 style="color: #ffffff; font-weight: 900; letter-spacing: -2px; margin-bottom: 5px; font-size: 3rem;">
+PROJECT FINDER
 </h1>
 
-<p style="color: #aaa; font-size: 1.1rem;">
-The Ultimate Research & Discovery Engine for Modern Developers 🚀
+<p style="color: #f97316; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 20px; opacity: 0.8;">
+The Ultimate Research & Discovery Engine 🚀
 </p>
 
-<div style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+<div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;">
   <a href="https://chimataraghuram.github.io/PROJECT-FINDER/">
-    <img src="https://img.shields.io/badge/🚀%20Live%20Demo-FF8C42?style=for-the-badge&logoColor=white" />
+    <img src="https://img.shields.io/badge/Live%20Demo%20→-f97316?style=for-the-badge&logoColor=white" height="35" />
   </a>
   <a href="https://github.com/chimataraghuram/PROJECT-FINDER">
-    <img src="https://img.shields.io/badge/💻%20Explore%20Code-222?style=for-the-badge&logo=github&logoColor=white" />
+    <img src="https://img.shields.io/badge/Source%20Code-111?style=for-the-badge&logo=github&logoColor=white" height="35" />
   </a>
   <a href="https://chimataraghuram.github.io/PROJECT-FINDER/#profiles">
-    <img src="https://img.shields.io/badge/🎨%20Browse%20Profiles-555?style=for-the-badge&logoColor=white" />
+    <img src="https://img.shields.io/badge/Browse%20Profiles-333?style=for-the-badge&logoColor=white" height="35" />
   </a>
 </div>
 
-<br/>
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=500&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;AI-Powered+Project+Summaries;Multi-Platform+Discovery)](https://git.io/typing-svg)
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=24&pause=1000&color=F97316&center=true&vCenter=true&width=435&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;AI-Powered+Project+Summaries;Multi-Platform+Discovery)](https://git.io/typing-svg)
+<table align="center" style="border-collapse: collapse; margin: 30px 0; max-width: 800px; width: 100%; border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); border-radius: 20px; overflow: hidden;">
+  <tr>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Framework</p>
+      <img src="https://img.shields.io/badge/React%2019-%2320232a.svg?style=flat-square&logo=react&logoColor=%2361DAFB" height="25" />
+    </td>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Server</p>
+      <img src="https://img.shields.io/badge/Node.js-%23339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" height="25" />
+    </td>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">AI Engine</p>
+      <img src="https://img.shields.io/badge/OpenRouter-%237C3AED.svg?style=flat-square&logo=openai&logoColor=white" height="25" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Database</p>
+      <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=flat-square&logo=mongodb&logoColor=white" height="25" />
+    </td>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Styling</p>
+      <img src="https://img.shields.io/badge/Tailwind-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white" height="25" />
+    </td>
+    <td align="center" style="padding: 20px; border: 1px solid rgba(255,255,255,0.05);">
+      <p style="color: #888; text-transform: uppercase; letter-spacing: 2px; font-size: 10px; font-weight: 900; margin: 0 0 10px 0;">Motion</p>
+      <img src="https://img.shields.io/badge/Framer-%23bc0fe4.svg?style=flat-square&logo=framer&logoColor=white" height="25" />
+    </td>
+  </tr>
+</table>
 
-<p align="center">
-  <strong>🚀 Project Finder is a premium, high-density research engine designed to help developers and students discover real-world open source projects in seconds. Powered by the GitHub V3 API and integrated with TECHBOY AI, the platform provides a unified interface to explore trending repositories, AI models, and technical datasets across the global developer ecosystem.</strong>
+<p align="center" style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: #cbd5e1; font-size: 1.05rem;">
+  <strong>Project Finder</strong> is a premium, high-density research engine designed to help developers and students discover real-world open source projects in seconds. Powered by the GitHub V3 API and integrated with <strong>TECHBOY AI</strong>, the platform provides a unified interface to explore trending repositories, AI models, and technical datasets across the global developer ecosystem.
 </p>
 
 </div>
 
 <br/>
-
-[![Framework: React 19](https://img.shields.io/badge/Framework-React%2019-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
-[![Server: Node.js](https://img.shields.io/badge/Server-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![AI: OpenRouter](https://img.shields.io/badge/AI-OpenRouter-7C3AED?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai/)
-[![Database: MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Styling: Tailwind](https://img.shields.io/badge/Styling-Tailwind-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Animations: Framer Motion](https://img.shields.io/badge/Animations-Framer_Motion-FF52D9?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
 ---
 
