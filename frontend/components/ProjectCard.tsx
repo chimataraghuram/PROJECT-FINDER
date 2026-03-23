@@ -43,9 +43,10 @@ interface ProjectCardProps {
   onToggleCompare?: (project: Project) => void;
   isComparing?: boolean;
   index?: number;
+  onView?: (project: Project) => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0 }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView }) => {
   const [copied, setCopied] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
@@ -59,6 +60,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   const handleSummarize = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    onView?.(project);
     if (summaryData) {
       setShowSummary(true);
       return;
@@ -80,6 +82,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   const handleAnalyze = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    onView?.(project);
     if (analysisData) {
       setShowAnalysis(true);
       return;
@@ -319,6 +322,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  onView?.(project);
                   openSafe(project.url);
                 }}
                 target="_blank"

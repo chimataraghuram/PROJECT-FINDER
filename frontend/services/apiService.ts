@@ -427,3 +427,19 @@ export const createChatStream = async function* (history: any[], message: string
     }
   }
 };
+
+export const fetchAIResponse = async (prompt: string, context: any): Promise<string> => {
+  try {
+    const response = await fetch(`${BASE_URL}/ai`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, context })
+    });
+    if (!response.ok) throw new Error("AI request failed");
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error("AI Error:", error);
+    return "I'm having trouble connecting to my brain right now. Please try again later!";
+  }
+};

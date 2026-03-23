@@ -153,6 +153,7 @@ const App: React.FC = () => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [lastViewedProject, setLastViewedProject] = useState<Project | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   
@@ -692,6 +693,7 @@ const App: React.FC = () => {
                                   project={project}
                                   isFavorite={favorites.some(f => f.url === project.url)}
                                   onToggleFavorite={toggleFavorite}
+                                  onView={setLastViewedProject}
                                 />
                               ))}
                             </div>
@@ -825,6 +827,7 @@ const App: React.FC = () => {
                         project={project}
                         isFavorite={true}
                         onToggleFavorite={toggleFavorite}
+                        onView={setLastViewedProject}
                       />
                     ))}
                   </div>
@@ -882,6 +885,8 @@ const App: React.FC = () => {
               projects={filteredProjects} 
               isOpen={isAIAssistantOpen} 
               setIsOpen={setIsAIAssistantOpen} 
+              currentSearch={localStorage.getItem('last-search-query') || ""}
+              lastProject={lastViewedProject}
             />
 
             {/* --- MOBILE BOTTOM NAVIGATION --- */}
