@@ -468,50 +468,52 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
 
             </div>
 
-            <div className="flex items-center gap-4 mb-12">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                <div className="flex items-center gap-2 px-8 py-3 rounded-full border border-white/5 bg-white/[0.02] backdrop-blur-md shadow-2xl">
-                    <Flame size={14} className="text-orange-500 animate-pulse" />
-                    <div className="flex flex-col md:flex-row items-center gap-3">
-                        <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-[0.3em]">Trending on {activePlatform} {activeCategory !== 'All' ? `(${activeCategory})` : ''}</span>
-                        {!loading && projects.length > 0 && (
-                            <div className="flex items-center gap-3 pl-3 border-l border-white/10">
-                                <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{projects.length} repositories</span>
-                                <span className="w-1 h-1 rounded-full bg-orange-500/20" />
-                                <span className="text-[8px] font-black text-orange-500/60 uppercase tracking-widest animate-pulse">Updated just now</span>
+            <div className="flex flex-col items-center gap-8 mb-16">
+                <div className="w-full flex items-center gap-4">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex items-center gap-4 px-10 py-4 rounded-[2rem] border border-white/10 bg-[#0f172a]/40 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] relative group cursor-default"
+                    >
+                        <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-b from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        
+                        <div className="relative flex items-center gap-3">
+                            <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                                <Flame size={16} className="text-orange-500 animate-pulse" />
                             </div>
-                        )}
-                    </div>
-                    <div className="ml-2 px-2 py-0.5 rounded-md bg-orange-500/20 border border-orange-500/30">
-                        <span className="text-[8px] font-black text-orange-500">REAL-TIME</span>
-                    </div>
-                </div>
-
-                {/* Tech Filters - Restored for Phase 6 */}
-                <div className="mt-8 flex flex-col items-center gap-6">
-                    <div className="flex flex-wrap justify-center gap-3">
-                        <div className="w-full flex items-center justify-center gap-2 mb-2">
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Filter by Tech</span>
+                            
+                            <div className="flex flex-col md:flex-row items-center gap-4">
+                                <span className="text-xs font-black text-white uppercase tracking-[0.4em] drop-shadow-sm">
+                                    Trending on {activePlatform}
+                                </span>
+                                
+                                {!loading && projects.length > 0 && (
+                                    <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">Discovery</span>
+                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{projects.length} Repositories</span>
+                                        </div>
+                                        
+                                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500/40 animate-pulse" />
+                                        
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[9px] font-black text-orange-500/40 uppercase tracking-widest leading-none">Status</span>
+                                            <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">Updated Just Now</span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="ml-4 px-3 py-1 rounded-lg bg-orange-600/20 border border-orange-500/30 shadow-[0_0_15px_rgba(234,88,12,0.1)]">
+                                <span className="text-[9px] font-black text-orange-400 tracking-[0.1em]">REAL-TIME</span>
+                            </div>
                         </div>
-                    {CATEGORIES.map((c) => (
-                        <motion.button
-                            key={c.id}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => handleCategoryChange(c.id)}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border ${
-                                activeCategory === c.id
-                                ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.2)]'
-                                : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-gray-300 border-white/5'
-                            }`}
-                        >
-                            <c.icon size={14} />
-                            {c.label}
-                        </motion.button>
-                    ))}
-                    </div>
+                    </motion.div>
+
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 </div>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
