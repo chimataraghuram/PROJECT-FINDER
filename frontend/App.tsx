@@ -490,7 +490,7 @@ const App: React.FC = () => {
                     onSearch={handleSearch} 
                     isLoading={searchState.isLoading}
                     onSurpriseMe={handleSurpriseMe}
-                    className="max-w-6xl mx-auto"
+                    className="max-w-4xl mx-auto"
                   />
 
                   {/* Hero Suggestions - Trending Now */}

@@ -12,6 +12,24 @@ interface SearchBarProps {
   className?: string;
 }
 
+const QUICK_TAGS = [
+  { label: 'Chatbot', emoji: '💬' },
+  { label: 'Portfolio', emoji: '📁' },
+  { label: 'Netflix Clone', emoji: '🎥' },
+  { label: 'OpenClaw', emoji: '🦾' },
+  { label: 'NanoClaw', emoji: '🔬' },
+  { label: 'PicoClaw', emoji: '⚡' },
+  { label: 'MegaClaw', emoji: '🐘' },
+  { label: 'OppoClaw', emoji: '🌀' },
+  { label: 'HyperClaw', emoji: '🏎️' },
+  { label: 'Llama 3', emoji: '🦙' },
+  { label: 'Auto-GPT', emoji: '🤖' },
+  { label: 'Stable Diffusion', emoji: '🎨' },
+  { label: 'Computer Vision', emoji: '👁️' },
+  { label: 'React 19', emoji: '⚛️' },
+  { label: 'Blockchain', emoji: '⛓️' },
+];
+
 export const SearchBar: React.FC<SearchBarProps> = ({ 
   onSearch, 
   isLoading, 
@@ -38,21 +56,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className={`w-full max-w-6xl mx-auto px-4 ${className}`}>
+    <div className={`w-full max-w-4xl mx-auto px-4 ${className}`}>
       
-      {/* Expanded Search Bar */}
+      {/* Search Bar */}
       <form onSubmit={handleSubmit} className="relative group">
-        <div className={`absolute -inset-[3px] rounded-[2.5rem] transition-all duration-700 ${
+        <div className={`absolute -inset-[2px] rounded-2xl transition-all duration-700 ${
           isFocused
-            ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 opacity-80 blur-[4px]'
-            : 'bg-gradient-to-r from-orange-600/30 via-red-600/20 to-orange-600/30 opacity-0 group-hover:opacity-60 blur-[4px]'
+            ? 'bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 opacity-80 blur-[2px]'
+            : 'bg-gradient-to-r from-orange-600/30 via-red-600/20 to-orange-600/30 opacity-0 group-hover:opacity-60 blur-[2px]'
         }`} />
 
-        <div className={`relative flex items-center bg-[#0c1628]/90 backdrop-blur-[40px] rounded-[2.5rem] border transition-all duration-500 shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden min-h-[80px] md:min-h-[110px] ${
-          isFocused ? 'border-orange-500/80 scale-[1.02]' : 'border-white/10 hover:border-white/20'
+        <div className={`relative flex items-center bg-[#0c1628]/80 backdrop-blur-3xl rounded-2xl border transition-all duration-300 shadow-2xl overflow-hidden ${
+          isFocused ? 'border-orange-500/60' : 'border-white/8 hover:border-white/15'
         }`}>
-          <div className="pl-8 md:pl-12 shrink-0">
-            <Search className={`w-6 h-6 md:w-8 md:h-8 transition-all duration-500 ${isFocused ? 'text-orange-400 scale-110' : 'text-gray-500'}`} />
+          <div className="pl-5 md:pl-6 shrink-0">
+            <Search className={`w-5 h-5 md:w-6 md:h-6 transition-colors duration-300 ${isFocused ? 'text-orange-400' : 'text-gray-500'}`} />
           </div>
 
           <input
@@ -61,40 +79,60 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Search AI, Web, ML, and Data Science projects..."
-            className="w-full bg-transparent text-white px-6 md:px-10 py-6 md:py-10 text-lg md:text-3xl focus:outline-none placeholder-gray-700 min-w-0 font-black tracking-tight"
+            placeholder="Search AI, Web, ML projects..."
+            className="w-full bg-transparent text-white px-4 py-4 md:py-6 text-sm md:text-xl focus:outline-none placeholder-gray-600 min-w-0 font-medium"
             disabled={isLoading}
           />
 
-          <div className="flex items-center gap-4 pr-4 md:pr-6 shrink-0">
-            <motion.button
+          <div className="flex items-center gap-2 pr-2 shrink-0">
+            <button
               type="button"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               onClick={handleSurprise}
               disabled={isLoading}
-              className="hidden lg:flex items-center gap-3 px-6 py-4 rounded-2xl text-orange-400 font-black text-sm uppercase tracking-[0.2em] border border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/40 transition-all duration-300 whitespace-nowrap group/luck shadow-lg"
+              className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl text-orange-400 font-black text-[10px] md:text-xs uppercase tracking-widest border border-orange-500/20 bg-orange-500/10 hover:bg-orange-500/20 hover:border-orange-500/40 transition-all duration-200 whitespace-nowrap group/luck"
             >
-              <Zap className="w-4 h-4 group-hover:scale-125 transition-transform" />
+              <Zap className="w-3.5 h-3.5 group-hover:scale-125 transition-transform" />
               <span>Surprise Me</span>
-            </motion.button>
+            </button>
 
-            <motion.button
+            <button
               type="submit"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(234,88,12,0.4)" }}
-              whileTap={{ scale: 0.95 }}
               disabled={isLoading || !query.trim()}
-              className="relative px-8 py-5 md:px-14 md:py-7 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-black rounded-2xl transition-all duration-300 disabled:opacity-40 flex items-center justify-center gap-4 shadow-2xl shadow-orange-600/40 text-xs md:text-lg uppercase tracking-[0.2em] overflow-hidden group/btn"
+              className="relative px-5 py-2.5 md:px-10 md:py-4 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white font-black rounded-xl transition-all duration-200 disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg shadow-orange-600/30 text-[10px] md:text-sm uppercase tracking-widest overflow-hidden group/btn"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover/btn:animate-[shimmer_1.5s_infinite] pointer-events-none" />
               {isLoading
-                ? <Loader2 className="w-6 h-6 animate-spin" />
-                : <><Search className="w-5 h-5 md:w-6 md:h-6" /><span className="hidden sm:inline">Explore</span></>
+                ? <Loader2 className="w-5 h-5 animate-spin" />
+                : <><Search className="w-4 h-4" /><span>Explore</span></>
               }
-            </motion.button>
+            </button>
           </div>
         </div>
       </form>
+
+      {/* Enlarged Quick Discovery Tags */}
+      <div className="mt-8 flex flex-col items-center gap-4 animate-fade-in" style={{ animationDelay: '200ms' }}>
+        <div className="flex items-center gap-2 text-gray-500 font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
+          <Sparkles className="w-4 h-4 text-orange-500/80" />
+          <span>Trending Heuristics</span>
+        </div>
+
+        <div className="flex flex-wrap gap-3 justify-center max-w-5xl">
+          {QUICK_TAGS.map((tag, i) => (
+            <motion.button
+              key={tag.label}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.3 }}
+              onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
+              className="group flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/10 bg-white/[0.04] hover:bg-white/[0.1] hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-300 text-xs md:text-sm font-black whitespace-nowrap backdrop-blur-md shadow-lg"
+            >
+              <span className="text-base group-hover:rotate-12 transition-transform">{tag.emoji}</span>
+              <span className="uppercase tracking-wider">{tag.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
     </div>
   );
-};
+};
