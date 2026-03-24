@@ -91,6 +91,10 @@ The Ultimate Research & Discovery Engine 🚀
 *Secure login and cloud synchronization for a personalized discovery experience.*
 <img src="./frontend/src/assets/images/screenshots/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
+### 9. Mobile-First Optimization
+*High-density research experience optimized for all device form factors with zero compromise.*
+<img src="./frontend/src/assets/images/screenshots/9.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+
 </div>
 
 ---
