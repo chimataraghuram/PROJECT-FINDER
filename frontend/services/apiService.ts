@@ -23,16 +23,21 @@ const mapToFrontendProject = (item: any): Project => {
     repoUrl = '#';
   }
   
-  const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
-  const topics = item.topics || item.tags || [];
-  
-  return {
-    id: item.id?.toString() || Math.random().toString(),
-    name,
-    description: item.description || '',
-    platform,
-    url: repoUrl,
-    liveUrl: (item.homepage && item.homepage !== repoUrl) ? item.homepage : (item.liveUrl && item.liveUrl !== repoUrl ? item.liveUrl : (item.demoUrl && item.demoUrl !== repoUrl ? item.demoUrl : null)),
+    const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
+    const topics = item.topics || item.tags || [];
+    
+    // Improved Live URL extraction (prioritize official homepages)
+    const liveUrl = (item.homepage && item.homepage !== repoUrl && item.homepage !== '#') ? item.homepage : 
+                   (item.liveUrl && item.liveUrl !== repoUrl && item.liveUrl !== '#') ? item.liveUrl : 
+                   (item.demoUrl && item.demoUrl !== repoUrl && item.demoUrl !== '#') ? item.demoUrl : null;
+    
+    return {
+      id: item.id?.toString() || Math.random().toString(),
+      name,
+      description: item.description || '',
+      platform,
+      url: repoUrl,
+      liveUrl: liveUrl,
     stars: stars,
     language: item.language || 'Unknown',
     tags: topics,
@@ -107,16 +112,17 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
         { id: 'li-s1', name: `${query} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${query}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/', stargazers_count: 25000, language: 'Community', topics: [query, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
       ];
     } else if (platform.toLowerCase() === 'all') {
-      // Mixed platform fallback for "All" - Use search links for more relevance
+      // Mixed platform fallback for "All" - Use REAL high-quality repos
       fallbackProjects = [
-        { id: 'as-1', name: query.charAt(0).toUpperCase() + query.slice(1) + ' Core', description: `The primary open-source implementation for ${query}.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 1500, language: 'TypeScript', topics: [query], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png' } },
-        { id: 'as-2', name: `${query} Analysis`, description: `Deep dive dataset and analysis for ${query} enthusiasts.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 900, language: 'Python', topics: [query], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'as-3', name: `${query} Pretrained`, description: `Latest pretrained models for ${query} applications.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 2200, language: 'PyTorch', topics: [query], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg' } }
+        { id: 'as-1', name: 'LangChain', description: `Building applications with LLMs through composability.`, platform: 'GitHub', html_url: `https://github.com/langchain-ai/langchain`, homepage: 'https://langchain.com', stargazers_count: 85000, language: 'Python', topics: ['AI', 'LLM', 'Framework'], owner: { login: 'langchain-ai', avatar_url: 'https://github.com/langchain-ai.png' } },
+        { id: 'as-2', name: `Transformers`, description: `State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/docs/transformers', stargazers_count: 125000, language: 'Python', topics: ['NLP', 'Deep Learning'], owner: { login: 'HuggingFace', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg' } },
+        { id: 'as-3', name: `House Prices`, description: `Advanced regression techniques for house price prediction.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques', stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
       ];
     } else {
+      // Specific GitHub search fallbacks - NO MORE GENERIC SEARCH LINKS
       fallbackProjects = [
-        { id: 'gs-1', name: query.charAt(0).toUpperCase() + query.slice(1) + ' Hub', description: `A high-performance repository focused on ${query}. Explore the latest patterns and implementations.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 1200, language: 'TypeScript', topics: [query, 'Modern'], owner: { login: 'OpenSource', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github.com' } },
-        { id: 'gs-2', name: `${query} Framework`, description: `An experimental open-source framework attempt for ${query} mastery.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(query)}`, stargazers_count: 850, language: 'Python', topics: [query, 'Framework'], owner: { login: 'DevCommunity', avatar_url: 'https://github.com/identicons/google.png', html_url: 'https://github' } }
+        { id: 'gs-1', name: 'Auto-GPT', description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: `https://github.com/Significant-Gravitas/Auto-GPT`, homepage: 'https://agpt.co/', stargazers_count: 154000, language: 'Python', topics: ['AI', 'Autonomous', 'GPT-4'], owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/Significant-Gravitas.png' } },
+        { id: 'gs-2', name: `PyTorch`, description: `Tensors and Dynamic neural networks in Python with strong GPU acceleration.`, platform: 'GitHub', html_url: `https://github.com/pytorch/pytorch`, homepage: 'https://pytorch.org', stargazers_count: 78000, language: 'C++', topics: ['Machine Learning', 'AI', 'Compute'], owner: { login: 'pytorch', avatar_url: 'https://github.com/pytorch.png' } }
       ];
     }
 
@@ -200,18 +206,18 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       ].map(mapToFrontendProject);
     }
 
-    // Default trending fallback for GitHub or unknown (No direct API calls)
+    // Default trending fallback for GitHub (Actual High-Quality Repos with REAL Homepages)
     return [
-      { id: 'gt1', name: 'Auto-GPT', description: 'An experimental open-source attempt to make GPT-4 fully autonomous.', platform: 'GitHub', url: 'https://github.com/Significant-Gravitas/Auto-GPT', liveUrl: 'https://github.com/Significant-Gravitas/Auto-GPT', stars: 154000, language: 'Python', tags: ['AI', 'Autonomous'], owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt2', name: 'Next.js', description: 'The React Framework for the Web.', platform: 'GitHub', url: 'https://github.com/vercel/next.js', liveUrl: 'https://nextjs.org', stars: 120000, language: 'TypeScript', tags: ['React', 'Framework'], owner: { login: 'vercel', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt3', name: 'Tailwind CSS', description: 'A utility-first CSS framework for rapid UI development.', platform: 'GitHub', url: 'https://github.com/tailwindlabs/tailwindcss', stars: 78000, language: 'CSS', tags: ['Utility', 'CSS'], owner: { login: 'tailwindlabs', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt4', name: 'FastAPI', description: 'Modern, fast (high-performance), web framework for building APIs with Python.', platform: 'GitHub', url: 'https://github.com/tiangolo/fastapi', stars: 65000, language: 'Python', tags: ['API', 'Speed'], owner: { login: 'tiangolo', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt5', name: 'Excalidraw', description: 'Virtual whiteboard for sketching hand-drawn like diagrams.', platform: 'GitHub', url: 'https://github.com/excalidraw/excalidraw', stars: 72000, language: 'TypeScript', tags: ['Drawing', 'Collaboration'], owner: { login: 'excalidraw', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt6', name: 'Prisma', description: 'Next-generation ORM for Node.js & TypeScript.', platform: 'GitHub', url: 'https://github.com/prisma/prisma', stars: 35000, language: 'TypeScript', tags: ['ORM', 'Database'], owner: { login: 'prisma', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt7', name: 'Zustand', description: 'ðŸ» Bear necessities for state management in React.', platform: 'GitHub', url: 'https://github.com/pmndrs/zustand', stars: 40000, language: 'TypeScript', tags: ['State', 'React'], owner: { login: 'pmndrs', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt8', name: 'Shadcn/UI', description: 'Beautifully designed components built with Radix UI and Tailwind CSS.', platform: 'GitHub', url: 'https://github.com/shadcn/ui', stars: 58000, language: 'TypeScript', tags: ['UI', 'Components'], owner: { login: 'shadcn', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt9', name: 'Bun', description: 'Incredibly fast JavaScript runtime, bundler, test runner, and package manager.', platform: 'GitHub', url: 'https://github.com/oven-sh/bun', stars: 68000, language: 'Zig', tags: ['Runtime', 'JS'], owner: { login: 'oven', avatar_url: 'https://github.com/identicons/google.png' } },
-      { id: 'gt10', name: 'Turborepo', description: 'The high-performance build system for JavaScript and TypeScript monorepos.', platform: 'GitHub', url: 'https://github.com/vercel/turborepo', stars: 22000, language: 'Go', tags: ['Build', 'Monorepo'], owner: { login: 'vercel', avatar_url: 'https://github.com/identicons/google.png' } }
+      { id: 'gt1', name: 'Auto-GPT', description: 'An experimental open-source attempt to make GPT-4 fully autonomous.', platform: 'GitHub', url: 'https://github.com/Significant-Gravitas/Auto-GPT', liveUrl: 'https://agpt.co/', stars: 154000, language: 'Python', tags: ['AI', 'Autonomous'], owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/Significant-Gravitas.png' } },
+      { id: 'gt2', name: 'Next.js', description: 'The React Framework for the Web.', platform: 'GitHub', url: 'https://github.com/vercel/next.js', liveUrl: 'https://nextjs.org', stars: 120000, language: 'TypeScript', tags: ['React', 'Framework'], owner: { login: 'vercel', avatar_url: 'https://github.com/vercel.png' } },
+      { id: 'gt3', name: 'Tailwind CSS', description: 'A utility-first CSS framework for rapid UI development.', platform: 'GitHub', url: 'https://github.com/tailwindlabs/tailwindcss', liveUrl: 'https://tailwindcss.com', stars: 78000, language: 'CSS', tags: ['Utility', 'CSS'], owner: { login: 'tailwindlabs', avatar_url: 'https://github.com/tailwindlabs.png' } },
+      { id: 'gt4', name: 'FastAPI', description: 'Modern, fast (high-performance), web framework for building APIs with Python.', platform: 'GitHub', url: 'https://github.com/tiangolo/fastapi', liveUrl: 'https://fastapi.tiangolo.com', stars: 65000, language: 'Python', tags: ['API', 'Speed'], owner: { login: 'tiangolo', avatar_url: 'https://github.com/tiangolo.png' } },
+      { id: 'gt5', name: 'Excalidraw', description: 'Virtual whiteboard for sketching hand-drawn like diagrams.', platform: 'GitHub', url: 'https://github.com/excalidraw/excalidraw', liveUrl: 'https://excalidraw.com', stars: 72000, language: 'TypeScript', tags: ['Drawing', 'Collaboration'], owner: { login: 'excalidraw', avatar_url: 'https://github.com/excalidraw.png' } },
+      { id: 'gt6', name: 'Prisma', description: 'Next-generation ORM for Node.js & TypeScript.', platform: 'GitHub', url: 'https://github.com/prisma/prisma', liveUrl: 'https://www.prisma.io', stars: 35000, language: 'TypeScript', tags: ['ORM', 'Database'], owner: { login: 'prisma', avatar_url: 'https://github.com/prisma.png' } },
+      { id: 'gt7', name: 'Zustand', description: '🐻 Bear necessities for state management in React.', platform: 'GitHub', url: 'https://github.com/pmndrs/zustand', liveUrl: 'https://zustand-demo.pmnd.rs/', stars: 40000, language: 'TypeScript', tags: ['State', 'React'], owner: { login: 'pmndrs', avatar_url: 'https://github.com/pmndrs.png' } },
+      { id: 'gt8', name: 'Shadcn/UI', description: 'Beautifully designed components built with Radix UI and Tailwind CSS.', platform: 'GitHub', url: 'https://github.com/shadcn/ui', liveUrl: 'https://ui.shadcn.com', stars: 58000, language: 'TypeScript', tags: ['UI', 'Components'], owner: { login: 'shadcn', avatar_url: 'https://github.com/shadcn.png' } },
+      { id: 'gt9', name: 'Bun', description: 'Incredibly fast JavaScript runtime, bundler, test runner, and package manager.', platform: 'GitHub', url: 'https://github.com/oven-sh/bun', liveUrl: 'https://bun.sh', stars: 68000, language: 'Zig', tags: ['Runtime', 'JS'], owner: { login: 'oven', avatar_url: 'https://github.com/oven-sh.png' } },
+      { id: 'gt10', name: 'Turborepo', description: 'The high-performance build system for JavaScript and TypeScript monorepos.', platform: 'GitHub', url: 'https://github.com/vercel/turborepo', liveUrl: 'https://turbo.build/repo', stars: 22000, language: 'Go', tags: ['Build', 'Monorepo'], owner: { login: 'vercel', avatar_url: 'https://github.com/vercel.png' } }
     ].map(mapToFrontendProject);
   }
 };
