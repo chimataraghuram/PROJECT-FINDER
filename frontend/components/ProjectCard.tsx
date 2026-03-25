@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProjectReadme, summarizeProject } from '../services/apiService';
 import { analyzeProject, ProjectAnalysis } from '../services/aiService';
 import { openSafe } from '../src/utils/urlHelper';
+import { TechStack } from './TechStack';
 
 // Custom SVG for Hugging Face logo
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
@@ -304,15 +305,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
         </motion.p>
 
         <motion.div variants={itemVariants} className="mt-auto space-y-4">
-          <div className="flex flex-wrap gap-2">
-            {project.tags.slice(0, 3).map((tag, idx) => (
-              <span
-                key={idx}
-                className="px-2.5 py-1 text-[10px] uppercase tracking-widest font-black rounded-lg bg-gray-900/50 border border-white/5 text-gray-500 group-hover:text-gray-300 transition-colors"
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="mt-4">
+            <TechStack tags={project.tags} max={3} />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
