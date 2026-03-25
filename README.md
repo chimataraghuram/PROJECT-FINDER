@@ -60,39 +60,39 @@ The Ultimate Research & Discovery Engine 🚀
 <div align="center">
 
 ### 1. Premium Splash Screen
-*Ultra-smooth onboarding with motion-ready typography and brand mascot.*
+*Elegant onboarding with the mascot logo and motion-ready branding.*
 <img src="./frontend/src/assets/images/screenshots/1.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 2. Modern Discovery Dashboard
-*The central hub featuring global platform integrations and quick-access technical categories.*
+### 2. Intelligent Hero & Discovery
+*The central search hub with quick-exploration categories and multi-platform support.*
 <img src="./frontend/src/assets/images/screenshots/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 3. Real-Time Trending Feed
-*Live activity display from across GitHub, optimized for discovery of high-engagement repositories.*
+### 3. Context-Aware Search Bar
+*Dynamic search interface that suggests trending explorations for instant discovery.*
 <img src="./frontend/src/assets/images/screenshots/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 4. Comparison Studio
-*Side-by-side analysis of up to 3 projects to evaluate tech stacks and community impact.*
+### 4. High-Density Project Cards
+*Premium project displays featuring live stats, tech stacks, and quick-action buttons.*
 <img src="./frontend/src/assets/images/screenshots/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 5. TECHBOY AI Assistant
-*Smart AI-driven project summaries and technical guidance powered by the latest LLMs.*
+### 5. Global Trending Engine
+*Dedicated hub for discovering hot repositories and models across all major platforms.*
 <img src="./frontend/src/assets/images/screenshots/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 6. Multi-Platform Results
-*Aggregated insights from GitHub, Hugging Face, Kaggle, and LinkedIn in a single view.*
+### 6. Ranked Project Leaderboard
+*Real-time trending dashboard for the most active projects in the developer ecosystem.*
 <img src="./frontend/src/assets/images/screenshots/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 7. User Dashboard & Starred Collections
 *Organized workspace for managing your saved project inspirations and syncing with the cloud.*
 <img src="./frontend/src/assets/images/screenshots/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 8. Full-Stack Authenticity
-*Secure login and cloud synchronization for a personalized discovery experience.*
+### 8. TECHBOY AI Chatbot
+*Intelligent assistant providing technical guidance and project recommendations in real-time.*
 <img src="./frontend/src/assets/images/screenshots/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
-### 9. Mobile-First Optimization
-*High-density research experience optimized for all device form factors with zero compromise.*
+### 9. Usage Guide & Developer Profile
+*Detailed documentation and integrated developer profile for complete transparency.*
 <img src="./frontend/src/assets/images/screenshots/9.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 </div>
