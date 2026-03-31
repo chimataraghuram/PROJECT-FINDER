@@ -258,7 +258,7 @@ This project is licensed under the **MIT License**.
 *Full-Stack Developer & AI Enthusiast*
 
 <div style="display: flex; gap: 10px;">
-  <a href="https://chimataraghuram.github.io/PORTFOLIO/">
+  <a href="https://chimataraghuram.vercel.app/">
     <img src="https://img.shields.io/badge/🌐%20Portfolio-FF8C42?style=for-the-badge&logoColor=white" />
   </a>
   <a href="https://www.linkedin.com/in/chimataraghuram/">
