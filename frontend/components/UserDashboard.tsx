@@ -123,7 +123,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
               {savedProjects.length > 0 ? (
                 savedProjects.map((project, idx) => (
                   <div key={idx} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all cursor-pointer group">

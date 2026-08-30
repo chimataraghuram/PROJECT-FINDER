@@ -590,3 +590,19 @@ h1, h2, h3, h4, .font-display {
 .hover-lift:hover {
     transform: translateY(-8px) scale(1.02);
 }
+
+/* Custom sleek scrollbar for dark mode */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.2); /* Orange 500 at 20% opacity */
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.5);
+}
