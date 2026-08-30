@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw, Code2 } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw, Code2, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
@@ -49,6 +49,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const [researchMode, setResearchMode] = useState<'quick' | 'deep'>('quick');
     const [researchStage, setResearchStage] = useState('');
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [feedback, setFeedback] = useState<Record<number, 'up' | 'down'>>({});
     const scrollRef = useRef<HTMLDivElement>(null);
     const abortRef = useRef<AbortController | null>(null);
 
@@ -248,7 +249,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     }`}>
                                         {msg.role === 'assistant' && <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-orange-400"><Bot size={13} /> TECHBOY AI <span className="text-white/30">· Research Assistant</span></div>}
                                         <div dangerouslySetInnerHTML={{ __html: safeHtml(msg.content) }} />
-                                        {msg.role === 'assistant' && msg.content && <div className="mt-2 flex gap-3"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button></div>}
+                                        {msg.role === 'assistant' && msg.content && <div className="mt-3 flex items-center gap-3 border-t border-white/5 pt-2"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button><span className="ml-auto text-[9px] uppercase tracking-widest text-gray-600">Helpful?</span><button onClick={() => setFeedback(current => ({ ...current, [i]: 'up' }))} className={feedback[i] === 'up' ? 'text-green-400' : 'text-gray-500 hover:text-green-400'} title="Helpful"><ThumbsUp size={13} /></button><button onClick={() => setFeedback(current => ({ ...current, [i]: 'down' }))} className={feedback[i] === 'down' ? 'text-red-400' : 'text-gray-500 hover:text-red-400'} title="Not helpful"><ThumbsDown size={13} /></button></div>}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                                             {msg.timestamp}
                                         </div>
