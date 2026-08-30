@@ -190,9 +190,12 @@ const App: React.FC = () => {
 
   const [homeTrending, setHomeTrending] = useState<Project[]>([]);
   useEffect(() => {
-    fetchTrending('GitHub', 'All').then(data => {
+    const loadHomeTrending = () => fetchTrending('GitHub', 'All').then(data => {
       if (data && data.length > 0) setHomeTrending(data.slice(0, 3));
-    });
+    }).catch(() => {});
+    loadHomeTrending();
+    const interval = window.setInterval(loadHomeTrending, 60000);
+    return () => window.clearInterval(interval);
   }, []);
 
   const toggleComparison = (project: Project) => {
