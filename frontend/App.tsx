@@ -449,25 +449,25 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="block md:hidden fixed top-0 left-0 right-0 z-[2000] px-4 py-2 bg-[#0f172a]/80 backdrop-blur-[40px] border-b border-white/10">
+          <div className="block md:hidden fixed top-3 left-4 right-4 z-[2000] pointer-events-none">
             <div className="flex items-center justify-between">
-              {/* Logo (Left) */}
+              {/* Logo Pill (Left) */}
               <div 
-                className="flex items-center gap-1.5 cursor-pointer"
+                className="pointer-events-auto flex items-center gap-2 cursor-pointer bg-[#0f172a]/60 backdrop-blur-3xl border border-white/10 rounded-full pr-4 pl-1.5 py-1.5 shadow-xl"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20" />
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30" />
                   <img src={mascotLogo} className="w-7 h-7 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
                 </div>
-                <span className="text-xs font-black text-white tracking-tighter uppercase">Project Finder</span>
+                <span className="text-xs font-black text-white tracking-tighter uppercase mt-0.5">Project Finder</span>
               </div>
 
-              {/* Actions (Right) */}
-              <div className="flex items-center gap-3">
+              {/* Actions Pill (Right) */}
+              <div className="pointer-events-auto flex items-center gap-2 bg-[#0f172a]/60 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl">
                 <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-8 h-8 rounded-xl bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-8 h-8 rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center active:scale-90 transition-transform"
                 >
                   <Bot className="w-4 h-4 text-white" />
                 </button>
