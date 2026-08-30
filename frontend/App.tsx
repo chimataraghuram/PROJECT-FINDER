@@ -378,23 +378,19 @@ const App: React.FC = () => {
                   transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
                 >
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
+                  <img src={mascotLogo} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300" alt="Mascot Logo" />
                 </motion.div>
 
                 <motion.div className="flex items-center gap-3 md:gap-4 origin-left">
-                  <div className={`relative transition-all duration-500 ease-out overflow-hidden origin-left ${isCompact ? 'w-0 opacity-0 mr-[-12px] md:mr-[-16px]' : 'w-8 opacity-100'}`}>
+                  <div className="relative shrink-0">
                     <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
                     <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
                       <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
                     </div>
                   </div>
-                  <motion.span 
-                    animate={{ scale: isCompact ? 0.85 : 1, opacity: isCompact ? 0.9 : 1 }}
-                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                    className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left"
-                  >
-                    Project Finder
-                  </motion.span>
+                  <span className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left">
+                      Project Finder
+                    </span>
                 </motion.div>
               </motion.div>
             </div>
@@ -501,14 +497,14 @@ const App: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2 }}
                 whileTap={{ scale: 0.95 }}
-                className="pointer-events-auto flex items-center gap-2 cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full pr-4 pl-1.5 py-1.5 shadow-xl group/moblogo"
+                className={`pointer-events-auto flex items-center cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full py-1.5 shadow-xl group/moblogo transition-all duration-500 ease-out ${isCompact ? 'gap-0 pr-1 pl-1' : 'gap-2 pr-4 pl-1.5'}`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
-                  <motion.img whileHover={{ rotate: 5 }} src={mascotLogo} className="w-8 h-8 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
+                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12' : 'w-8 h-8'}`} alt="Logo" />
                 </div>
-                <span className="text-xs font-black text-white tracking-tighter uppercase mt-0.5">Project Finder</span>
+                <span className={`text-xs font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[100px] opacity-100'}`}>Project Finder</span>
               </motion.div>
 
               {/* Actions Pill (Right) */}
@@ -516,16 +512,18 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2, delay: 0.1 }}
-                className="pointer-events-auto flex items-center gap-2 bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl"
+                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl transition-all duration-500 ease-out ${isCompact ? 'gap-1' : 'gap-2'}`}
               >
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-8 h-8 rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-colors"
+                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12' : 'w-8 h-8'}`}
                 >
-                  <Bot className="w-4 h-4 text-white" />
+                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-6 h-6' : 'w-4 h-4'}`} />
                 </motion.button>
-                <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
+                <div className={`transition-all duration-500 ease-out ${isCompact ? 'scale-150 origin-right' : 'scale-100'}`}>
+                  <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
+                </div>
               </motion.div>
             </div>
           </div>
