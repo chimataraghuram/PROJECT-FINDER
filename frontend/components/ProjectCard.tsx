@@ -48,6 +48,8 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView }) => {
+  const healthSignals = [Boolean(project.description), Boolean(project.language && project.language !== 'Unknown'), Boolean(project.tags?.length), Boolean(project.liveUrl), (project.stars || 0) > 100].filter(Boolean).length;
+  const healthLabel = healthSignals >= 4 ? 'Strong signals' : healthSignals >= 2 ? 'Good signals' : 'Limited signals';
   const [copied, setCopied] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
@@ -253,6 +255,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
         <p className="text-gray-400 text-xs md:text-sm leading-relaxed mb-4 line-clamp-3">
           {project.description || "A powerful open-source tool for the modern web."}
         </p>
+
+        <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-500">
+          <span className={`h-1.5 w-1.5 rounded-full ${healthSignals >= 4 ? 'bg-green-400' : healthSignals >= 2 ? 'bg-yellow-400' : 'bg-gray-500'}`} />
+          Metadata health: <span className="text-gray-300">{healthLabel}</span>
+        </div>
         
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-4 opacity-50" />
 
