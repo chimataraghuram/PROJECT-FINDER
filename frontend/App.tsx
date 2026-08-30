@@ -378,20 +378,19 @@ const App: React.FC = () => {
                   transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
                 >
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300 ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
+                  <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
                 </motion.div>
 
-                <motion.div className="flex items-center gap-3 md:gap-4 origin-left"
-                >
-                  <div className="relative">
+                <motion.div className="flex items-center gap-3 md:gap-4 origin-left">
+                  <div className={`relative transition-all duration-500 ease-out overflow-hidden origin-left ${isCompact ? 'w-0 opacity-0 mr-[-12px] md:mr-[-16px]' : 'w-8 opacity-100'}`}>
                     <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
                     <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
                       <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
                     </div>
                   </div>
-                  <motion.span
+                  <motion.span 
                     animate={{ scale: isCompact ? 0.85 : 1, opacity: isCompact ? 0.9 : 1 }}
-                    transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
+                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                     className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left"
                   >
                     Project Finder
@@ -459,32 +458,32 @@ const App: React.FC = () => {
 
             {/* 3. Right Island: Action Hub */}
             <div className="pointer-events-auto shrink-0 flex justify-end">
-              <motion.div 
+              <motion.div
                 layout
-                animate={{ 
+                animate={{
                   scale: isCompact ? 0.9 : 1,
                   opacity: 1,
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={`flex items-center transition-all duration-300 border border-white/10 shadow-2xl ${isCompact ? 'gap-4 bg-[#0a0a0f]/90 backdrop-blur-3xl rounded-[2.5rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 backdrop-blur-xl rounded-[2rem] p-2'}`}
+                className={`flex items-center transition-all duration-500 ease-out border border-white/10 shadow-2xl ${isCompact ? 'gap-2 bg-[#0a0a0f]/90 backdrop-blur-3xl rounded-[2.5rem] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 backdrop-blur-xl rounded-[2rem] p-2'}`}
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className={`flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-300 ${isCompact ? 'gap-3 pr-6 bg-[#0f172a]' : 'gap-2 pr-3 bg-transparent'}`}
+                  className={`flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-500 ease-out ${isCompact ? 'gap-0 pr-1 bg-transparent' : 'gap-2 pr-3 bg-transparent'}`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className={`bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-all duration-300 ${isCompact ? 'w-10 h-10 rounded-[0.9rem]' : 'w-7 h-7 rounded-xl'}`}>
-                    <Bot className={`text-white transition-all duration-300 ${isCompact ? 'w-5 h-5' : 'w-4 h-4'}`} />
+                  <div className={`bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12 rounded-full' : 'w-8 h-8 rounded-[0.9rem]'}`}>
+                    <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-6 h-6' : 'w-4 h-4'}`} />
                   </div>
-                  <div className={`hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] transition-all duration-300 overflow-hidden ${isCompact ? 'text-[11px] opacity-100 max-w-[100px]' : 'text-[9px] opacity-70 max-w-[80px]'}`}>
+                  <div className={`hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[80px] opacity-70 text-[9px]'}`}>
                     <span className="text-white">Techboy</span>
                     <span className="text-orange-500">AI</span>
                   </div>
                 </motion.button>
 
-                <div className={`hidden sm:block w-px bg-white/10 shrink-0 transition-all duration-300 ${isCompact ? 'h-8 mx-2' : 'h-6 mx-1'}`} />
+                <div className={`hidden sm:block w-px bg-white/10 shrink-0 transition-all duration-500 ease-out overflow-hidden origin-center ${isCompact ? 'w-0 h-8 mx-0 opacity-0' : 'w-px h-6 mx-1 opacity-100'}`} />
 
                 <AuthButton
                   onViewDashboard={() => setCurrentView(currentView === 'dashboard' ? 'search' : 'dashboard')}
