@@ -29,7 +29,7 @@ The Ultimate Research & Discovery Engine 🚀
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=500&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;AI-Powered+Project+Summaries;Multi-Platform+Discovery)](https://git.io/typing-svg)
 
 <p align="center" style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: #cbd5e1; font-size: 1.05rem;">
-  <strong>Project Finder</strong> is a premium, high-density research engine designed to help developers and students discover real-world open source projects in seconds. Powered by the GitHub V3 API and integrated with <strong>TECHBOY AI</strong>, the platform provides a unified interface to explore trending repositories, AI models, and technical datasets across the global developer ecosystem.
+  <strong>Project Finder</strong> is a premium research workspace for developers and students. It combines GitHub-first discovery, live trending repositories, multi-platform resources, RAG-powered TECHBOY AI, saved collections, and persistent research history in one focused interface.
 </p>
 
 <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 30px;">
@@ -115,7 +115,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://img.icons8.com/material-outlined/24/ffffff/github.png" width="20"/> GitHub
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Real-time trending and star-filtered repository discovery across million of sources.
+          Real-time trending, searchable, filterable repository discovery with GitHub results prioritized first.
         </p>
       </div>
     </td>
@@ -125,7 +125,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <span style="font-size: 20px;">🤗</span> Hugging Face
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Native AI model discovery with high-density "View Model" interactive profiles.
+          AI model discovery with direct model links and platform-aware project cards.
         </p>
       </div>
     </td>
@@ -137,7 +137,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://img.icons8.com/color/24/000000/kaggle.png" width="20"/> Kaggle
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          High-impact dataset discovery with native "View Dataset" optimized profile views.
+          Dataset discovery with direct dataset links and unified cross-platform results.
         </p>
       </div>
     </td>
@@ -147,7 +147,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://img.icons8.com/color/24/000000/linkedin.png" width="20"/> LinkedIn
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Professional project discovery with native "View Post" social profile styling.
+          Professional discovery links presented alongside technical project resources.
         </p>
       </div>
     </td>
@@ -204,6 +204,23 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 - **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas)
 - **Authentication**: [Firebase Authentication](https://firebase.google.com/docs/auth) with Google Sign-In and server-side token verification
 - **Hosting**: [Render](https://render.com/) (Backend) & [GitHub Pages](https://pages.github.com/) (Frontend)
+
+### Local Setup
+
+```bash
+git clone https://github.com/chimataraghuram/PROJECT-FINDER.git
+cd PROJECT-FINDER/frontend
+npm install
+npm run dev
+```
+
+The frontend runs on Vite. Start the backend separately from `backend` with `npm install` and `npm start`. Copy the environment examples into local `.env` files and keep server secrets, service-account credentials, and API keys out of frontend code.
+
+### Configuration
+
+Frontend Firebase web settings use the `VITE_FIREBASE_*` variables documented in `frontend/.env.example`. Backend configuration uses `MONGODB_URI`, `FIREBASE_SERVICE_ACCOUNT_JSON`, `GITHUB_TOKEN`, `OPENROUTER_API_KEY`, `RAG_MODEL`, and `FRONTEND_ORIGINS` where required.
+
+Google Sign-In is the application authentication flow. Firebase creates accounts on first successful login, restores sessions, and provides the identity used to associate saved projects, collections, searches, and research sessions.
 
 ---
 
