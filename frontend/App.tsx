@@ -706,41 +706,61 @@ const App: React.FC = () => {
                               {/* Middle side: Filters Grid */}
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full lg:flex-1 shrink">
                                   {/* Sort */}
-                                  <div className="relative group/select">
-                                      <ListFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
-                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="relevance" className="bg-[#0f172a]">Sort: Relevance</option>
-                                        <option value="stars" className="bg-[#0f172a]">Sort: GitHub Stars</option>
-                                        <option value="name" className="bg-[#0f172a]">Sort: Name</option>
+                                  <div className="relative group/select flex items-center justify-between px-4 h-11 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors cursor-pointer overflow-hidden">
+                                      <div className="flex items-center gap-3 pointer-events-none z-10">
+                                          <ListFilter className="text-orange-500 w-4 h-4 group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-200">
+                                              {resultSort === 'relevance' ? 'Sort: Relevance' : resultSort === 'stars' ? 'Sort: GitHub Stars' : 'Sort: Name'}
+                                          </span>
+                                      </div>
+                                      <ChevronDown className="text-gray-400 w-3.5 h-3.5 pointer-events-none z-10" />
+                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        <option value="relevance">Sort: Relevance</option>
+                                        <option value="stars">Sort: GitHub Stars</option>
+                                        <option value="name">Sort: Name</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Language */}
-                                  <div className="relative group/select">
-                                      <Code className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
-                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        {availableLanguages.map(language => <option key={language} value={language} className="bg-[#0f172a]">{language === 'All' ? 'Language: All' : language}</option>)}
+                                  <div className="relative group/select flex items-center justify-between px-4 h-11 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors cursor-pointer overflow-hidden">
+                                      <div className="flex items-center gap-3 pointer-events-none z-10">
+                                          <Code className="text-orange-500 w-4 h-4 group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-200">
+                                              {languageFilter === 'All' ? 'Language: All' : `Language: ${languageFilter}`}
+                                          </span>
+                                      </div>
+                                      <ChevronDown className="text-gray-400 w-3.5 h-3.5 pointer-events-none z-10" />
+                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        {availableLanguages.map(language => <option key={language} value={language}>{language === 'All' ? 'Language: All' : language}</option>)}
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Stars */}
-                                  <div className="relative group/select">
-                                      <Star className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
-                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="0" className="bg-[#0f172a]">Stars: Any</option><option value="100" className="bg-[#0f172a]">Stars: 100+</option><option value="1000" className="bg-[#0f172a]">Stars: 1K+</option><option value="10000" className="bg-[#0f172a]">Stars: 10K+</option>
+                                  <div className="relative group/select flex items-center justify-between px-4 h-11 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors cursor-pointer overflow-hidden">
+                                      <div className="flex items-center gap-3 pointer-events-none z-10">
+                                          <Star className="text-orange-500 w-4 h-4 group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-200">
+                                              {minStars === '0' ? 'Stars: Any' : minStars === '100' ? 'Stars: 100+' : minStars === '1000' ? 'Stars: 1K+' : 'Stars: 10K+'}
+                                          </span>
+                                      </div>
+                                      <ChevronDown className="text-gray-400 w-3.5 h-3.5 pointer-events-none z-10" />
+                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        <option value="0">Stars: Any</option><option value="100">Stars: 100+</option><option value="1000">Stars: 1K+</option><option value="10000">Stars: 10K+</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Updated */}
-                                  <div className="relative group/select">
-                                      <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
-                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="all" className="bg-[#0f172a]">Updated: Any time</option><option value="week" className="bg-[#0f172a]">Updated: This week</option><option value="month" className="bg-[#0f172a]">Updated: This month</option><option value="year" className="bg-[#0f172a]">Updated: This year</option>
+                                  <div className="relative group/select flex items-center justify-between px-4 h-11 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors cursor-pointer overflow-hidden">
+                                      <div className="flex items-center gap-3 pointer-events-none z-10">
+                                          <Clock className="text-orange-500 w-4 h-4 group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-200">
+                                              {dateFilter === 'all' ? 'Updated: Any time' : dateFilter === 'week' ? 'Updated: This week' : dateFilter === 'month' ? 'Updated: This month' : 'Updated: This year'}
+                                          </span>
+                                      </div>
+                                      <ChevronDown className="text-gray-400 w-3.5 h-3.5 pointer-events-none z-10" />
+                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                        <option value="all">Updated: Any time</option><option value="week">Updated: This week</option><option value="month">Updated: This month</option><option value="year">Updated: This year</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
                               </div>
 
