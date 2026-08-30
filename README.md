@@ -179,7 +179,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 
 ## ✨ Features
 
-- 🤖 **TECHBOY AI**: Quick and Deep Research modes with streaming answers, citations, formatting, copy, regenerate, feedback, and session restore.
+- 🤖 **TECHBOY AI + RAG**: Retrieval-Augmented Generation using repository ingestion, code/document chunk retrieval, grounded answers, source citations, Quick and Deep Research modes, streaming, formatting, copy, regenerate, feedback, and session restore.
 - 👑 **Platform Profiles**: Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn.
 - 📊 **Comparison Studio**: Side-by-side comparison of multiple repositories to evaluate complexity and tech stack.
 - 🌍 **Multi-Platform**: Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view.
@@ -200,6 +200,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 - **Frontend**: [React v19](https://reactjs.org/), [Vite](https://vitejs.dev/), [Framer Motion](https://www.framer.com/motion/), [Lucide React](https://lucide.dev/)
 - **Backend**: [Node.js](https://nodejs.org/) (Express) with [Mongoose](https://mongoosejs.com/)
 - **AI Integration**: [OpenRouter API](https://openrouter.ai/) & [Google Gemini AI](https://ai.google.dev/)
+- **RAG Pipeline**: Repository ingestion, document/code chunking, semantic retrieval, context-grounded generation, and citation sources
 - **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas)
 - **Authentication**: [Firebase Authentication](https://firebase.google.com/docs/auth) with Google Sign-In and server-side token verification
 - **Hosting**: [Render](https://render.com/) (Backend) & [GitHub Pages](https://pages.github.com/) (Frontend)
