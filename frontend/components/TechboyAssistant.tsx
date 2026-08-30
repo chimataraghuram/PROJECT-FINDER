@@ -52,6 +52,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const [feedback, setFeedback] = useState<Record<number, 'up' | 'down'>>({});
     const scrollRef = useRef<HTMLDivElement>(null);
     const abortRef = useRef<AbortController | null>(null);
+    const stageTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // 🔄 Load Chat History
     useEffect(() => {
@@ -109,7 +110,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         if (!customPrompt) setInput('');
         setIsTyping(true);
         abortRef.current = new AbortController();
-        setResearchStage(mode === 'deep' ? 'Understanding question…' : '');
+        if (mode === 'deep') {
+            const stages = ['Understanding question…', 'Searching repository evidence…', 'Ranking relevant sources…', 'Generating grounded answer…'];
+            let stageIndex = 0;
+            setResearchStage(stages[stageIndex]);
+            stageTimerRef.current = setInterval(() => { stageIndex = Math.min(stageIndex + 1, stages.length - 1); setResearchStage(stages[stageIndex]); }, 1400);
+        } else setResearchStage('');
 
         try {
             // 🤖 ATTEMPT BACKEND LLM (OpenRouter/Gemini)
@@ -130,8 +136,6 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                     const research = await askQuickResearchQuestion(promptToUse, undefined, { owner, repo });
                     response = research.answer;
                 } else {
-                    setResearchStage('Searching and ranking repository evidence…');
-                    setResearchStage('Generating grounded answer…');
                     let streamed = '';
                     setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
                     for await (const event of streamResearchQuestion(promptToUse, { owner, repo }, abortRef.current.signal)) {
@@ -155,6 +159,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
             }]);
         } finally {
+            if (stageTimerRef.current) { clearInterval(stageTimerRef.current); stageTimerRef.current = null; }
             abortRef.current = null;
             setIsTyping(false);
             setResearchStage('');
