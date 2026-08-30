@@ -385,7 +385,7 @@ const App: React.FC = () => {
             </div>
 
             {/* 3. Right Island: Action Hub */}
-            <div className="fixed top-4 right-8 z-[2000] pointer-events-auto">
+            <div className="fixed top-4 right-4 md:right-5 z-[2000] pointer-events-auto">
               <motion.div 
                 layout
                 animate={{ 
