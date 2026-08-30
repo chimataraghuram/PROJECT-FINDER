@@ -191,7 +191,7 @@ const App: React.FC = () => {
   const [homeTrending, setHomeTrending] = useState<Project[]>([]);
   useEffect(() => {
     fetchTrending('GitHub', 'All').then(data => {
-      if (data && data.length > 0) setHomeTrending(data.slice(0, 2));
+      if (data && data.length > 0) setHomeTrending(data.slice(0, 3));
     });
   }, []);
 
@@ -554,7 +554,7 @@ const App: React.FC = () => {
                         <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest uppercase italic">Trending Now</h2>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-10">
                         {homeTrending.length > 0 ? homeTrending.map((project, idx) => {
                           const isFav = favorites.some(f => f.url === project.url);
                           
