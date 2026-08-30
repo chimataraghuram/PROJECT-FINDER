@@ -398,17 +398,17 @@ const App: React.FC = () => {
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="h-8 md:h-9 px-3 md:px-4 rounded-full border border-orange-500 bg-[#0f172a] flex items-center gap-2 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all"
+                  className="h-8 md:h-9 pl-1 md:pl-1.5 pr-3 md:pr-4 rounded-full border border-orange-500/50 bg-[#0f172a] flex items-center gap-2 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <div className="w-5 h-5 md:w-6 md:h-6 bg-orange-500 rounded-md md:rounded-lg shadow-lg shrink-0 flex items-center justify-center">
-                    <Bot className="w-3 h-3 md:w-3.5 md:h-3.5 text-white" />
+                  <div className="w-6 h-6 md:w-7 md:h-7 bg-orange-500 rounded-md md:rounded-xl shadow-sm shrink-0 flex items-center justify-center">
+                    <Bot className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
                   </div>
-                  <span className="hidden sm:inline-block text-[9px] md:text-[10px] font-black uppercase tracking-[0.15em] transition-colors">
+                  <div className="w-px h-3 bg-white/10 hidden sm:block mx-0.5" />
+                  <span className="hidden sm:inline-block text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] transition-colors">
                     <span className="text-white">TECHBOY</span> <span className="text-orange-500">AI</span>
                   </span>
-                  <ChevronRight className="w-3 h-3 md:w-3.5 md:h-3.5 text-orange-500 hidden sm:inline-block ml-0.5" />
                 </motion.button>
                 
                 <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
