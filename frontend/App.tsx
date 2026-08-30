@@ -102,6 +102,7 @@ const App: React.FC = () => {
 
   // Filtering State
   const [filterPlatform, setFilterPlatform] = useState<PlatformFilter>('All');
+  const [resultSort, setResultSort] = useState<'relevance' | 'stars' | 'name'>('relevance');
 
   const [favorites, setFavorites] = useState<Project[]>(() => {
     const saved = localStorage.getItem('project-finder-favorites');
@@ -277,9 +278,11 @@ const App: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     if (!result?.projects) return [];
-    if (filterPlatform === 'All') return result.projects;
-    return result.projects.filter(p => p.platform === filterPlatform);
-  }, [result, filterPlatform]);
+    const filtered = filterPlatform === 'All' ? [...result.projects] : result.projects.filter(p => p.platform === filterPlatform);
+    if (resultSort === 'stars') return filtered.sort((a, b) => (b.stars || 0) - (a.stars || 0));
+    if (resultSort === 'name') return filtered.sort((a, b) => a.name.localeCompare(b.name));
+    return filtered;
+  }, [result, filterPlatform, resultSort]);
 
   const [isCompact, setIsCompact] = useState(false);
   useEffect(() => {
@@ -605,6 +608,11 @@ const App: React.FC = () => {
                               </div>
                             </div>
                             <div className="flex flex-col sm:flex-row gap-3">
+                              <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="rounded-2xl border border-white/10 bg-[#1e293b]/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50">
+                                <option value="relevance">Sort: Relevance</option>
+                                <option value="stars">Sort: GitHub Stars</option>
+                                <option value="name">Sort: Name</option>
+                              </select>
                               <div className="bg-[#1e293b]/60 backdrop-blur-3xl p-1.5 rounded-2xl border border-white/10 flex flex-wrap gap-1 shadow-2xl">
                                 {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => {
                                   const isActive = filterPlatform === p;
