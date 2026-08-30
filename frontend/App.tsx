@@ -369,41 +369,38 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
-                className={`p-1 flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 ${isCompact ? 'pr-2 md:pr-2' : 'pr-5 md:pr-6 pl-3 md:pl-4 py-2'}`}
+                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <motion.div
                   layout="position"
-                  className="relative"
-                  animate={{ scale: isCompact ? 1.1 : 1 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="relative shrink-0"
+                  animate={{ scale: isCompact ? 1.2 : 1 }}
+                  transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
                 >
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                  <img src={mascotLogo} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10" alt="Mascot Logo" />
+                  <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300 ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
                 </motion.div>
 
-                <AnimatePresence mode="popLayout">
-                  {!isCompact && (
-                    <motion.div
-                      layout="position"
-                      initial={{ opacity: 0, filter: "blur(4px)", scale: 0.9, x: -10 }}
-                      animate={{ opacity: 1, filter: "blur(0px)", scale: 1, x: 0 }}
-                      exit={{ opacity: 0, filter: "blur(4px)", scale: 0.9, x: -10 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="flex items-center gap-3 md:gap-4 origin-left"
-                    >
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                        <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
-                          <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
-                        </div>
-                      </div>
-                      <span className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap">
-                        Project Finder
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  layout="position"
+                  className="flex items-center gap-3 md:gap-4 origin-left"
+                >
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
+                    <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
+                      <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
+                    </div>
+                  </div>
+                  <motion.span 
+                    layout="position"
+                    animate={{ scale: isCompact ? 0.85 : 1, opacity: isCompact ? 0.9 : 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left"
+                  >
+                    Project Finder
+                  </motion.span>
+                </motion.div>
               </motion.div>
             </div>
 
