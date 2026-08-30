@@ -606,3 +606,11 @@ h1, h2, h3, h4, .font-display {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(249, 115, 22, 0.5);
 }
+
+@media print {
+  body { background: #fff !important; color: #111 !important; }
+  body * { visibility: hidden !important; }
+  .glass-card, .glass-card * { visibility: visible !important; }
+  .glass-card { background: #fff !important; color: #111 !important; border: 1px solid #ddd !important; box-shadow: none !important; break-inside: avoid; }
+  .glass-card button, .glass-card a, .glass-card svg { visibility: hidden !important; }
+}
