@@ -172,37 +172,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
         {/* Right Col: Smart Analytics */}
         <motion.div variants={itemVariants} className="space-y-8">
           <div className="glass-card p-8 rounded-[3rem] h-full">
-            <div className="flex items-center gap-3 mb-2">
-              <Code2 className="w-5 h-5 text-blue-500" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Stack Power</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <Sparkles className="w-5 h-5 text-blue-500" />
+              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">AI Insights</h2>
             </div>
-            <p className="text-[10px] text-gray-500 font-medium mb-8">
-              Analyzes the technologies used across your saved projects to build your developer fingerprint.
-            </p>
-            <div className="space-y-8">
-              {topTags.map(([tag, count], idx) => (
-                <div key={idx}>
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="text-xs font-black text-white uppercase tracking-widest">{tag}</span>
-                    <span className="text-[10px] font-bold text-gray-500">{Math.round((count / totalSaved) * 100) || 0}% Affinity</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(count / totalSaved) * 100}%` }}
-                      transition={{ duration: 1, delay: 0.5 + idx * 0.1 }}
-                      className="h-full bg-orange-500"
-                    />
-                  </div>
-                </div>
-              ))}
-              
-              {topTags.length === 0 && (
-                <p className="text-gray-600 text-sm italic">Save projects to see your tech stack distribution.</p>
-              )}
-            </div>
-
-            <div className="mt-12 p-6 bg-blue-500/5 rounded-[2rem] border border-blue-500/10">
+            
+            <div className="p-6 bg-blue-500/5 rounded-[2rem] border border-blue-500/10">
               <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-3">AI Recommendation</p>
               {recommendations.length > 0 ? <div className="space-y-3">{recommendations.slice(0, 3).map((item, index) => <div key={index}><p className="text-xs text-white font-bold">{item.repository?.owner}/{item.repository?.name}</p><p className="text-[10px] text-gray-400">{item.reasons?.[0] || 'Matches your saved projects'}</p></div>)}</div> : <p className="text-xs text-gray-400 leading-relaxed italic">Save indexed projects to receive evidence-based recommendations.</p>}
             </div>
