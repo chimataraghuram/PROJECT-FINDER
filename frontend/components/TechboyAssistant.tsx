@@ -283,24 +283,22 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                             )}
 
                             <div className="relative flex items-center group">
-                                <textarea
+                                <input
+                                    type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSend(); } }}
                                     placeholder="Ask about this project, code, stack, or architecture..."
                                     disabled={isTyping}
-                                    rows={1}
-                                    className="w-full resize-none bg-white/[0.03] border border-white/10 rounded-full py-4 px-6 pr-16 text-sm text-white focus:outline-none focus:border-white/20 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
+                                    className="w-full bg-white/[0.03] border border-white/10 rounded-full py-3.5 px-6 pr-14 text-sm text-white focus:outline-none focus:border-white/20 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
                                 />
                                 <button
                                     onClick={() => isTyping ? abortRef.current?.abort() : handleSend()}
                                     disabled={!isTyping && !input.trim()}
-                                    className="absolute right-4 p-2.5 rounded-xl bg-orange-500/5 text-orange-500 hover:bg-orange-500/10 transition-all disabled:opacity-30"
+                                    className="absolute right-2 p-2.5 rounded-full bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-all disabled:opacity-30"
                                 >
-                                    {isTyping ? <X size={18} /> : <Send size={18} />}
+                                    {isTyping ? <X size={18} /> : <Send size={16} />}
                                 </button>
-                                {/* Glowing Right Edge Indicator */}
-                                <div className="absolute right-0 w-1 h-8 rounded-l-full bg-gradient-to-b from-orange-500 to-red-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]" />
                             </div>
                         </div>
                     </motion.div>
