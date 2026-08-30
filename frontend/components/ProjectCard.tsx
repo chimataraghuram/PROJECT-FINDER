@@ -192,13 +192,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   };
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9 },
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: { 
       opacity: 1, 
       y: 0, 
       scale: 1,
       transition: { 
-        duration: 0.6, 
+        duration: 0.5, 
+        ease: [0.23, 1, 0.32, 1], // beautiful spring ease out
+        delay: index * 0.1, // Stagger based on index
         staggerChildren: 0.1
       }
     }
