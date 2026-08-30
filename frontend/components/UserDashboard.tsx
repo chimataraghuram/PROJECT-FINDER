@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { Project } from '../types';
+import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -11,6 +12,20 @@ interface UserDashboardProps {
 }
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover }) => {
+  const [recommendations, setRecommendations] = React.useState<any[]>([]);
+  const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
+  const [collections, setCollections] = React.useState<any[]>([]);
+  const [notes, setNotes] = React.useState<any[]>([]);
+  const [searchHistory, setSearchHistory] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    const token = localStorage.getItem('project-finder-token');
+    if (!token) return;
+    fetchRecommendations(token).then(data => setRecommendations(data.recommendations || [])).catch(() => {});
+    fetchResearchSessions(token).then(data => setResearchSessions(data || [])).catch(() => {});
+    fetchCollections(token).then(data => setCollections(data || [])).catch(() => {});
+    fetchProjectNotes(token).then(data => setNotes(data || [])).catch(() => {});
+    fetchSearchHistory(token).then(data => setSearchHistory(data || [])).catch(() => {});
+  }, []);
   // Calculate stats
   const totalSaved = savedProjects.length;
   
@@ -44,7 +59,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="max-w-7xl mx-auto px-4 py-12 pb-32 md:pb-12"
+      className="max-w-7xl mx-auto px-4 pt-32 md:pt-40 pb-32 md:pb-12"
     >
       {/* Profile Header */}
       <motion.div variants={itemVariants} className="flex flex-col md:flex-row items-center gap-8 mb-12 glass-card p-8 rounded-[3rem]">
@@ -63,7 +78,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
         
         <div className="text-center md:text-left">
           <h1 className="text-3xl md:text-4xl font-black text-white mb-2 font-display">
-            Welcome back, <span className="text-orange-500">{user.displayName?.split(' ')[0] || 'Techboy'}</span>
+            Welcome back, <span className="text-orange-500 uppercase">{user.displayName?.split(' ')[0] || 'Techboy'}</span>
           </h1>
           <p className="text-gray-400 font-medium mb-4">{user.email}</p>
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
@@ -212,10 +227,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
 
             <div className="mt-12 p-6 bg-blue-500/5 rounded-[2rem] border border-blue-500/10">
               <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-3">AI Recommendation</p>
-              <p className="text-xs text-gray-400 leading-relaxed italic">
-                "Based on your interest in <span className="text-white">{topTags[0]?.[0] || 'Modern Web'}</span>, you should explore the new <span className="text-blue-400 underline cursor-pointer">Llama-3 Edge</span> project."
-              </p>
+              {recommendations.length > 0 ? <div className="space-y-3">{recommendations.slice(0, 3).map((item, index) => <div key={index}><p className="text-xs text-white font-bold">{item.repository?.owner}/{item.repository?.name}</p><p className="text-[10px] text-gray-400">{item.reasons?.[0] || 'Matches your saved projects'}</p></div>)}</div> : <p className="text-xs text-gray-400 leading-relaxed italic">Save indexed projects to receive evidence-based recommendations.</p>}
             </div>
+            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10"><p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2">Research History</p><p className="text-2xl font-black text-white">{researchSessions.length}</p><p className="text-[10px] text-gray-500 uppercase tracking-widest">saved sessions</p></div>
+            <div className="mt-6 grid grid-cols-2 gap-3"><div className="p-4 bg-white/5 rounded-2xl"><p className="text-[9px] text-gray-500 uppercase tracking-widest">Collections</p><p className="text-xl font-black text-white">{collections.length}</p></div><div className="p-4 bg-white/5 rounded-2xl"><p className="text-[9px] text-gray-500 uppercase tracking-widest">Notes</p><p className="text-xl font-black text-white">{notes.length}</p></div></div>
+            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10"><p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-3">Recent Searches</p>{searchHistory.length ? <div className="space-y-2">{searchHistory.slice(0, 5).map((item, index) => <p key={index} className="text-xs text-gray-300 truncate">{item.query}</p>)}</div> : <p className="text-xs text-gray-600 italic">No searches recorded yet.</p>}</div>
           </div>
         </motion.div>
 
