@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Project, SummaryData } from '../types';
-import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus } from 'lucide-react';
+import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchProjectReadme, summarizeProject } from '../services/apiService';
+import { fetchProjectReadme, summarizeProject, askResearchQuestion, startIngestionJob, getJobStatus, submitAIFeedback, analyzeRepository } from '../services/apiService';
 import { analyzeProject, ProjectAnalysis } from '../services/aiService';
 import { openSafe } from '../src/utils/urlHelper';
 import { TechStack } from './TechStack';
@@ -57,6 +57,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisData, setAnalysisData] = useState<ProjectAnalysis | null>(null);
   const [showSavedFeedback, setShowSavedFeedback] = useState(false);
+  const [showResearch, setShowResearch] = useState(false);
+  const [researchQuestion, setResearchQuestion] = useState('What does this project do?');
+  const [researchAnswer, setResearchAnswer] = useState<any>(null);
+  const [isResearching, setIsResearching] = useState(false);
+  const [isIndexing, setIsIndexing] = useState(false);
+  const [indexStatus, setIndexStatus] = useState<string | null>(null);
+  const [indexedRepositoryId, setIndexedRepositoryId] = useState<string | null>(null);
 
   const handleSummarize = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -91,14 +98,45 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
 
     setIsAnalyzing(true);
     try {
-      const analysis = await analyzeProject(project);
-      setAnalysisData(analysis);
+      if (indexedRepositoryId) {
+        const result = await analyzeRepository(indexedRepositoryId);
+        const scores = result.analysis?.scores || {};
+        setAnalysisData({ overallScore: Math.round(Object.values(scores).reduce((sum: number, value: any) => sum + Number(value || 0), 0) / Math.max(Object.values(scores).length, 1) / 10), documentation: Math.round((scores.documentation || 0) / 10), maintenance: Math.round((scores.maintenance || 0) / 10), popularity: Math.round((scores.portfolioValue || 0) / 10), verdict: 'Evidence-backed heuristic analysis generated from the indexed repository.', tags: Object.keys(scores) });
+      } else setAnalysisData(await analyzeProject(project));
       setShowAnalysis(true);
     } catch (err) {
       console.error('Analysis failed:', err);
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleResearch = async (e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation(); setShowResearch(true); setIsResearching(true);
+    const owner = project.owner?.login;
+    const repo = project.url.match(/github\.com\/[^/]+\/([^/?#]+)/)?.[1];
+    try { setResearchAnswer(await askResearchQuestion(researchQuestion, undefined, owner && repo ? { owner, repo } : undefined)); }
+    catch { setResearchAnswer({ answer: 'Research is unavailable until this repository has been indexed.' }); }
+    finally { setIsResearching(false); }
+  };
+
+  const handleIndex = async (e: React.MouseEvent) => {
+    e.preventDefault(); e.stopPropagation();
+    if (!isGithub || !project.owner?.login) return;
+    setIsIndexing(true); setIndexStatus('Indexing repository…');
+    try {
+      const job = await startIngestionJob(project.owner.login, project.name.split('/').pop() || project.name);
+      setIndexStatus('Indexing queued…');
+      let status = job;
+      for (let attempt = 0; attempt < 60 && (status.status === 'queued' || status.status === 'processing'); attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        status = await getJobStatus(job.id);
+        setIndexStatus(status.status === 'processing' ? 'Indexing repository…' : 'Indexing queued…');
+      }
+      if (status.status === 'completed') { setIndexedRepositoryId(status.result?.repositoryId || null); setIndexStatus(`Indexed ${status.result?.chunkCount || 0} evidence chunks`); }
+      else if (status.status === 'failed') setIndexStatus('Indexing failed');
+    } catch { setIndexStatus('Indexing failed'); }
+    finally { setIsIndexing(false); }
   };
 
   const isGithub = project.platform === 'GitHub';
@@ -157,376 +195,240 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
     visible: { opacity: 1, y: 0 }
   };
 
-  return (
+  
+    return (
     <motion.div
+      layout
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      whileHover={{ 
-        y: -12,
-        transition: { duration: 0.4, ease: "easeOut" }
-      }}
-      className="group relative glass-card p-5 md:p-6 transition-all duration-700 flex flex-col h-full hover:shadow-2xl hover:shadow-orange-500/20 rounded-[2.5rem] overflow-hidden hover-lift"
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="group relative bg-[#0a0a0f] border border-white/5 p-6 md:p-8 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl hover:border-orange-500/20 transition-all duration-500"
     >
+      {/* Top Row: Platform Pill & Actions */}
+      <div className="flex items-start justify-between mb-8 relative z-20">
+        {/* Platform Pill */}
+        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border bg-black shadow-lg ${badgeClasses}`}>
+          {icon}
+          <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-white">{platformName}</span>
+        </div>
 
-      {/* Floating Sparkle Elements (Animated Background) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          animate={{ 
-            x: [0, 20, 0], 
-            y: [0, 30, 0],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/10 blur-[60px] rounded-full"
-        />
+        {/* Action Icons */}
+        <div className="flex items-center gap-2 md:gap-3">
+          <button onClick={handleAnalyze} disabled={isAnalyzing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Pro-Grade AI Review">
+            {isAnalyzing ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
+          </button>
+          {isGithub && (
+            <button onClick={handleSummarize} disabled={isSummarizing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="AI Summary">
+              {isSummarizing ? <Loader2 size={16} className="animate-spin" /> : <Brain size={16} />}
+            </button>
+          )}
+          <button onClick={handleResearch} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Ask grounded research assistant">
+            <MessageCircle size={16} />
+          </button>
+          {isGithub && (
+            <button onClick={handleIndex} disabled={isIndexing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Index repository evidence">
+              <FolderPlus size={16} className={isIndexing ? 'animate-pulse' : ''} />
+            </button>
+          )}
+          <button onClick={handleShare} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Share Project">
+            {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+          </button>
+          <button 
+            onClick={(e) => { e.preventDefault(); onToggleFavorite?.(project); }} 
+            className={`p-2.5 rounded-full border transition-colors flex items-center justify-center ${isFavorite ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            title="Save to Collection"
+          >
+            <Heart size={16} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? "text-red-500" : ""} />
+          </button>
+          <button 
+            onClick={(e) => { e.preventDefault(); onToggleCompare?.(project); }} 
+            className={`p-2.5 rounded-full border transition-colors flex items-center justify-center ${isComparing ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            title="Compare"
+          >
+            <BarChart3 size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* Glow Effect */}
-      <div className="absolute -inset-px bg-gradient-to-br from-orange-500/20 to-red-600/10 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      {/* Content */}
+      <div className="flex-1 relative z-20 flex flex-col">
+        <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+          {project.name}
+        </h3>
+        
+        <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-6">
+          {project.description || "A powerful open-source tool for the modern web."}
+        </p>
+        
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-6 opacity-50" />
 
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Header with Platform Badge and Favorite toggle */}
-        <motion.div variants={itemVariants} className="mb-4">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex flex-wrap gap-2">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold border uppercase tracking-wider ${badgeClasses}`}>
-                {icon}
-                <span>{platformName}</span>
+        <div className="flex flex-wrap items-center gap-3 mb-8">
+          {project.tags?.slice(0, 3).map((tag, i) => (
+            <span key={i} className="px-4 py-1.5 rounded-full border border-white/10 bg-transparent text-[10px] font-black text-gray-400 tracking-[0.15em] uppercase hover:text-white hover:border-white/20 transition-colors">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-4">
+          {project.liveUrl && project.liveUrl !== '#' ? (
+            <>
+              <button 
+                onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
+                className="flex-1 py-4 px-6 rounded-2xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-white/5 transition-colors"
+              >
+                {icon} VIEW REPO <ExternalLink size={14} />
+              </button>
+              <button 
+                onClick={(e) => { e.preventDefault(); openSafe(project.liveUrl); }}
+                className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+              >
+                LIVE DEMO <ExternalLink size={14} />
+              </button>
+            </>
+          ) : (
+            <button 
+              onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
+              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+            >
+              {icon} VIEW REPO <span className="ml-2 font-light text-lg leading-none">&rarr;</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Decorative Gradient Borders (similar to mockup) */}
+      <div className="absolute -inset-[1px] bg-gradient-to-br from-orange-500/20 via-transparent to-purple-500/20 rounded-[2rem] pointer-events-none opacity-50" />
+      
+      {/* Existing Modals and popups */}
+      {/* (Copying the existing modals from the old return block) */}
+      <AnimatePresence>
+        {showSummary && summaryData && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="absolute inset-0 z-50 bg-[#0f172a]/95 backdrop-blur-xl p-6 overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#0f172a]/90 backdrop-blur-md py-2 border-b border-white/5 z-10">
+              <h4 className="text-white font-bold flex items-center gap-2"><Brain size={16} className="text-orange-500" /> AI Review</h4>
+              <button onClick={() => setShowSummary(false)} className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10"><X size={16} /></button>
+            </div>
+            <div className="prose prose-invert prose-sm max-w-none">
+              <div className="mb-6">
+                <h5 className="text-orange-400 font-bold mb-2 uppercase tracking-wider text-xs">The TL;DR</h5>
+                <p className="text-gray-300 leading-relaxed bg-orange-500/5 p-4 rounded-xl border border-orange-500/10">{summaryData.tldr}</p>
               </div>
+              <div className="mb-6">
+                <h5 className="text-blue-400 font-bold mb-2 uppercase tracking-wider text-xs">Core Features</h5>
+                <ul className="space-y-2">
+                  {summaryData.features.map((feat, i) => (
+                    <li key={i} className="flex items-start gap-2 text-gray-300">
+                      <Zap size={14} className="text-blue-500 mt-1 shrink-0" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-              {project.isPublisher && (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] md:text-xs font-black border border-orange-500/50 bg-orange-500/10 text-orange-400 uppercase tracking-[0.15em] animate-pulse">
-                  <Sparkles className="w-3 h-3" />
-                  <span>From Publisher</span>
+      <AnimatePresence>
+        {showAnalysis && analysisData && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="absolute inset-0 z-50 bg-[#0f172a]/95 backdrop-blur-xl p-6 overflow-y-auto rounded-[2rem]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6 sticky top-0 bg-[#0f172a]/90 backdrop-blur-md py-2 border-b border-white/5 z-10">
+              <h4 className="text-white font-bold flex items-center gap-2">
+                <ShieldCheck size={18} className="text-green-500" /> Security & Architecture
+              </h4>
+              <button onClick={() => setShowAnalysis(false)} className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10"><X size={16} /></button>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+                <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Overall Score</h5>
+                <div className="flex items-center gap-4">
+                  <div className={`text-4xl font-black ${analysisData.score >= 80 ? 'text-green-400' : analysisData.score >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
+                    {analysisData.score}
+                  </div>
+                  <div className="flex-1">
+                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                      <div className={`h-full ${analysisData.score >= 80 ? 'bg-green-400' : analysisData.score >= 60 ? 'bg-yellow-400' : 'bg-red-400'}`} style={{ width: `${analysisData.score}%` }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showResearch && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="absolute inset-0 z-[60] bg-[#020617]/95 backdrop-blur-2xl p-6 flex flex-col rounded-[2rem]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6 shrink-0">
+              <h4 className="text-white font-bold flex items-center gap-2"><MessageCircle size={16} className="text-purple-400" /> Research Assistant</h4>
+              <button onClick={() => setShowResearch(false)} className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10"><X size={16} /></button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+              {researchAnswer ? (
+                <div className="prose prose-invert prose-sm">
+                  <div className="bg-purple-500/10 border border-purple-500/20 p-4 rounded-xl text-purple-200 leading-relaxed">
+                    {researchAnswer.answer}
+                  </div>
+                  {researchAnswer.confidence && (
+                    <div className="mt-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-1">
+                      <Activity size={10} /> Confidence: {researchAnswer.confidence}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
+                  <Lightbulb size={32} className="mb-4 text-purple-400" />
+                  <p className="text-sm font-medium">Ask any question about {project.name}.</p>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleAnalyze}
-                disabled={isAnalyzing}
-                className={`p-2 rounded-full transition-all duration-500 ${isAnalyzing
-                  ? 'bg-red-500/20 text-red-500 animate-pulse'
-                  : 'bg-white/5 text-gray-500 hover:text-red-400 hover:bg-white/10'}`}
-                title="Pro-Grade AI Review"
-              >
-                {isAnalyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <ShieldCheck className="w-5 h-5" />}
-              </button>
-              <button
-                onClick={handleSummarize}
-                disabled={isSummarizing || !isGithub}
-                className={`p-2 rounded-full transition-all duration-500 ${isSummarizing
-                  ? 'bg-orange-500/20 text-orange-500 animate-pulse'
-                  : !isGithub 
-                    ? 'hidden' 
-                    : 'bg-white/5 text-gray-500 hover:text-orange-400 hover:bg-white/10'}`}
-                title="AI Summary"
-              >
-                {isSummarizing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Brain className="w-5 h-5" />}
-              </button>
-              <button
-                onClick={handleShare}
-                className={`p-2 rounded-full transition-all duration-500 ${copied
-                  ? 'bg-green-500/20 text-green-500'
-                  : 'bg-white/5 text-gray-500 hover:text-blue-400 hover:bg-white/10'}`}
-                title="Share Project"
-              >
-                {copied ? <Check className="w-5 h-5" /> : <Share2 className="w-5 h-5" />}
-              </button>
-
-              {/* Action Icons */}
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onToggleFavorite?.(project);
-                      if (!isFavorite) {
-                        setShowSavedFeedback(true);
-                        setTimeout(() => setShowSavedFeedback(false), 2000);
-                      }
-                    }}
-                    className={`p-2.5 rounded-full transition-all duration-500 flex items-center justify-center ${
-                      isFavorite
-                        ? 'bg-red-500/20 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]'
-                        : 'bg-white/5 text-gray-500 hover:text-red-400 hover:bg-white/10'
-                    }`}
-                  >
-                    <motion.div
-                      animate={isFavorite ? { scale: [1, 1.4, 1], rotate: [0, 15, -15, 0] } : { scale: 1 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence>
-                    {showSavedFeedback && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                        animate={{ opacity: 1, y: -45, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap bg-green-500 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-lg flex items-center gap-2 z-50 pointer-events-none"
-                      >
-                        <span>Saved to Favorites ✅</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onToggleCompare?.(project);
-                  }}
-                className={`p-2 rounded-full transition-all duration-500 border ${
-                  isComparing 
-                    ? 'bg-blue-500/20 text-blue-400 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.5)]' 
-                    : 'bg-white/5 text-gray-500 border-transparent hover:text-blue-400 hover:bg-white/10'
-                }`}
-                title="Add to Compare"
-              >
-                <BarChart3 className={`w-5 h-5 ${isComparing ? 'animate-pulse' : ''}`} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-          <h3 className="text-lg md:text-xl font-black text-white leading-tight font-display mb-2 group-hover:text-orange-400 transition-colors">
-            {project.name}
-          </h3>
-        </motion.div>
-
-        <motion.p variants={itemVariants} className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed line-clamp-3 md:line-clamp-4">
-          {project.description}
-        </motion.p>
-
-        <motion.div variants={itemVariants} className="mt-auto space-y-4">
-          <div className="mt-4">
-            <TechStack tags={project.tags} max={3} />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            {project.url && project.url !== '#' && (
-              <a
-                href={project.url}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onView?.(project);
-                  openSafe(project.url);
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-orange-600 hover:bg-orange-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-orange-600/20 hover:shadow-orange-600/40 active:scale-[0.98] liquid-button ${(project.liveUrl && project.liveUrl !== '#') ? 'sm:w-1/2' : 'w-full'}`}
-              >
-                <span className="truncate">
-                  {project.platform === 'Kaggle' ? 'View Dataset' :
-                    isLinkedIn ? 'View on LinkedIn' : 
-                    (isGithub || (project.liveUrl && project.liveUrl !== '#')) ? 'View Repo' : 'Explore Project'}
-                </span>
-                {isLinkedIn ? <Linkedin className="w-4 h-4 shrink-0" /> : 
-                 isKaggle ? <ExternalLink className="w-4 h-4 shrink-0" /> :
-                 <Github className="w-4 h-4 shrink-0" />}
-              </a>
-            )}
-
-            {(project.liveUrl && project.liveUrl !== '#') && (
-              <a
-                href={project.liveUrl}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  openSafe(project.liveUrl);
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center justify-center gap-2.5 px-6 py-3.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-black uppercase tracking-widest rounded-full transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 active:scale-[0.98] liquid-button ${(!project.url || project.url === '#') ? 'w-full' : 'sm:w-1/2'}`}
-              >
-                <span className="truncate">Live Demo</span>
-                <ExternalLink className="w-4 h-4 shrink-0" />
-              </a>
-            )}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* AI Analysis Overlay */}
-      <AnimatePresence>
-        {showAnalysis && analysisData && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, x: 20 }}
-            animate={{ opacity: 1, scale: 1, x: 0 }}
-            exit={{ opacity: 0, scale: 0.9, x: 20 }}
-            className="absolute inset-0 z-[60] bg-[#020617]/98 backdrop-blur-2xl p-6 flex flex-col rounded-[2.5rem] border border-red-500/30 overflow-hidden shadow-2xl"
-          >
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-red-600/20 rounded-xl">
-                  <ShieldCheck className="w-5 h-5 text-red-500" />
-                </div>
-                <div>
-                  <span className="block text-[10px] font-black uppercase tracking-[0.25em] text-red-500">Pro-Grade Review</span>
-                  <span className="block text-[8px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Technboy Advanced Heuristics</span>
-                </div>
-              </div>
+            <div className="shrink-0 relative">
+              <input
+                type="text"
+                value={researchQuestion}
+                onChange={(e) => setResearchQuestion(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') submitResearch(); }}
+                placeholder="Ask a question..."
+                className="w-full bg-[#0f172a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 pr-12"
+              />
               <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowAnalysis(false);
-                }}
-                className="p-2 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-colors"
+                onClick={submitResearch}
+                disabled={isResearching || !researchQuestion.trim()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors disabled:opacity-50"
               >
-                <X className="w-5 h-5" />
+                {isResearching ? <Loader2 size={14} className="animate-spin" /> : <Terminal size={14} />}
               </button>
-            </div>
-
-            <div className="flex flex-col items-center mb-10">
-              <div className="relative flex items-center justify-center">
-                <svg className="w-32 h-32 md:w-40 md:h-40 rotate-[-90deg]">
-                  <circle
-                    cx="50%" cy="50%" r="45%"
-                    className="stroke-gray-800 fill-none"
-                    strokeWidth="10"
-                  />
-                  <motion.circle
-                    cx="50%" cy="50%" r="45%"
-                    initial={{ strokeDasharray: "0, 1000" }}
-                    animate={{ strokeDasharray: `${analysisData.overallScore * 10 * 2.82}, 1000` }}
-                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-                    className="stroke-red-500 fill-none"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <motion.span 
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1 }}
-                    className="text-4xl md:text-5xl font-black text-white"
-                  >
-                    {analysisData.overallScore}
-                  </motion.span>
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Overall Rank</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
-                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Doc</span>
-                  <span className="text-sm font-black text-white">{analysisData.documentation}/10</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
-                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Maint</span>
-                  <span className="text-sm font-black text-white">{analysisData.maintenance}/10</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-white/5 border border-white/5 text-center">
-                  <span className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Stars</span>
-                  <span className="text-sm font-black text-white">{analysisData.popularity}/10</span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-red-500/5 border border-red-500/10">
-                <div className="flex items-center gap-2 mb-2">
-                  <Activity className="w-3.5 h-3.5 text-red-500" />
-                  <span className="text-[10px] font-black uppercase tracking-wider text-red-500">AI Verdict</span>
-                </div>
-                <p className="text-xs text-gray-400 leading-relaxed italic">
-                  "{analysisData.verdict}"
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {analysisData.tags.map((tag, i) => (
-                  <span key={i} className="px-2.5 py-1 bg-red-600/10 text-red-400 text-[9px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5">
-                    <Zap className="w-2.5 h-2.5" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* AI Summary Overlay */}
-      <AnimatePresence>
-        {showSummary && summaryData && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="absolute inset-0 z-50 bg-[#0f172a]/95 backdrop-blur-xl p-6 flex flex-col rounded-[2.5rem] border border-orange-500/30"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-orange-600/20 rounded-lg">
-                  <Sparkles className="w-4 h-4 text-orange-500" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500">Techboy AI Summary</span>
-              </div>
-              <button 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setShowSummary(false);
-                }}
-                className="p-2 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-6 overflow-y-auto no-scrollbar pr-2">
-              <section>
-                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
-                  <Lightbulb className="w-3.5 h-3.5 text-yellow-500" />
-                  Overview
-                </div>
-                <p className="text-gray-300 text-xs leading-relaxed italic">
-                  "{summaryData.overview}"
-                </p>
-              </section>
-
-              <section>
-                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
-                  <Terminal className="w-3.5 h-3.5 text-blue-500" />
-                  Primary Use Case
-                </div>
-                <p className="text-gray-400 text-xs leading-relaxed">
-                  {summaryData.useCase}
-                </p>
-              </section>
-
-              <section>
-                <div className="flex items-center gap-2 mb-2 text-white font-bold text-xs uppercase tracking-wider">
-                  <Cpu className="w-3.5 h-3.5 text-purple-500" />
-                  Tech Stack
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {summaryData.techStack.map((tech, i) => (
-                    <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[9px] font-bold text-gray-300">
-                      {tech}
-                    </span>
-                  ))}
-                  {summaryData.techStack.length === 0 && <span className="text-[10px] text-gray-600">General stack detected</span>}
-                </div>
-              </section>
-            </div>
-
-            <div className="mt-auto pt-4 border-t border-white/5 text-center">
-              <p className="text-[9px] text-gray-600 font-bold uppercase tracking-widest">Powered by Techboy heuristic engine</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
+
 };

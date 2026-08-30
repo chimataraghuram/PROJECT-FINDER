@@ -540,114 +540,15 @@ const App: React.FC = () => {
                           const isFav = favorites.some(f => f.url === project.url);
                           
                           return (
-                            <motion.div
-                              key={project.id}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.2 * idx }}
-                              className="relative group rounded-[2.5rem] glass-card p-8 shadow-2xl hover:border-orange-500/40 transition-all duration-500 overflow-hidden"
-                            >
-                              {/* Card Content Top Row */}
-                              <div className="flex justify-between items-start mb-8">
-                                <div className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 flex items-center gap-2">
-                                  <Github size={14} className="text-white" />
-                                  <span className="text-[10px] font-black text-white tracking-widest uppercase">{project.platform}</span>
-                                </div>
-                                
-                                <div className="flex items-center gap-3">
-                                  <button 
-                                    onClick={(e) => { e.stopPropagation(); setShowComingSoon(true); setTimeout(() => setShowComingSoon(false), 2000); }}
-                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-blue-500/10 hover:border-blue-500/20 transition-all cursor-pointer text-gray-400 hover:text-blue-400"
-                                    title="Security Status"
-                                  >
-                                    <Shield size={14} />
-                                  </button>
-                                  <button 
-                                    onClick={(e) => { e.stopPropagation(); handleSearch(`Summarize ${project.name}`); }}
-                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-orange-500/10 hover:border-orange-500/20 transition-all cursor-pointer text-gray-400 hover:text-orange-500"
-                                    title="AI Summary"
-                                  >
-                                    <Brain size={14} />
-                                  </button>
-                                  <button 
-                                    onClick={(e) => { 
-                                      e.stopPropagation(); 
-                                      navigator.clipboard.writeText(project.url);
-                                      // Trigger toast using coming soon for now but message is copy
-                                    }}
-                                    className="p-2 rounded-lg bg-white/5 border border-white/5 hover:bg-green-500/10 hover:border-green-500/20 transition-all cursor-pointer text-gray-400 hover:text-green-500"
-                                    title="Share Project"
-                                  >
-                                    <Share2 size={14} />
-                                  </button>
-                                  <button 
-                                    onClick={(e) => { e.stopPropagation(); toggleFavorite(project); }}
-                                    className={`p-2 rounded-lg border transition-all cursor-pointer ${
-                                      isFav 
-                                      ? 'bg-red-500/20 border-red-500/30 text-red-500' 
-                                      : 'bg-white/5 border-white/5 text-gray-400 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-500'
-                                    }`}
-                                    title="Save to Collection"
-                                  >
-                                    <Heart size={14} fill={isFav ? "currentColor" : "none"} />
-                                  </button>
-                                  <button 
-                                    onClick={(e) => { e.stopPropagation(); toggleComparison(project); }}
-                                    className={`p-2 rounded-lg border transition-all cursor-pointer ${
-                                      comparisonQueue.some(p => p.id === project.id)
-                                      ? 'bg-blue-500/20 border-blue-500/30 text-blue-500'
-                                      : 'bg-white/5 border-white/5 text-gray-400 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-purple-500'
-                                    }`}
-                                    title="Add to Comparison"
-                                  >
-                                    <BarChart3 size={14} />
-                                  </button>
-                                </div>
-                              </div>
-
-                              <h3 className="text-3xl md:text-4xl font-black text-white mb-6 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-orange-400 transition-all duration-500">
-                                {project.name}
-                              </h3>
-                              
-                              <p className="text-gray-400 text-sm md:text-md leading-relaxed mb-8 opacity-80 min-h-[60px]">
-                                {project.description}
-                              </p>
-
-                              <div className="flex flex-wrap items-center gap-2 mb-10">
-                                {project.tags.map((tag, i) => (
-                                  <span key={i} className="px-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/5 text-[10px] font-black text-gray-500 tracking-wider uppercase">
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-
-                              <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                                <button 
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    openSafe(project.url);
-                                  }}
-                                  className={`py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-2 hover:bg-white/10 transition-all ${project.liveUrl && project.liveUrl !== '#' ? 'sm:w-1/2' : 'w-full'}`}
-                                >
-                                  View Repo <Github size={14} />
-                                </button>
-                                
-                                {project.liveUrl && project.liveUrl !== '#' && (
-                                  <button 
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      openSafe(project.liveUrl);
-                                    }}
-                                    className="sm:w-1/2 py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white font-black uppercase tracking-[0.2em] text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 transition-all"
-                                  >
-                                    Live Demo <ExternalLink size={14} />
-                                  </button>
-                                )}
-                              </div>
-                              
-                              {/* Decorative Glow */}
-                              <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-orange-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/20 transition-all" />
-                            </motion.div>
+                            <ProjectCard 
+                              key={project.id} 
+                              project={project} 
+                              isFavorite={isFav} 
+                              onToggleFavorite={toggleFavorite} 
+                              onToggleCompare={toggleComparison} 
+                              isComparing={comparisonQueue.some(p => p.url === project.url)} 
+                              index={idx}
+                            />
                           );
                         }) : null}
                       </div>
