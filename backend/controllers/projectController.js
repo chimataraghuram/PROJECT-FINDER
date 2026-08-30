@@ -4,13 +4,13 @@ import FavoriteProject from '../models/FavoriteProject.js';
 // Helper for GitHub topic mapping
 const getGitHubTopic = (category) => {
   const map = {
-    'AI': 'ai+OR+topic:machine-learning+OR+topic:artificial-intelligence',
-    'Web': 'web-development+OR+topic:frontend+OR+topic:backend',
-    'Mobile': 'mobile+OR+topic:android+OR+topic:ios+OR+topic:react-native',
-    'Data': 'data-science+OR+topic:data-analysis+OR+topic:visualization',
-    'Game': 'game-dev+OR+topic:unity+OR+topic:unreal-engine',
-    'Tools': 'dev-tools+OR+topic:cli+OR+topic:automation',
-    'Agent': 'ai-agents+OR+topic:agents+OR+topic:llm-apps'
+    'AI': 'ai OR topic:machine-learning OR topic:artificial-intelligence',
+    'Web': 'web-development OR topic:frontend OR topic:backend',
+    'Mobile': 'mobile OR topic:android OR topic:ios OR topic:react-native',
+    'Data': 'data-science OR topic:data-analysis OR topic:visualization',
+    'Game': 'game-dev OR topic:unity OR topic:unreal-engine',
+    'Tools': 'dev-tools OR topic:cli OR topic:automation',
+    'Agent': 'ai-agents OR topic:agents OR topic:llm-apps'
   };
   return map[category] || category.toLowerCase();
 };
@@ -23,7 +23,7 @@ export const getTrendingProjects = async (req, res) => {
     const activePlatform = platform.toLowerCase();
     if (activePlatform === 'github' || activePlatform === 'all') {
       const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
-      const q = `stars:>500+created:>2024-01-01${topic}`;
+      const q = `stars:>500 created:>2024-01-01${topic ? ` ${topic}` : ''}`;
       const response = await axios.get(
         `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=30`,
         { 
@@ -140,7 +140,7 @@ export const searchProjects = async (req, res) => {
         if (cached) return cached;
 
         const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
-        const query = `${q}+in:name,description${topic}`;
+        const query = `${q} in:name,description${topic ? ` ${topic}` : ''}`;
         const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=${activePlatform === 'all' ? 10 : 30}`;
         
         const response = await axios.get(url, { 
