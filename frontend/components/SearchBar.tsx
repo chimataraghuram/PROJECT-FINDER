@@ -58,66 +58,64 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className={`w-full max-w-5xl mx-auto px-4 ${className}`}>
       
       {/* Search Bar Container */}
-      <form onSubmit={handleSubmit} className="relative group">
-        {/* Subtle Multi-layered Glow Effect */}
-        <div className={`absolute -inset-[2px] rounded-full transition-all duration-1000 ${
-          isFocused
-            ? 'bg-gradient-to-r from-orange-500/30 via-red-500/20 to-orange-500/30 opacity-40 blur-sm scale-[1.01]'
-            : 'opacity-0'
+            <form onSubmit={handleSubmit} className="relative group w-full">
+        {/* Subtle glow behind the entire bar */}
+        <div className={`absolute -inset-[1px] rounded-full transition-all duration-700 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 blur-md ${
+          isFocused ? 'opacity-100 blur-lg scale-[1.01]' : 'opacity-40 group-hover:opacity-70'
         }`} />
         
-        <div className={`absolute -inset-[1px] rounded-full transition-all duration-700 ${
-          isFocused
-            ? 'bg-gradient-to-r from-orange-500/40 via-red-500/30 to-orange-500/40 opacity-80'
-            : 'bg-white/5 opacity-30'
-        }`} />
+        {/* Gradient Border Wrapper */}
+        <div className="relative p-[1px] rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 overflow-visible transition-transform duration-300">
+          
+          {/* Inner Container */}
+          <div className="relative flex items-center w-full bg-[#0a0a0f] rounded-full p-1.5 md:p-2 pl-6 md:pl-8">
+            
+            {/* Search Icon */}
+            <Search className={`w-5 h-5 md:w-6 md:h-6 shrink-0 transition-all duration-300 ${isFocused ? 'text-white' : 'text-gray-400'}`} />
 
-        {/* Main Search Input Area */}
-        <div className={`relative flex items-center bg-[#050b18]/60 backdrop-blur-2xl rounded-full border transition-all duration-500 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden ${
-          isFocused ? 'border-orange-500/50 ring-1 ring-orange-500/20' : 'border-white/10 hover:border-white/20'
-        }`}>
-          <div className="pl-7 md:pl-10 shrink-0">
-            <Search className={`w-5 h-5 md:w-7 md:h-7 transition-all duration-500 ${isFocused ? 'text-orange-400 scale-110' : 'text-gray-500'}`} />
-          </div>
-
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="Search AI agents, Web stacks, ML models..."
-            className="w-full bg-transparent text-white px-5 py-5 md:py-8 text-base md:text-2xl focus:outline-none placeholder-gray-600/80 min-w-0 font-medium tracking-tight"
-            disabled={isLoading}
-          />
-
-          <div className="flex items-center gap-3 pr-3 md:pr-5 shrink-0">
-            <button
-              type="button"
-              onClick={handleSurprise}
+            {/* Input Field */}
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="Search AI agents, Web stacks, ML models..."
+              className="flex-1 bg-transparent text-white px-4 py-3 md:py-4 text-base md:text-xl focus:outline-none placeholder-gray-500 font-medium tracking-tight min-w-0"
               disabled={isLoading}
-              className="hidden sm:flex items-center gap-2.5 px-6 py-3 rounded-full text-orange-400 font-bold text-xs uppercase tracking-wider border border-orange-500/20 bg-orange-500/10 hover:bg-orange-500/20 hover:text-orange-300 transition-all duration-300 whitespace-nowrap group/luck active:scale-95"
-            >
-              <Zap className="w-4 h-4 group-hover:fill-orange-400 transition-all" />
-              <span>Surprise Me</span>
-            </button>
+            />
 
-            <button
-              type="submit"
-              disabled={isLoading || !query.trim()}
-              className="relative group/btn h-12 md:h-16 px-6 md:px-12 bg-gradient-to-br from-orange-600 via-red-600 to-orange-500 text-white font-bold rounded-full transition-all duration-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] overflow-hidden active:scale-95"
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[150%] group-hover/btn:translate-x-[150%] transition-transform duration-1000 ease-in-out" />
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 md:gap-3 shrink-0">
               
-              {isLoading
-                ? <Loader2 className="w-6 h-6 animate-spin" />
-                : <>
-                    <Search className="w-5 h-5 md:w-6 md:h-6 group-hover/btn:scale-110 transition-transform" />
-                    <span className="text-sm md:text-lg uppercase tracking-widest">Explore</span>
+              {/* Surprise Me Button */}
+              <button
+                type="button"
+                onClick={handleSurprise}
+                disabled={isLoading}
+                className="hidden sm:flex items-center gap-2 px-5 py-3 md:py-4 rounded-full border border-orange-500/40 bg-orange-500/5 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/60 transition-all duration-300 font-bold text-[10px] md:text-xs uppercase tracking-widest active:scale-95"
+              >
+                <Zap className="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" />
+                <span>Surprise Me</span>
+              </button>
+
+              {/* Explore Button */}
+              <button
+                type="submit"
+                disabled={isLoading || !query.trim()}
+                className="flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400 text-white font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 active:scale-95"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Search className="w-4 h-4 md:w-5 md:h-5" />
+                    <span>Explore</span>
                   </>
-              }
-            </button>
+                )}
+              </button>
+
+            </div>
           </div>
         </div>
       </form>
@@ -147,7 +145,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 damping: 25
               }}
               onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
-              className="group flex items-center gap-2.5 px-6 py-3 rounded-full border border-white/5 bg-[#0a1220]/40 hover:bg-white/10 hover:border-orange-500/40 text-gray-400 hover:text-white transition-all duration-300 text-xs md:text-sm font-semibold backdrop-blur-xl shadow-lg ring-1 ring-white/5 hover:ring-orange-500/20"
+              className="group frosted-card flex items-center gap-2.5 px-6 py-3 rounded-full text-gray-400 hover:text-white transition-all duration-300 text-xs md:text-sm font-semibold ring-1 ring-white/5 hover:ring-orange-500/20"
             >
               <span className="text-base md:text-lg group-hover:scale-125 group-hover:rotate-12 transition-transform duration-500">{tag.icon}</span>
               <span className="tracking-wide">{tag.label}</span>
@@ -157,4 +155,4 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </div>
     </div>
   );
-};
+};
