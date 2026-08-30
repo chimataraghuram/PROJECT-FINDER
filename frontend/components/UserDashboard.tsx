@@ -4,7 +4,7 @@ import { User } from 'firebase/auth';
 import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
 import { auth, githubProvider } from '../services/firebase';
-import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, createCollection, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
+import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, createCollection, addProjectToCollection, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2, Bell } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -113,6 +113,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
       const collection = await createCollection(token, name);
       setCollections(current => [collection, ...current]);
     } catch { /* keep the current collection list when creation fails */ }
+  };
+
+  const assignProject = async (project: Project, collectionId: string) => {
+    if (!user || !collectionId || !project.id) return;
+    try {
+      const token = await user.getIdToken();
+      const updated = await addProjectToCollection(token, collectionId, project.id);
+      setCollections(current => current.map(collection => collection._id === collectionId ? { ...collection, ...updated } : collection));
+    } catch { /* assignment remains unchanged when the request fails */ }
   };
   
   const containerVariants = {
@@ -226,6 +235,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                         {project.platform} • {project.tags[0] || 'Code'}
                       </p>
                     </div>
+                    {collections.length > 0 && project.id && <select aria-label={`Add ${project.name} to collection`} defaultValue="" onChange={event => assignProject(project, event.target.value)} className="max-w-28 rounded-lg border border-white/10 bg-[#1e293b]/80 px-2 py-1 text-[9px] text-gray-400 outline-none"><option value="">Collection</option>{collections.map(collection => <option key={collection._id || collection.id} value={collection._id || collection.id}>{collection.name}</option>)}</select>}
                     <a href={project.url} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-white/10 transition-colors">
                       <ExternalLink className="w-4 h-4 text-gray-400" />
                     </a>
