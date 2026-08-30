@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Project, SummaryData } from '../types';
-import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus, MessageCircle } from 'lucide-react';
+import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus, MessageCircle, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProjectReadme, summarizeProject, askResearchQuestion, startIngestionJob, getJobStatus, submitAIFeedback, analyzeRepository } from '../services/apiService';
 import { analyzeProject, ProjectAnalysis } from '../services/aiService';
