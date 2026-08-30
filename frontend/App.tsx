@@ -476,6 +476,12 @@ const App: React.FC = () => {
                   setCurrentView('search');
                   handleSearch(query);
                 }}
+                onImportProjects={(imported) => {
+                  setFavorites(current => {
+                    const existing = new Set(current.map(project => project.url));
+                    return [...current, ...imported.filter(project => !existing.has(project.url))];
+                  });
+                }}
               />
             )}
 

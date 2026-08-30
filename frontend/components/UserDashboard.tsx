@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { Project } from '../types';
-import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory } from '../services/apiService';
+import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -10,15 +10,18 @@ interface UserDashboardProps {
   savedProjects: Project[];
   onNavigateToDiscover: () => void;
   onSearch?: (query: string) => void;
+  onImportProjects?: (projects: Project[]) => void;
   recentSearches?: any[];
 }
 
-export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover, onSearch, recentSearches = [] }) => {
+export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover, onSearch, onImportProjects, recentSearches = [] }) => {
   const [recommendations, setRecommendations] = React.useState<any[]>([]);
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
   const [notes, setNotes] = React.useState<any[]>([]);
   const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
+  const [githubSyncing, setGithubSyncing] = React.useState(false);
+  const [githubSyncMessage, setGithubSyncMessage] = React.useState('');
   React.useEffect(() => { if (recentSearches.length) setSearchHistory(recentSearches); }, [recentSearches]);
   React.useEffect(() => {
     if ((user as any)?.uid) fetchFirebaseSearchHistory((user as any).uid).then(data => { if (data.length) setSearchHistory(data); }).catch(() => {});
@@ -161,10 +164,28 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                 <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Integrations</h2>
               </div>
             </div>
-            <button className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-gray-200 transition-all shadow-[0_5px_20px_rgba(255,255,255,0.15)] hover:shadow-[0_5px_25px_rgba(255,255,255,0.25)]">
+            <button onClick={async () => {
+              const username = window.prompt('Enter your GitHub username to import public starred repositories:');
+              if (!username?.trim()) return;
+              setGithubSyncing(true); setGithubSyncMessage('Loading starred repositories…');
+              try {
+                const starred = await fetchGithubStarred(username.trim());
+                const imported: Project[] = starred.map((repo: any) => ({
+                  id: String(repo.id), name: repo.full_name || repo.name, description: repo.description || 'GitHub repository',
+                  platform: 'GitHub', url: repo.html_url, liveUrl: repo.homepage || null, stars: repo.stargazers_count || 0,
+                  language: repo.language || 'Unknown', tags: repo.topics || [], isPublisher: false,
+                  owner: { login: repo.owner?.login || username.trim(), avatar_url: repo.owner?.avatar_url || '', html_url: repo.owner?.html_url || `https://github.com/${username.trim()}` },
+                  slug: null, image: repo.owner?.avatar_url || null, readme: repo.description || ''
+                }));
+                onImportProjects?.(imported);
+                setGithubSyncMessage(`Imported ${imported.length} starred repositories`);
+              } catch (error: any) { setGithubSyncMessage(error.message || 'GitHub sync failed'); }
+              finally { setGithubSyncing(false); }
+            }} disabled={githubSyncing} className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-gray-200 transition-all shadow-[0_5px_20px_rgba(255,255,255,0.15)] hover:shadow-[0_5px_25px_rgba(255,255,255,0.25)] disabled:opacity-60">
               <Github className="w-4 h-4" />
-              Sync with GitHub
+              {githubSyncing ? 'Syncing GitHub…' : 'Sync with GitHub'}
             </button>
+            {githubSyncMessage && <p className={`text-[10px] text-center mt-3 ${githubSyncMessage.toLowerCase().includes('failed') || githubSyncMessage.toLowerCase().includes('not found') ? 'text-red-400' : 'text-green-400'}`}>{githubSyncMessage}</p>}
             <p className="text-[10px] text-center text-gray-500 mt-4 leading-relaxed px-4">Connect your GitHub to automatically import your starred repos and tech stack.</p>
           </motion.div>
 
