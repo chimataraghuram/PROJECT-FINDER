@@ -179,11 +179,16 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 
 ## ✨ Features
 
-- 🤖 **TECHBOY AI**: Advanced pro-grade AI analysis (OpenRouter/Gemini), providing architectural reviews and technical heuristics.
+- 🤖 **TECHBOY AI**: Quick and Deep Research modes with streaming answers, citations, formatting, copy, regenerate, feedback, and session restore.
 - 👑 **Platform Profiles**: Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn.
 - 📊 **Comparison Studio**: Side-by-side comparison of multiple repositories to evaluate complexity and tech stack.
 - 🌍 **Multi-Platform**: Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view.
-- ☁️ **Cloud Sync**: Secure user authentication and project saving via MongoDB and Firebase.
+- ☁️ **Google Authentication**: Firebase Google Sign-In with persistent sessions and UID-based user data.
+- 🗂️ **Saved Collections**: Create named square collections, assign starred projects, open collections, rename, delete, and remove projects.
+- 🕘 **Research History**: Combined searchable history with internal scrolling and saved research conversations.
+- 🔎 **Search Filters**: GitHub-first results with platform, language, minimum stars, date, and sort filters.
+- 🔔 **GitHub Updates**: Detects changed stars and repository activity for saved GitHub projects.
+- 📴 **Resilient Discovery**: Local caching and GitHub fallback behavior when Render or public APIs are unavailable.
 - 📱 **High-Density UI**: Premium glassmorphic interface with mobile-first optimizations for desktop-class research.
 - 🚀 **Live API Proxy**: Proxied requests for high-frequency, authentic discovery with zero-loop reliability.
 - 🎥 **Intro Experience**: Premium video onboarding and smooth Framer Motion transitions.
@@ -196,7 +201,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 - **Backend**: [Node.js](https://nodejs.org/) (Express) with [Mongoose](https://mongoosejs.com/)
 - **AI Integration**: [OpenRouter API](https://openrouter.ai/) & [Google Gemini AI](https://ai.google.dev/)
 - **Database**: [MongoDB Atlas](https://www.mongodb.com/atlas)
-- **Authentication**: [Firebase Auth](https://firebase.google.com/docs/auth) & [JWT](https://jwt.io/)
+- **Authentication**: [Firebase Authentication](https://firebase.google.com/docs/auth) with Google Sign-In and server-side token verification
 - **Hosting**: [Render](https://render.com/) (Backend) & [GitHub Pages](https://pages.github.com/) (Frontend)
 
 ---
@@ -226,7 +231,10 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 
 ## 🚀 Future Roadmap
 
-- [ ] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
+- [x] **AI Recommendations**: Personalized project suggestions based on your saved favorites.
+- [x] **Research Workspace**: Saved, restored, renamed, deleted, and exportable research sessions.
+- [x] **Collection Management**: Named collections with project assignment and removal.
+- [ ] **Admin Monitoring**: Role-protected operational metrics and error monitoring dashboard.
 - [ ] **Community Portals**: Share and review project discoveries with other developers.
 
 ---
