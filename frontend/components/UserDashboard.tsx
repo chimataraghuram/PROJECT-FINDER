@@ -323,21 +323,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
             </div>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
-            <div className="flex items-center justify-between gap-3 mb-6">
-              <div className="flex items-center gap-3">
-              <Star className="w-5 h-5 text-orange-500" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Collections</h2>
-              </div>
-              <button onClick={addCollection} className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-orange-300 hover:bg-orange-500/20">New Collection</button>
-            </div>
-            {collections.length ? <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{collections.slice(0, 12).map((collection, index) => <button key={collection._id || collection.id || index} onClick={() => setOpenCollection(collection)} className="rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-left hover:bg-orange-500/20 transition-all"><span className="block truncate text-xs font-black uppercase tracking-widest text-orange-200">{collection.name || 'Untitled collection'}</span><span className="mt-1 block text-[10px] text-orange-200/60">{collection.projects?.length || 0} saved projects · Open collection</span></button>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
-          </motion.div>
-
         </div>
 
       </div>
-      {openCollection && <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setOpenCollection(null)}><div className="glass-card w-full max-w-lg rounded-[2rem] p-6" onClick={event => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black uppercase tracking-widest text-white">{openCollection.name}</h2><button onClick={() => setOpenCollection(null)} className="rounded-lg px-3 py-2 text-xs text-gray-400 hover:bg-white/10">CLOSE</button></div><div className="max-h-80 space-y-2 overflow-y-auto custom-scrollbar">{openCollection.projects?.length ? openCollection.projects.map((project: any, index: number) => <a key={project._id || project.id || index} href={project.url || project.html_url || '#'} target="_blank" rel="noopener noreferrer" className="block rounded-xl border border-white/10 bg-white/[0.04] p-3 hover:border-orange-500/40"><span className="block text-sm font-bold text-white">{project.name || project.title || 'Saved project'}</span><span className="text-[10px] text-gray-500">{project.platform || 'GitHub'} · Open repository ↗</span></a>) : <p className="py-8 text-center text-xs italic text-gray-500">No projects in this collection yet.</p>}</div></div></div>}
     </motion.div>
   );
 };
