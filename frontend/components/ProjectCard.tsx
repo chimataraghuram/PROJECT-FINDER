@@ -283,7 +283,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
           ) : (
             <button 
               onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
             >
               {icon} VIEW REPO <span className="ml-2 font-light text-base leading-none">&rarr;</span>
             </button>
