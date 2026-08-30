@@ -28,7 +28,14 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     currentSearch = "",
     lastProject = null
 }) => {
-    const safeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char)).replace(/\*\*(.*?)\*\*/g, '<b class="text-white font-black">$1</b>').replace(/\n/g, '<br/>');
+    const safeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char))
+        .replace(/```([\s\S]*?)```/g, '<pre class="my-3 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-[11px] text-orange-100"><code>$1</code></pre>')
+        .replace(/^### (.*)$/gm, '<h4 class="mt-4 mb-1 text-xs font-black uppercase tracking-widest text-orange-300">$1</h4>')
+        .replace(/^## (.*)$/gm, '<h3 class="mt-4 mb-2 text-base font-black text-white">$1</h3>')
+        .replace(/^[-•] (.*)$/gm, '<li class="ml-4 list-disc">$1</li>')
+        .replace(/\*\*(.*?)\*\*/g, '<b class="text-white font-black">$1</b>')
+        .replace(/`([^`]+)`/g, '<code class="rounded bg-black/30 px-1.5 py-0.5 text-orange-200">$1</code>')
+        .replace(/\n/g, '<br/>');
     const [messages, setMessages] = useState<Message[]>([
         { 
             role: 'assistant', 
@@ -178,7 +185,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-3rem)] max-w-[360px] h-[520px] bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
+                        className="w-[calc(100vw-2rem)] max-w-[640px] h-[min(720px,calc(100vh-7rem))] bg-[#0b1220]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
                         <div className="p-6 bg-gradient-to-r from-orange-600/10 to-transparent border-b border-white/10 flex items-center justify-between">
@@ -212,7 +219,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={clearChat} className="p-2 text-white/20 hover:text-red-400 transition-colors">
+                                <button onClick={clearChat} className="px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors" title="Clear chat">
                                     <Trash2 size={16} />
                                 </button>
                                 <button onClick={() => setIsOpen(false)} className="p-2 text-white/20 hover:text-white transition-colors">
@@ -220,7 +227,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 </button>
                             </div>
                         </div>
-                        <div className="px-6 pt-4 flex gap-2"><button onClick={() => setResearchMode('quick')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'quick' ? 'bg-orange-600 text-white' : 'bg-white/5 text-gray-500'}`}>⚡ Quick</button><button onClick={() => setResearchMode('deep')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'deep' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>🔬 Deep Research</button>{researchStage && <span className="ml-auto text-[9px] text-purple-300 self-center">{researchStage}</span>}</div>
+                        <div className="px-6 pt-4 flex items-center gap-2"><button onClick={() => setResearchMode('quick')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'quick' ? 'bg-orange-600 text-white' : 'bg-white/5 text-gray-500'}`}>⚡ Quick</button><button onClick={() => setResearchMode('deep')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'deep' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>🔬 Deep Research</button>{researchStage && <span className="ml-auto truncate text-[9px] text-purple-300">{researchStage}</span>}</div>
 
                         {/* Messages Area */}
                         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
@@ -231,11 +238,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     key={i}
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div className={`max-w-[85%] p-4 rounded-3xl text-[13px] leading-relaxed font-medium shadow-sm ${
+                                    <div className={`max-w-[92%] p-4 text-[13px] leading-relaxed font-medium ${msg.role === 'assistant' ? 'w-full rounded-2xl border border-white/10 bg-white/[0.045] text-gray-200 shadow-[0_10px_30px_rgba(0,0,0,0.18)]' : 'rounded-2xl border border-orange-500/20 bg-[#1a2435] text-white shadow-sm'} ${
                                         msg.role === 'user'
-                                            ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white rounded-tr-none shadow-orange-500/20'
-                                             : 'bg-white/5 text-gray-200 border border-white/10 rounded-tl-none backdrop-blur-md'
+                                            ? 'rounded-tr-md'
+                                            : ''
                                     }`}>
+                                        {msg.role === 'assistant' && <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-orange-400"><Bot size={13} /> TECHBOY AI <span className="text-white/30">· Research Assistant</span></div>}
                                         <div dangerouslySetInnerHTML={{ __html: safeHtml(msg.content) }} />
                                         {msg.role === 'assistant' && msg.content && <div className="mt-2 flex gap-3"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button></div>}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
@@ -246,7 +254,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                             ))}
                             {isTyping && (
                                 <div className="flex justify-start">
-                                    <div className="bg-white/5 p-4 rounded-3xl rounded-tl-none border border-white/10 flex gap-1.5 items-center">
+                                    <div className="w-full rounded-2xl border border-white/10 bg-white/[0.045] p-4 flex gap-1.5 items-center">
                                          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mr-2">Thinking</span>
                                         {[0, 1, 2].map(i => (
                                             <div key={i} className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
@@ -275,14 +283,14 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                             )}
 
                             <div className="relative flex items-center group">
-                                <input
-                                    type="text"
+                                <textarea
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                    placeholder="Ask about projects, stars, or tech..."
+                                    onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                                    placeholder="Ask about this project, code, stack, or architecture..."
                                     disabled={isTyping}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
+                                    rows={1}
+                                    className="w-full resize-none bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/60 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
                                 />
                                 <button
                                     onClick={() => isTyping ? abortRef.current?.abort() : handleSend()}
