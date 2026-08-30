@@ -185,12 +185,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-2rem)] max-w-[640px] h-[min(720px,calc(100vh-7rem))] bg-[#0b1220]/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
+                        className="w-[calc(100vw-2rem)] max-w-[480px] h-[min(720px,calc(100vh-7rem))] bg-[#0f1115] border border-white/5 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
-                        <div className="p-6 bg-gradient-to-r from-orange-600/10 to-transparent border-b border-white/10 flex items-center justify-between">
+                        <div className="p-6 bg-transparent border-b border-white/5 flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center shadow-lg border border-white/20">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg border border-orange-500/30">
                                     <Bot className="w-6 h-6 text-white" />
                                 </div>
                                 <div className="flex flex-col">
@@ -238,7 +238,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     key={i}
                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
-                                    <div className={`max-w-[92%] p-4 text-[13px] leading-relaxed font-medium ${msg.role === 'assistant' ? 'w-full rounded-2xl border border-white/10 bg-white/[0.045] text-gray-200 shadow-[0_10px_30px_rgba(0,0,0,0.18)]' : 'rounded-2xl border border-orange-500/20 bg-[#1a2435] text-white shadow-sm'} ${
+                                    <div className={`max-w-[92%] p-4 text-[13px] leading-relaxed font-medium ${msg.role === 'assistant' ? 'w-full rounded-2xl border border-white/10 bg-white/[0.045] text-gray-200 shadow-[0_10px_30px_rgba(0,0,0,0.18)]' : 'rounded-2xl border border-white/5 bg-[#181a20] text-gray-200 shadow-sm'} ${
                                         msg.role === 'user'
                                             ? 'rounded-tr-md'
                                             : ''
@@ -273,7 +273,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                         <button
                                             key={i}
                                             onClick={() => { setResearchMode(action.mode); handleSend(action.prompt, action.mode); }}
-                                            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold text-gray-300 whitespace-nowrap hover:bg-white/10 hover:border-orange-500/30 transition-all active:scale-95"
+                                            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] md:text-[11px] font-bold text-gray-300 whitespace-nowrap hover:bg-white/10 hover:border-orange-500/30 transition-all active:scale-95"
                                         >
                                             <action.icon className="w-3 h-3 text-orange-500" />
                                             {action.label}
@@ -290,12 +290,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     placeholder="Ask about this project, code, stack, or architecture..."
                                     disabled={isTyping}
                                     rows={1}
-                                    className="w-full resize-none bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/60 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
+                                    className="w-full resize-none bg-white/[0.03] border border-white/10 rounded-[2rem] py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/60 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
                                 />
                                 <button
                                     onClick={() => isTyping ? abortRef.current?.abort() : handleSend()}
                                     disabled={!isTyping && !input.trim()}
-                                    className="absolute right-2 p-2.5 rounded-xl bg-orange-600/20 text-orange-500 hover:bg-orange-600 hover:text-white transition-all shadow-lg disabled:opacity-30"
+                                    className="absolute right-2 p-2.5 rounded-xl bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-all shadow-lg disabled:opacity-30"
                                 >
                                     {isTyping ? <X size={18} /> : <Send size={18} />}
                                 </button>
