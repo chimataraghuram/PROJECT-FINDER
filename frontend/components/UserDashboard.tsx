@@ -158,21 +158,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
             <p className="text-[10px] text-center text-gray-500 mt-4 leading-relaxed px-4">Connect your GitHub to automatically import your starred repos and tech stack.</p>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem] h-full">
+          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
             <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="w-5 h-5 text-blue-500" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">AI Insights</h2>
+              <History className="w-5 h-5 text-orange-500" />
+              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Searches</h2>
             </div>
             
-            <div className="p-6 bg-blue-500/5 rounded-[2rem] border border-blue-500/10 mb-8">
-              <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-3">AI Recommendation</p>
-              {recommendations.length > 0 ? <div className="space-y-3">{recommendations.slice(0, 3).map((item, index) => <div key={index}><p className="text-xs text-white font-bold">{item.repository?.owner}/{item.repository?.name}</p><p className="text-[10px] text-gray-400">{item.reasons?.[0] || 'Matches your saved projects'}</p></div>)}</div> : <p className="text-[11px] text-gray-400 leading-relaxed italic">Save projects to receive evidence-based recommendations.</p>}
-            </div>
-
-            <div className="flex items-center gap-3 mb-4">
-              <History className="w-4 h-4 text-orange-500" />
-              <h3 className="text-sm font-black text-white uppercase tracking-tighter">Recent Searches</h3>
-            </div>
             {searchHistory.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {searchHistory.slice(0, 8).map((item, idx) => (
