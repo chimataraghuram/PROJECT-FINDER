@@ -363,7 +363,7 @@ const App: React.FC = () => {
               <motion.div
                 layout
                 initial={{ opacity: 0, y: -20 }}
-                style={{ borderRadius: 9999 }}
+                style={{ borderRadius: "99px" }}
                 animate={{
                   opacity: 1,
                   y: 0,
@@ -373,9 +373,7 @@ const App: React.FC = () => {
                 className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
-                <motion.div
-                  layout="position"
-                  className="relative shrink-0"
+                <motion.div className="relative shrink-0"
                   animate={{ scale: isCompact ? 1.2 : 1 }}
                   transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
                 >
@@ -383,9 +381,7 @@ const App: React.FC = () => {
                   <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300 ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
                 </motion.div>
 
-                <motion.div
-                  layout="position"
-                  className="flex items-center gap-3 md:gap-4 origin-left"
+                <motion.div className="flex items-center gap-3 md:gap-4 origin-left"
                 >
                   <div className="relative">
                     <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
@@ -393,8 +389,7 @@ const App: React.FC = () => {
                       <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
                     </div>
                   </div>
-                  <motion.span 
-                    layout="position"
+                  <motion.span
                     animate={{ scale: isCompact ? 0.85 : 1, opacity: isCompact ? 0.9 : 1 }}
                     transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
                     className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left"
@@ -408,15 +403,13 @@ const App: React.FC = () => {
             {/* 2. Middle Island: Adaptive Navigation Pill */}
             <div className="pointer-events-auto absolute left-1/2 -translate-x-1/2 shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
               <motion.nav
-                layout
-                style={{ borderRadius: 9999 }}
                 animate={{
                   scale: isCompact ? 0.95 : 1,
                   opacity: 1,
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-colors duration-300 shrink-0`}
+                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-500 ease-out shrink-0`}
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
@@ -424,31 +417,28 @@ const App: React.FC = () => {
                   return (
                     <motion.button
                       key={item.id}
-                      layout
-                      style={{ borderRadius: 9999 }}
                       whileHover={{ y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-10 md:h-12 rounded-full flex items-center justify-center gap-2 lg:gap-3 transition-colors duration-300 font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
+                      className={`h-10 md:h-12 rounded-full flex items-center justify-center gap-2 lg:gap-3 transition-all duration-500 ease-out font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
                         isActive
                           ? `bg-gradient-to-r ${item.color} text-white shadow-[0_0_25px_rgba(249,115,22,0.4)]`
                           : 'text-gray-400 bg-transparent hover:text-white hover:bg-white/5'
                       } ${isCompact ? 'px-3 md:px-4' : 'px-4 md:px-6'}`}
                     >
-                      <motion.div layout="position" className="relative z-10 flex items-center justify-center shrink-0">
+                      <motion.div className="relative z-10 flex items-center justify-center shrink-0">
                         <Icon className={`${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-4 h-4 md:w-5 md:h-5 transition-transform duration-300`} />
                       </motion.div>
                       
-                      <AnimatePresence mode="popLayout">
+                      <AnimatePresence initial={false}>
                         {!isCompact && (
                           <motion.span
                             key="text"
-                            layout="position"
-                            initial={{ opacity: 0, filter: "blur(4px)", scale: 0.9 }}
-                            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                            exit={{ opacity: 0, filter: "blur(4px)", scale: 0.9 }}
+                            initial={{ width: 0, opacity: 0, filter: "blur(4px)", scale: 0.9 }}
+                            animate={{ width: "auto", opacity: 1, filter: "blur(0px)", scale: 1 }}
+                            exit={{ width: 0, opacity: 0, filter: "blur(4px)", scale: 0.9 }}
                             transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                            className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left"
+                            className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left overflow-hidden"
                           >
                             {item.label} {item.id === 'favorites' && `(${favorites.length})`}
                           </motion.span>
