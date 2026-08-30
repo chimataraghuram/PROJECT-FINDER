@@ -5,7 +5,7 @@ import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
 import { auth, githubProvider } from '../services/firebase';
 import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
-import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2 } from 'lucide-react';
+import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2, Bell } from 'lucide-react';
 
 interface UserDashboardProps {
   user: User;
@@ -19,6 +19,7 @@ interface UserDashboardProps {
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover, onSearch, onOpenResearchSession, onImportProjects, recentSearches = [] }) => {
   const [recommendations, setRecommendations] = React.useState<any[]>([]);
+  const [githubUpdates, setGithubUpdates] = React.useState<any[]>([]);
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
   const [notes, setNotes] = React.useState<any[]>([]);
@@ -48,6 +49,29 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
     fetchProjectNotes(token).then(data => setNotes(data || [])).catch(() => {});
     fetchSearchHistory(token).then(data => { if (data?.length) setSearchHistory(data); }).catch(() => {});
   }, []);
+
+  React.useEffect(() => {
+    const githubProjects = savedProjects.filter(project => project.platform === 'GitHub' && project.owner?.login && project.name);
+    if (!githubProjects.length) return;
+    let cancelled = false;
+    const checkUpdates = async () => {
+      const updates: any[] = [];
+      for (const project of githubProjects.slice(0, 20)) {
+        try {
+          const response = await fetch(`https://api.github.com/repos/${encodeURIComponent(project.owner!.login)}/${encodeURIComponent(project.name)}`, { cache: 'no-store' });
+          if (!response.ok) continue;
+          const current = await response.json();
+          const key = `project-finder-github-snapshot:${project.url}`;
+          const previous = JSON.parse(localStorage.getItem(key) || 'null');
+          if (previous && (current.stargazers_count !== previous.stars || current.pushed_at !== previous.pushedAt)) updates.push({ ...project, currentStars: current.stargazers_count, pushedAt: current.pushed_at });
+          localStorage.setItem(key, JSON.stringify({ stars: current.stargazers_count, pushedAt: current.pushed_at }));
+        } catch { /* notifications are best effort */ }
+      }
+      if (!cancelled) setGithubUpdates(updates);
+    };
+    checkUpdates();
+    return () => { cancelled = true; };
+  }, [savedProjects]);
 
   const exportWorkspace = (format: 'markdown' | 'json' | 'pdf') => {
     if (format === 'pdf') { window.print(); return; }
@@ -156,6 +180,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
         
         {/* Left Col: Saved Projects */}
         <div className="lg:col-span-3 space-y-8">
+          {githubUpdates.length > 0 && <motion.div variants={itemVariants} className="glass-card rounded-[2rem] border border-orange-500/20 bg-orange-500/[0.06] p-5">
+            <div className="flex items-center gap-3 mb-3"><Bell className="h-5 w-5 text-orange-400" /><h2 className="text-sm font-black uppercase tracking-widest text-orange-200">GitHub Updates</h2></div>
+            <div className="space-y-2">{githubUpdates.map(project => <button key={project.url} onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')} className="w-full rounded-xl bg-black/20 px-3 py-2 text-left hover:bg-black/30"><span className="block text-xs font-bold text-white">{project.name}</span><span className="text-[10px] text-orange-200/70">Repository activity changed · {Number(project.currentStars || 0).toLocaleString()} stars</span></button>)}</div>
+          </motion.div>}
           
           {/* Saved Projects Hub */}
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
