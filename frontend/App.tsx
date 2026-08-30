@@ -492,6 +492,24 @@ const App: React.FC = () => {
 
 
 
+          
+          {/* Toast Notification */}
+          <AnimatePresence>
+            {toast.visible && (
+              <motion.div
+                initial={{ opacity: 0, y: -50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -50, scale: 0.9 }}
+                className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none"
+              >
+                <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#0a0a0f]/80 backdrop-blur-3xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                  {toast.icon}
+                  <span className="text-white text-xs font-medium tracking-wide">{toast.message}</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <main className="relative z-10 pt-[60px] md:pt-0">
             {/* Global Mobile Sticky Logo Pill */}
 
@@ -824,12 +842,7 @@ const App: React.FC = () => {
                 {/* Loading State - Skeleton Grid */}
                 {searchState.isLoading && (
                   <div className="max-w-7xl mx-auto px-4 py-12">
-                    <div className="flex flex-col items-center mb-12">
-                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 mb-4 animate-pulse">
-                        <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
-                        <span className="text-orange-500 font-black uppercase tracking-[0.2em] text-xs">Fetching projects from all platforms...</span>
-                      </div>
-                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {[1, 2, 3, 4, 5, 6].map((i) => (
                         <SkeletonCard key={i} />
