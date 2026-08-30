@@ -545,7 +545,7 @@ const App: React.FC = () => {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: 0.2 * idx }}
-                              className="relative group rounded-[2.5rem] bg-[#020617]/40 backdrop-blur-3xl border border-white/10 p-8 shadow-2xl hover:border-orange-500/40 transition-all duration-500 overflow-hidden"
+                              className="relative group rounded-[2.5rem] glass-card p-8 shadow-2xl hover:border-orange-500/40 transition-all duration-500 overflow-hidden"
                             >
                               {/* Card Content Top Row */}
                               <div className="flex justify-between items-start mb-8">

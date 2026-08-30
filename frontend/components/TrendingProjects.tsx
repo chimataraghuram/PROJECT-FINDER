@@ -109,7 +109,7 @@ const TrendingCard: React.FC<{
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -12, scale: 1.02 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className={`group relative bg-[#020617]/40 backdrop-blur-3xl border ${isComparing ? 'border-orange-500/50' : 'border-white/5'} hover:border-orange-500/40 rounded-[2.5rem] p-8 transition-colors duration-500 flex flex-col h-full shadow-2xl overflow-hidden`}
+            className={`group relative glass-card border ${isComparing ? 'border-orange-500/50' : 'border-white/5'} hover:border-orange-500/40 rounded-[2.5rem] p-8 transition-colors duration-500 flex flex-col h-full shadow-2xl overflow-hidden`}
         >
             <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/0 via-orange-500/0 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             
