@@ -347,9 +347,16 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
 
-    // Never label stale curated data as live GitHub trending data.
-    // Let the page show its error state so the user knows the live feed is unavailable.
-    if (platform.toLowerCase() === 'github') throw error;
+    // Keep GitHub Trending live even when the Render proxy is cold or down.
+    // GitHub's public API permits browser requests and returns the real records.
+    if (platform.toLowerCase() === 'github') {
+      const topic = category !== 'All' ? ` topic:${category.toLowerCase()}` : '';
+      const githubQuery = encodeURIComponent(`stars:>500 created:>2024-01-01${topic}`);
+      const directResponse = await fetch(`https://api.github.com/search/repositories?q=${githubQuery}&sort=stars&order=desc&per_page=30`, { cache: 'no-store' });
+      if (!directResponse.ok) throw error;
+      const directData = await directResponse.json();
+      return (directData.items || []).map(mapToFrontendProject);
+    }
     
     // Curated discovery fallbacks (No direct API calls)
     if (platform.toLowerCase() === 'hugging face') {
