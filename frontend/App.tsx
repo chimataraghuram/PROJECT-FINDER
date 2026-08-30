@@ -126,8 +126,9 @@ const App: React.FC = () => {
     });
     return merged;
   });
-  const [collections, setCollections] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>(() => { try { return JSON.parse(localStorage.getItem('project-finder-local-collections') || '[]'); } catch { return []; } });
   const [openCollection, setOpenCollection] = useState<any | null>(null);
+  const [collectionError, setCollectionError] = useState('');
   const [showCreateCollection, setShowCreateCollection] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
 
@@ -217,8 +218,16 @@ const App: React.FC = () => {
   const handleCreateCollection = async () => {
     const token = localStorage.getItem('project-finder-token');
     const name = newCollectionName.trim();
-    if (!token || !name) return;
-    try { const collection = await createCollection(token, name); setCollections(current => [collection, ...current]); setNewCollectionName(''); setShowCreateCollection(false); } catch { /* keep the modal open on failure */ }
+    if (!name) return;
+    try {
+      if (!token) throw new Error('Please sign in with Google before creating a collection.');
+      const collection = await createCollection(token, name); setCollections(current => [collection, ...current]);
+    } catch (error: any) {
+      const localCollection = { id: `local-${Date.now()}`, name, projects: [], localOnly: true };
+      setCollections(current => { const next = [localCollection, ...current]; localStorage.setItem('project-finder-local-collections', JSON.stringify(next)); return next; });
+      setCollectionError(`${error?.message || 'Cloud sync unavailable'} Saved locally on this device.`);
+    }
+    setNewCollectionName(''); setShowCreateCollection(false);
   };
   const handleRenameCollection = async (collection: any) => { const token = localStorage.getItem('project-finder-token'); const name = window.prompt('Rename collection', collection.name)?.trim(); if (!token || !name || name === collection.name) return; try { const updated = await updateCollection(token, collection._id || collection.id, name); setCollections(current => current.map(item => item._id === collection._id ? updated : item)); setOpenCollection(updated); } catch {} };
   const handleDeleteCollection = async (collection: any) => { const token = localStorage.getItem('project-finder-token'); if (!token || !window.confirm(`Delete ${collection.name}?`)) return; try { await deleteCollection(token, collection._id || collection.id); setCollections(current => current.filter(item => item._id !== collection._id)); setOpenCollection(null); } catch {} };
@@ -937,7 +946,7 @@ const App: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="mb-8"><div className="flex justify-end"><button onClick={() => setShowCreateCollection(true)} className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-orange-300 hover:bg-orange-500/20">+ Create Collection</button></div>{collections.length > 0 && <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{collections.map(collection => <div key={collection._id || collection.id} className="glass-card rounded-2xl border border-white/10 p-4"><button onClick={() => setOpenCollection(collection)} className="w-full text-left"><span className="block truncate text-sm font-bold text-white">{collection.name}</span><span className="mt-1 block text-[10px] text-gray-500">{collection.projects?.length || 0} projects · Open</span></button><div className="mt-3 flex gap-3"><button aria-label="Rename collection" onClick={() => handleRenameCollection(collection)} className="text-gray-500 hover:text-orange-400"><Settings size={13}/></button><button aria-label="Delete collection" onClick={() => handleDeleteCollection(collection)} className="text-gray-500 hover:text-red-400"><Trash2 size={13}/></button></div></div>)}</div>}</div>
+                <div className="mb-8"><div className="flex justify-end"><button onClick={() => { setCollectionError(''); setShowCreateCollection(true); }} className="rounded-full border border-orange-500/30 bg-orange-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-orange-300 hover:bg-orange-500/20">+ Create Collection</button></div>{collectionError && <p className="mt-3 text-right text-[10px] text-orange-300">{collectionError}</p>}{collections.length > 0 && <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{collections.map(collection => <div key={collection._id || collection.id} className="glass-card rounded-2xl border border-white/10 p-4"><button onClick={() => setOpenCollection(collection)} className="w-full text-left"><span className="block truncate text-sm font-bold text-white">{collection.name}</span><span className="mt-1 block text-[10px] text-gray-500">{collection.projects?.length || 0} projects · Open</span></button><div className="mt-3 flex gap-3"><button aria-label="Rename collection" onClick={() => handleRenameCollection(collection)} className="text-gray-500 hover:text-orange-400"><Settings size={13}/></button><button aria-label="Delete collection" onClick={() => handleDeleteCollection(collection)} className="text-gray-500 hover:text-red-400"><Trash2 size={13}/></button></div></div>)}</div>}</div>
 
                 {favorites.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
