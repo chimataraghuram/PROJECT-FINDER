@@ -368,7 +368,7 @@ const App: React.FC = () => {
                   y: 0,
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
-                transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
+                transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
                 className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
@@ -376,7 +376,7 @@ const App: React.FC = () => {
                   layout="position"
                   className="relative shrink-0"
                   animate={{ scale: isCompact ? 1.2 : 1 }}
-                  transition={{ duration: 0.3, type: "spring", bounce: 0.4 }}
+                  transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
                 >
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
                   <img src={mascotLogo} className={`rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300 ${isCompact ? 'w-12 h-12 md:w-14 md:h-14' : 'w-10 h-10 md:w-12 md:h-12'}`} alt="Mascot Logo" />
@@ -395,7 +395,7 @@ const App: React.FC = () => {
                   <motion.span 
                     layout="position"
                     animate={{ scale: isCompact ? 0.85 : 1, opacity: isCompact ? 0.9 : 1 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.7, ease: [0.23, 1, 0.32, 1] }}
                     className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left"
                   >
                     Project Finder
@@ -413,7 +413,7 @@ const App: React.FC = () => {
                   opacity: 1,
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
-                transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
+                transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
                 className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-colors duration-300 shrink-0`}
               >
                 {NAV_ITEMS.map((item) => {
@@ -444,7 +444,7 @@ const App: React.FC = () => {
                             initial={{ opacity: 0, filter: "blur(4px)", scale: 0.9 }}
                             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
                             exit={{ opacity: 0, filter: "blur(4px)", scale: 0.9 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                             className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left"
                           >
                             {item.label} {item.id === 'favorites' && `(${favorites.length})`}
