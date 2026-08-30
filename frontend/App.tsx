@@ -11,7 +11,7 @@ import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
-import { saveProject, fetchFavorites, fetchTrending, fetchSearch, recordSearchHistory } from './services/apiService';
+import { saveProject, fetchFavorites, fetchTrending, fetchSearch, recordSearchHistory, recordFirebaseSearchHistory } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import { openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
@@ -96,6 +96,9 @@ const App: React.FC = () => {
     hasSearched: false,
   });
   const [result, setResult] = useState<SearchResult | null>(null);
+  const [recentSearches, setRecentSearches] = useState<any[]>(() => {
+    try { return JSON.parse(localStorage.getItem('project-finder-recent-searches') || '[]'); } catch { return []; }
+  });
 
   // Filtering State
   const [filterPlatform, setFilterPlatform] = useState<PlatformFilter>('All');
@@ -136,8 +139,17 @@ const App: React.FC = () => {
 
     try {
       const data = await fetchSearch(trimmedQuery, category, platform);
+      const historyItem = { query: trimmedQuery, platform, resultCount: data.projects?.length || 0, createdAt: new Date().toISOString() };
+      setRecentSearches(previous => {
+        const next = [historyItem, ...previous.filter(item => item.query !== trimmedQuery)].slice(0, 50);
+        localStorage.setItem('project-finder-recent-searches', JSON.stringify(next));
+        return next;
+      });
       const token = localStorage.getItem('project-finder-token');
       if (token) recordSearchHistory(token, trimmedQuery, platform, data.projects?.length || 0).catch(() => {});
+      const storedUser = localStorage.getItem('project-finder-user');
+      const firebaseUid = storedUser ? JSON.parse(storedUser).uid : null;
+      if (firebaseUid) recordFirebaseSearchHistory(firebaseUid, trimmedQuery, platform, data.projects?.length || 0).catch(() => {});
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
     } catch (err: any) {
@@ -482,6 +494,7 @@ const App: React.FC = () => {
                     return [...current, ...imported.filter(project => !existing.has(project.url))];
                   });
                 }}
+                recentSearches={recentSearches}
               />
             )}
 
