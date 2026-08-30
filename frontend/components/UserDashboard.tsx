@@ -22,6 +22,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [githubUpdates, setGithubUpdates] = React.useState<any[]>([]);
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
+  const [openCollection, setOpenCollection] = React.useState<any | null>(null);
   const [notes, setNotes] = React.useState<any[]>([]);
   const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
   const [githubSyncing, setGithubSyncing] = React.useState(false);
@@ -319,7 +320,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
             </div>
             
             {searchHistory.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
+              <div className="max-h-44 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-2 pr-1">
                 {searchHistory.slice(0, 8).map((item, idx) => (
                   <button 
                     key={idx}
@@ -340,7 +341,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               <Clock className="w-5 h-5 text-orange-500" />
               <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Research</h2>
             </div>
-            {researchSessions.length ? <div className="space-y-2">{researchSessions.slice(0, 5).map((session, index) => <div key={session._id || session.id || index} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><button onClick={async () => { const token = await user.getIdToken(); const full = await fetchResearchSession(token, session._id || session.id); onOpenResearchSession?.(full); }} className="min-w-0 flex-1 py-1 text-left"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages{session.updatedAt ? ` · Updated ${new Date(session.updatedAt).toLocaleDateString()}` : ''}</span></button><button aria-label="Rename research session" title="Rename session" onClick={() => editResearchSession(session)} className="rounded-lg p-2 text-gray-600 hover:bg-orange-500/10 hover:text-orange-400"><Settings className="h-3.5 w-3.5" /></button><button aria-label="Delete research session" title="Delete session" onClick={() => removeResearchSession(session._id || session.id)} className="rounded-lg p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button></div>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
+            {researchSessions.length ? <div className="max-h-56 overflow-y-auto custom-scrollbar space-y-2 pr-1">{researchSessions.slice(0, 50).map((session, index) => <div key={session._id || session.id || index} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><button onClick={async () => { const token = await user.getIdToken(); const full = await fetchResearchSession(token, session._id || session.id); onOpenResearchSession?.(full); }} className="min-w-0 flex-1 py-1 text-left"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages{session.updatedAt ? ` · Updated ${new Date(session.updatedAt).toLocaleDateString()}` : ''}</span></button><button aria-label="Rename research session" title="Rename session" onClick={() => editResearchSession(session)} className="rounded-lg p-2 text-gray-600 hover:bg-orange-500/10 hover:text-orange-400"><Settings className="h-3.5 w-3.5" /></button><button aria-label="Delete research session" title="Delete session" onClick={() => removeResearchSession(session._id || session.id)} className="rounded-lg p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button></div>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
@@ -351,16 +352,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               </div>
               <button onClick={addCollection} className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-orange-300 hover:bg-orange-500/20">New Collection</button>
             </div>
-            {collections.length ? <div className="flex flex-wrap gap-2">{collections.slice(0, 8).map((collection, index) => <span key={collection._id || collection.id || index} className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-orange-300">{collection.name || 'Untitled collection'} · {collection.projects?.length || 0}</span>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
+            {collections.length ? <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">{collections.slice(0, 12).map((collection, index) => <button key={collection._id || collection.id || index} onClick={() => setOpenCollection(collection)} className="rounded-2xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-left hover:bg-orange-500/20 transition-all"><span className="block truncate text-xs font-black uppercase tracking-widest text-orange-200">{collection.name || 'Untitled collection'}</span><span className="mt-1 block text-[10px] text-orange-200/60">{collection.projects?.length || 0} saved projects · Open collection</span></button>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
           </motion.div>
 
-          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
-            <div className="flex items-center gap-3 mb-6"><Sparkles className="w-5 h-5 text-orange-500" /><h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recommended For You</h2></div>
-            {recommendations.length ? <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{recommendations.slice(0, 6).map((recommendation, index) => { const project = recommendation.project || recommendation; return <button key={recommendation._id || recommendation.id || index} onClick={() => project.name && onSearch?.(project.name)} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-left hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><span className="block truncate text-sm font-bold text-white">{project.name || 'Recommended project'}</span><span className="mt-1 block line-clamp-2 text-[10px] text-gray-500">{project.description || recommendation.reason || 'Personalized project recommendation'}</span></button>; })}</div> : <p className="text-[11px] italic text-gray-500">Recommendations will appear as you explore projects.</p>}
-          </motion.div>
         </div>
 
       </div>
+      {openCollection && <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setOpenCollection(null)}><div className="glass-card w-full max-w-lg rounded-[2rem] p-6" onClick={event => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black uppercase tracking-widest text-white">{openCollection.name}</h2><button onClick={() => setOpenCollection(null)} className="rounded-lg px-3 py-2 text-xs text-gray-400 hover:bg-white/10">CLOSE</button></div><div className="max-h-80 space-y-2 overflow-y-auto custom-scrollbar">{openCollection.projects?.length ? openCollection.projects.map((project: any, index: number) => <a key={project._id || project.id || index} href={project.url || project.html_url || '#'} target="_blank" rel="noopener noreferrer" className="block rounded-xl border border-white/10 bg-white/[0.04] p-3 hover:border-orange-500/40"><span className="block text-sm font-bold text-white">{project.name || project.title || 'Saved project'}</span><span className="text-[10px] text-gray-500">{project.platform || 'GitHub'} · Open repository ↗</span></a>) : <p className="py-8 text-center text-xs italic text-gray-500">No projects in this collection yet.</p>}</div></div></div>}
     </motion.div>
   );
 };
