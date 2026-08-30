@@ -148,7 +148,7 @@ const TrendingCard: React.FC<{
                         <span className="text-[9px] font-bold tracking-wider">Share</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-red-500 transition-colors group/metric" title="Save" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}>
-                        <Heart size={16} className={`group-hover/metric:scale-110 transition-transform ${isFavorite ? 'text-red-500 fill-red-500' : ''}`} />
+                        <Heart size={16} fill={isFavorite ? "currentColor" : "none"} className={`group-hover/metric:scale-110 transition-transform ${isFavorite ? 'text-red-500' : ''}`} />
                         <span className="text-[9px] font-bold tracking-wider">Loved</span>
                     </div>
                 </div>
@@ -495,8 +495,8 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                                 key={project.id || `${project.name}-${index}`} 
                                 project={project}
                                 rank={index + 1}
-                                isFavorite={favorites.some(f => f.id === project.id)}
-                                isComparing={comparisonQueue.some(p => p.id === project.id)}
+                                isFavorite={favorites.some(f => f.url === project.url)}
+                                isComparing={comparisonQueue.some(p => p.url === project.url)}
                                 onToggle={() => onToggleFavorite(project)}
                                 onCompare={() => onToggleComparison(project)}
                                 onSummarize={() => onSummarize(project.name)}
