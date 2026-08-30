@@ -455,26 +455,26 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={`flex items-center gap-3 md:gap-4 bg-[#0f172a]/${isCompact ? '60' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full p-2.5 md:p-3 transition-all duration-300`}
+                className="flex items-center gap-4 bg-[#0a0a0f]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-3 shadow-2xl transition-all duration-300"
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="h-8 md:h-9 pl-1 md:pl-1.5 pr-3 md:pr-4 rounded-full border border-orange-500/50 bg-[#0f172a] flex items-center gap-2 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-3 p-1 pr-6 rounded-full border border-orange-500/30 bg-[#0f172a] hover:bg-white/[0.04] group transition-all"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-6 h-6 md:w-7 md:h-7 bg-orange-500 rounded-md md:rounded-xl shadow-sm shrink-0 flex items-center justify-center">
-                    <Bot className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
+                  <div className="w-10 h-10 rounded-[0.9rem] bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform">
+                    <Bot className="w-5 h-5 text-white" />
                   </div>
-                  <div className="w-px h-3 bg-white/10 hidden sm:block mx-0.5" />
-                  <span className="hidden lg:inline-block text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] transition-colors whitespace-nowrap">
-                    <span className="text-white">TECHBOY</span> <span className="text-orange-500">AI</span>
-                  </span>
+                  <div className="hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] text-[11px]">
+                    <span className="text-white">Techboy</span>
+                    <span className="text-orange-500">AI</span>
+                  </div>
                 </motion.button>
-                
-                <div className="w-px h-6 bg-white/10 hidden sm:block" />
-                
-                <AuthButton isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
+
+                <div className="hidden sm:block w-px h-8 bg-white/10 shrink-0 mx-2" />
+
+                <AuthButton isCompact={false} onViewDashboard={() => setCurrentView('dashboard')} />
               </motion.div>
             </div>
           </div>
