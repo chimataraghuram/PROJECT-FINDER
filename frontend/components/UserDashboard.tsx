@@ -262,6 +262,22 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               <p className="text-[11px] text-gray-500 italic">Your recent searches will appear here.</p>
             )}
           </motion.div>
+
+          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
+            <div className="flex items-center gap-3 mb-6">
+              <Clock className="w-5 h-5 text-orange-500" />
+              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Research</h2>
+            </div>
+            {researchSessions.length ? <div className="space-y-2">{researchSessions.slice(0, 5).map((session, index) => <button key={session._id || session.id || index} onClick={() => session.title && onSearch?.(session.title)} className="w-full rounded-xl border border-white/5 bg-white/[0.03] px-3 py-3 text-left hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.mode || 'Research'}{session.createdAt ? ` · ${new Date(session.createdAt).toLocaleDateString()}` : ''}</span></button>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
+            <div className="flex items-center gap-3 mb-6">
+              <Star className="w-5 h-5 text-orange-500" />
+              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Collections</h2>
+            </div>
+            {collections.length ? <div className="flex flex-wrap gap-2">{collections.slice(0, 8).map((collection, index) => <span key={collection._id || collection.id || index} className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-orange-300">{collection.name || 'Untitled collection'}</span>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
+          </motion.div>
         </div>
 
       </div>
