@@ -463,12 +463,12 @@ const App: React.FC = () => {
               </div>
 
               {/* Actions (Right) */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-8 h-8 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-8 h-8 rounded-xl bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center active:scale-90 transition-transform"
                 >
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-4 h-4 text-white" />
                 </button>
                 <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
               </div>
