@@ -408,7 +408,7 @@ const App: React.FC = () => {
             </div>
 
             {/* 2. Middle Island: Adaptive Navigation Pill */}
-            <div className="pointer-events-auto shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
+            <div className="pointer-events-auto absolute left-1/2 -translate-x-1/2 shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
               <motion.nav
                 layout
                 animate={{
