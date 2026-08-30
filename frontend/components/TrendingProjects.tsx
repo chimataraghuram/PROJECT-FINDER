@@ -109,213 +109,160 @@ const TrendingCard: React.FC<{
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -12, scale: 1.02 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className={`group relative glass-card ${isComparing ? 'border border-orange-500/50' : ''} hover:border-orange-500/40 rounded-[2.5rem] p-8 transition-colors duration-500 flex flex-col h-full shadow-2xl overflow-hidden`}
+            className={`group relative glass-card p-5 md:p-6 flex flex-col h-full overflow-hidden border border-white/5 rounded-[2rem]`}
         >
-            <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/0 via-orange-500/0 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            
-            {isComparing && (
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="absolute inset-0 bg-orange-500/[0.03] animate-pulse pointer-events-none"
-                />
-            )}
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-            {/* Top Bar: Badges and Actions */}
-            <div className="flex flex-col gap-4 mb-6 relative z-30">
-                <div className="flex items-center gap-2">
-                    <RankBadge rank={rank} />
-                    <TrendingBadge />
+            {/* Top Row: Rank, Trending, Menu */}
+            <div className="flex items-center justify-between mb-5 relative z-30">
+                <div className="flex items-center gap-2.5">
+                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-gray-300">
+                        #{rank}
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30">
+                        <Flame size={12} className="text-orange-500" />
+                        <span className="text-[9px] font-black text-orange-500 uppercase tracking-widest">Trending</span>
+                    </div>
+                </div>
+                <button className="text-gray-500 hover:text-white transition-colors">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                </button>
+            </div>
+
+            {/* Metrics Box */}
+            <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-[#020617]/50 border border-white/5 mb-5 relative z-30 shadow-inner">
+                <div className="flex items-center gap-4 flex-1">
+                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Security Status" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                        <Shield size={14} className="group-hover/metric:scale-110 transition-transform" />
+                        <span className="text-[8px] font-bold tracking-wider">Secure</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="AI Summary" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}>
+                        <Brain size={14} className="group-hover/metric:scale-110 transition-transform" />
+                        <span className="text-[8px] font-bold tracking-wider text-center leading-[10px]">Well<br/>Documented</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Share" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}>
+                        <Share2 size={14} className="group-hover/metric:scale-110 transition-transform" />
+                        <span className="text-[8px] font-bold tracking-wider">Popular</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-red-500 transition-colors group/metric" title="Save" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}>
+                        <Heart size={14} className={`group-hover/metric:scale-110 transition-transform ${isFavorite ? 'text-red-500 fill-red-500' : ''}`} />
+                        <span className="text-[8px] font-bold tracking-wider">Loved</span>
+                    </div>
                 </div>
                 
-                {/* Action Icon Bar */}
-                <div className="flex items-center gap-1.5 p-1.5 rounded-[1.5rem] bg-[#020617]/50 border border-white/10 w-fit">
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                    className="p-2 rounded-full hover:bg-blue-500/20 transition-all text-gray-400 hover:text-blue-400"
-                    title="Security Status"
-                  >
-                    <Shield size={14} />
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}
-                    className="p-2 rounded-full hover:bg-orange-500/20 transition-all text-gray-400 hover:text-orange-500"
-                    title="AI Summary"
-                  >
-                    <Brain size={14} />
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}
-                    className="p-2 rounded-full hover:bg-green-500/20 transition-all text-gray-400 hover:text-green-500"
-                    title="Share Link"
-                  >
-                    <Share2 size={14} />
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}
-                    className={`p-2 rounded-full transition-all ${
-                      isFavorite 
-                      ? 'bg-red-500/20 text-red-500' 
-                      : 'text-gray-400 hover:bg-red-500/20 hover:text-red-500'
-                    }`}
-                    title="Save"
-                  >
-                    <Heart size={14} fill={isFavorite ? "currentColor" : "none"} />
-                  </motion.button>
-                  
-                  <div className="w-px h-4 bg-white/10 mx-1" />
-
-                  <div className="px-2 py-1 rounded-full bg-orange-500/10 text-orange-500 flex items-center gap-1" title="Stars">
-                      <Star size={12} fill="currentColor" />
-                      <span className="text-[10px] font-black tracking-widest">{typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}</span>
-                  </div>
-                  
-                  <div className="w-px h-4 bg-white/10 mx-1" />
-
-                  <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }}
-                    className={`p-2 rounded-full transition-all ${
-                      isComparing
-                      ? 'bg-orange-500/20 text-orange-500'
-                      : 'text-gray-400 hover:bg-purple-500/20 hover:text-purple-500'
-                    }`}
-                    title="Compare"
-                  >
-                    <BarChart3 size={14} />
-                  </motion.button>
+                <div className="w-px h-6 bg-white/10 mx-3" />
+                
+                <div className="flex items-center gap-2 pr-1">
+                    <Star size={16} className="text-orange-500 fill-orange-500" />
+                    <div className="flex flex-col">
+                        <span className="text-sm font-black text-orange-500 leading-none mb-0.5">
+                            {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}
+                        </span>
+                        <span className="text-[8px] font-bold text-gray-400 tracking-wider">Stars</span>
+                    </div>
                 </div>
             </div>
 
-            {/* Author Info */}
-            <div className="flex items-center gap-4 mb-8 relative z-20">
-                <a 
-                    href={project.owner?.html_url || '#'} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="relative group/avatar flex items-center justify-center p-0.5 rounded-2xl bg-white/5 border border-white/10 hover:border-orange-500/50 transition-all duration-500 shadow-xl overflow-hidden"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openSafe(project.owner?.html_url);
-                    }}
-                >
-                    {/* We now prioritize the platform logo as the main "profile" for trending cards as requested */}
-                    <div className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl">
+            {/* Author Area */}
+            <div className="flex items-center gap-3 mb-6 relative z-30">
+                <div className="relative">
+                    <div className="w-12 h-12 rounded-[1rem] bg-[#0f172a] border border-white/10 flex items-center justify-center p-2 shadow-lg">
                         {getPlatformAvatar()}
                     </div>
-                    {/* Platform Tiny Badge */}
-                    <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-[#020617] ${
-                        project.platform === 'Hugging Face' ? 'bg-yellow-500 text-black' :
-                        project.platform === 'Kaggle' ? 'bg-[#20beff] text-white' :
-                        project.platform === 'LinkedIn' ? 'bg-[#0077b5] text-white' :
-                        'bg-white text-black'
-                    } shadow-xl scale-90 z-30`}>
-                        {project.platform === 'Hugging Face' ? <Bot size={12} strokeWidth={3} /> :
-                         project.platform === 'Kaggle' ? <Database size={12} strokeWidth={3} /> :
-                         project.platform === 'LinkedIn' ? <Linkedin size={12} strokeWidth={3} /> :
-                         <Github size={12} strokeWidth={3} />}
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#020617] border border-white/10 flex items-center justify-center shadow-lg">
+                        <img 
+                            src={project.owner?.avatar_url || `https://ui-avatars.com/api/?name=${project.owner?.login || project.platform}`} 
+                            alt={project.owner?.login} 
+                            className="w-full h-full object-cover rounded-full"
+                        />
                     </div>
-                </a>
+                </div>
                 <div>
-                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-0.5">By Author</p>
-                    <a 
-                        href={project.owner?.html_url || '#'} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        className={`text-sm font-black transition-colors ${
-                            project.platform === 'Hugging Face' ? 'text-yellow-400 hover:text-white' :
-                            project.platform === 'Kaggle' ? 'text-blue-400 hover:text-white' :
-                            project.platform === 'LinkedIn' ? 'text-blue-500 hover:text-white' :
-                            'text-white hover:text-orange-400'
-                        }`}
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            openSafe(project.owner?.html_url);
-                        }}
-                    >
-                        @{project.owner?.login || 'unknown'}
-                    </a>
-                </div>
-            </div>
-
-            {/* Content Area - Fixed heights for stability */}
-            <div className="flex-1 relative z-20">
-                <h3 className="text-xl font-black text-white mb-4 group-hover:text-orange-400 transition-colors line-clamp-1 tracking-tight">
-                    {project.name}
-                </h3>
-                <div className="min-h-[50px]">
-                    <p className="text-gray-400 font-medium text-[13px] leading-relaxed mb-6 line-clamp-3 opacity-70 group-hover:opacity-100 transition-opacity">
-                        {project.description || 'Discover this amazing open-source contribution across platform.'}
-                    </p>
-                </div>
-                {project.language && (
-                    <div className="flex items-center gap-2 mb-6">
-                        <div className="w-2.5 h-2.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
-                        <span className="text-xs font-black text-white/60 uppercase tracking-widest">{project.language}</span>
-                    </div>
-                )}
-            </div>
-
-            {/* Footer Actions */}
-            <div className="mt-auto space-y-5 relative z-20">
-                <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags?.slice(0, 3).map((tag: string, i: number) => (
-                        <span key={i} className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black text-gray-400 uppercase tracking-wider group-hover:bg-white/10 transition-colors">
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-
-                <div className={`grid ${project.liveUrl ? 'grid-cols-2 gap-4' : 'grid-cols-1'}`}>
-                    <motion.a 
-                        href={project.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(234,88,12,0.4)" }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          openSafe(project.url);
-                        }}
-                        className={`group/btn py-3.5 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-orange-600/30 overflow-hidden relative ${project.liveUrl ? 'px-4' : 'px-8'}`}
-                    >
-                        <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-                        <config.icon size={16} className="relative z-10" /> 
-                        <span className="relative z-10">{config.label}</span>
-                    </motion.a>
-
-                    {project.liveUrl && project.liveUrl !== '#' && (
-                        <motion.a 
-                            href={project.liveUrl}
-                            target="_blank"
+                    <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-0.5">By Author</p>
+                    <div className="flex items-center gap-1.5">
+                        <a 
+                            href={project.owner?.html_url || '#'} 
+                            target="_blank" 
                             rel="noreferrer"
-                            whileHover={{ scale: 1.02, boxShadow: "0 0 15px rgba(59,130,246,0.4)" }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              openSafe(project.liveUrl);
-                            }}
-                            className="group/btn py-3.5 px-4 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2.5 shadow-lg shadow-blue-600/30 overflow-hidden relative"
+                            className="text-sm md:text-base font-bold text-white hover:text-blue-400 transition-colors tracking-tight"
+                            onClick={(e) => { e.stopPropagation(); openSafe(project.owner?.html_url); }}
                         >
-                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-                            <ExternalLink size={16} className="relative z-10" /> 
-                            <span className="relative z-10">Live Demo</span>
-                        </motion.a>
-                    )}
+                            @{project.owner?.login || 'unknown'}
+                        </a>
+                        <div className="w-3.5 h-3.5 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-[0_0_8px_rgba(59,130,246,0.5)]">
+                            <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 relative z-20 flex flex-col">
+                <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-xl md:text-2xl font-black bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-transparent bg-clip-text truncate pb-1">
+                            {project.name}
+                        </h3>
+                        <p className="text-gray-400 text-[12px] md:text-[13px] font-medium leading-relaxed mt-2 opacity-90 line-clamp-3">
+                            {project.description || 'Discover this amazing open-source contribution across platform.'}
+                        </p>
+                    </div>
+                    {/* Placeholder for Green Lightning / Project Logo */}
+                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 shadow-[0_0_20px_rgba(45,212,191,0.2)] flex items-center justify-center border border-teal-300/30">
+                        <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                </div>
+
+                <div className="mt-auto">
+                    {project.language && (
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]" />
+                            <span className="text-[10px] font-black text-white uppercase tracking-widest">{project.language}</span>
+                        </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        {project.tags?.slice(0, 3).map((tag: string, i: number) => (
+                            <span key={i} className="px-3 py-1 rounded-xl bg-white/5 border border-white/5 text-[9px] font-bold text-gray-300 uppercase tracking-wider shadow-inner">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="grid grid-cols-2 gap-3 mt-auto relative z-20">
+                <motion.a 
+                    href={project.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={(e) => { e.stopPropagation(); openSafe(project.url); }}
+                    className="py-3 rounded-xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.2)]"
+                >
+                    <config.icon size={14} /> 
+                    VIEW REPO
+                </motion.a>
+
+                <motion.a 
+                    href={project.liveUrl || '#'}
+                    target={project.liveUrl ? "_blank" : "_self"}
+                    rel="noreferrer"
+                    whileHover={{ scale: project.liveUrl ? 1.02 : 1 }}
+                    whileTap={{ scale: project.liveUrl ? 0.98 : 1 }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (project.liveUrl && project.liveUrl !== '#') openSafe(project.liveUrl);
+                        else e.preventDefault();
+                    }}
+                    className={`py-3 rounded-xl border-2 ${project.liveUrl && project.liveUrl !== '#' ? 'border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2`}
+                >
+                    <ExternalLink size={14} /> 
+                    LIVE DEMO
+                </motion.a>
             </div>
         </motion.div>
     );
