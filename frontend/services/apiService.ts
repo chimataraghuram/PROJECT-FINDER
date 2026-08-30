@@ -6,6 +6,14 @@ const BASE_URL = window.location.hostname === 'localhost' || window.location.hos
   ? '/api' 
   : 'https://project-finder-api.onrender.com/api';
 
+const cacheKey = (kind: string, value: string) => `project-finder-cache:${kind}:${value}`;
+const readCache = <T,>(key: string): T | null => {
+  try { const item = JSON.parse(localStorage.getItem(key) || 'null'); return item?.value || null; } catch { return null; }
+};
+const writeCache = (key: string, value: unknown) => {
+  try { localStorage.setItem(key, JSON.stringify({ value, cachedAt: new Date().toISOString() })); } catch { /* storage may be unavailable */ }
+};
+
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => {
   // Defensive mapping to handle both backend and hardcoded fallback shapes
@@ -93,13 +101,17 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
       .map(mapToFrontendProject)
       .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
     
-    return {
+    const searchResult = {
       summary: `Found ${projects.length} results for "${query}" on ${platform}${category !== 'All' ? ` in ${category}` : ''}.`,
       projects,
       groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
     };
+    writeCache(cacheKey('search', `${query}:${category}:${platform}`), searchResult);
+    return searchResult;
   } catch (error) {
     console.warn(`[Backend API] Search for ${platform} failed or returned low-quality data, using curated fallbacks.`, error);
+    const cached = readCache<SearchResult>(cacheKey('search', `${query}:${category}:${platform}`));
+    if (cached?.projects?.length) return cached;
     
     // Curated discovery fallbacks for SEARCH results (Phase 24 - specific URLs)
     let fallbackProjects: any[] = [];
@@ -343,9 +355,13 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       throw new Error("Generic data detected in trending"); 
     }
 
-    return filteredTrending.map(mapToFrontendProject);
+    const trending = filteredTrending.map(mapToFrontendProject);
+    writeCache(cacheKey('trending', `${platform}:${category}`), trending);
+    return trending;
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
+    const cached = readCache<Project[]>(cacheKey('trending', `${platform}:${category}`));
+    if (cached?.length) return cached;
 
     // Keep GitHub Trending live even when the Render proxy is cold or down.
     // GitHub's public API permits browser requests and returns the real records.
