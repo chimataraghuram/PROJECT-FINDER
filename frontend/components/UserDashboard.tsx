@@ -24,6 +24,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
   const [githubSyncing, setGithubSyncing] = React.useState(false);
   const [githubSyncMessage, setGithubSyncMessage] = React.useState('');
+  const [githubNeedsUsername, setGithubNeedsUsername] = React.useState(false);
+  const [githubUsernameInput, setGithubUsernameInput] = React.useState('');
   const [githubAccount, setGithubAccount] = React.useState<any>(() => {
     try { return JSON.parse(localStorage.getItem('project-finder-github-account') || 'null'); } catch { return null; }
   });
@@ -190,9 +192,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                   } catch (linkError: any) {
                     // Keep sync usable if Firebase GitHub linking is not enabled yet.
                     if (linkError?.code !== 'auth/operation-not-allowed') throw linkError;
-                    const username = window.prompt('GitHub linking is not enabled yet. Enter your GitHub username to sync your real public account:');
-                    if (!username?.trim()) throw new Error('GitHub connection cancelled');
-                    const profileResponse = await fetch(`https://api.github.com/users/${encodeURIComponent(username.trim())}`, { cache: 'no-store' });
+                    const username = githubUsernameInput.trim();
+                    if (!username) { setGithubNeedsUsername(true); throw new Error('Enter your GitHub username below to continue'); }
+                    const profileResponse = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, { cache: 'no-store' });
                     if (!profileResponse.ok) throw new Error('GitHub username not found');
                     const profile = await profileResponse.json();
                     account = { username: profile.login, displayName: profile.name, photoURL: profile.avatar_url, fallback: true };
@@ -216,6 +218,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               {githubAccount?.photoURL ? <img src={githubAccount.photoURL} alt="GitHub account" className="w-5 h-5 rounded-full" /> : <Github className="w-4 h-4" />}
               {githubSyncing ? 'Connecting…' : githubAccount ? `Connected @${githubAccount.username}` : 'Connect GitHub Account'}
             </button>
+            {githubNeedsUsername && !githubAccount && <div className="mt-3 flex gap-2">
+              <input value={githubUsernameInput} onChange={event => setGithubUsernameInput(event.target.value)} placeholder="GitHub username" className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50" />
+              <button onClick={() => { setGithubNeedsUsername(false); }} className="rounded-xl bg-orange-500 px-3 py-2 text-[10px] font-black uppercase text-white">Use</button>
+            </div>}
             {githubSyncMessage && <p className={`text-[10px] text-center mt-3 ${githubSyncMessage.toLowerCase().includes('failed') || githubSyncMessage.toLowerCase().includes('not found') ? 'text-red-400' : 'text-green-400'}`}>{githubSyncMessage}</p>}
             <p className="text-[10px] text-center text-gray-500 mt-4 leading-relaxed px-4">Connect your GitHub to automatically import your starred repos and tech stack.</p>
           </motion.div>
