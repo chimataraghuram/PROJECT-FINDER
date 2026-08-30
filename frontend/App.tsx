@@ -428,7 +428,7 @@ const App: React.FC = () => {
                 
                 <div className="w-px h-6 bg-white/10 hidden sm:block" />
                 
-                <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
+                <AuthButton isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
               </motion.div>
             </div>
           </div>
