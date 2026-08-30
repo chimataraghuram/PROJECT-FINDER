@@ -131,15 +131,15 @@ const TrendingCard: React.FC<{
             </div>
 
             {/* Metrics Box */}
-            <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-[#020617]/50 border border-white/5 mb-5 relative z-30 shadow-inner">
-                <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center justify-between px-3 py-2.5 rounded-2xl bg-[#020617]/50 border border-white/5 mb-5 relative z-30 shadow-inner w-full">
+                <div className="flex items-center justify-between flex-1">
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Security Status" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                         <Shield size={14} className="group-hover/metric:scale-110 transition-transform" />
                         <span className="text-[8px] font-bold tracking-wider">Secure</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="AI Summary" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}>
                         <Brain size={14} className="group-hover/metric:scale-110 transition-transform" />
-                        <span className="text-[8px] font-bold tracking-wider text-center leading-[10px]">Well<br/>Documented</span>
+                        <span className="text-[8px] font-bold tracking-wider text-center leading-[10px]">Well<br/>Docs</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Share" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}>
                         <Share2 size={14} className="group-hover/metric:scale-110 transition-transform" />
@@ -151,12 +151,12 @@ const TrendingCard: React.FC<{
                     </div>
                 </div>
                 
-                <div className="w-px h-6 bg-white/10 mx-3" />
+                <div className="w-px h-6 bg-white/10 mx-2 md:mx-3" />
                 
-                <div className="flex items-center gap-2 pr-1">
+                <div className="flex items-center gap-1.5 shrink-0">
                     <Star size={16} className="text-orange-500 fill-orange-500" />
                     <div className="flex flex-col">
-                        <span className="text-sm font-black text-orange-500 leading-none mb-0.5">
+                        <span className="text-xs font-black text-orange-500 leading-none mb-0.5">
                             {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}
                         </span>
                         <span className="text-[8px] font-bold text-gray-400 tracking-wider">Stars</span>
