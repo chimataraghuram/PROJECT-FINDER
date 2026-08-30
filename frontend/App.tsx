@@ -497,27 +497,37 @@ const App: React.FC = () => {
           <div className="block md:hidden fixed top-3 left-4 right-4 z-[2000] pointer-events-none">
             <div className="flex items-center justify-between">
               {/* Logo Pill (Left) */}
-              <div 
-                className="pointer-events-auto flex items-center gap-2 cursor-pointer bg-[#0f172a]/60 backdrop-blur-3xl border border-white/10 rounded-full pr-4 pl-1.5 py-1.5 shadow-xl"
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, type: "spring", bounce: 0.2 }}
+                whileTap={{ scale: 0.95 }}
+                className="pointer-events-auto flex items-center gap-2 cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full pr-4 pl-1.5 py-1.5 shadow-xl group/moblogo"
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30" />
-                  <img src={mascotLogo} className="w-7 h-7 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
+                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
+                  <motion.img whileHover={{ rotate: 5 }} src={mascotLogo} className="w-8 h-8 rounded-full border border-white/20 shadow-lg relative z-10" alt="Logo" />
                 </div>
                 <span className="text-xs font-black text-white tracking-tighter uppercase mt-0.5">Project Finder</span>
-              </div>
+              </motion.div>
 
               {/* Actions Pill (Right) */}
-              <div className="pointer-events-auto flex items-center gap-2 bg-[#0f172a]/60 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl">
-                <button
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, type: "spring", bounce: 0.2, delay: 0.1 }}
+                className="pointer-events-auto flex items-center gap-2 bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl"
+              >
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="w-8 h-8 rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-8 h-8 rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-colors"
                 >
                   <Bot className="w-4 h-4 text-white" />
-                </button>
+                </motion.button>
                 <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
-              </div>
+              </motion.div>
             </div>
           </div>
 
@@ -1041,7 +1051,12 @@ const App: React.FC = () => {
 
             {/* --- MOBILE BOTTOM NAVIGATION --- */}
             <div className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] w-full px-4 flex justify-center pointer-events-none">
-              <nav className="inline-flex p-1 bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-auto">
+              <motion.nav 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, type: "spring", bounce: 0.25, delay: 0.2 }}
+                className="inline-flex p-1 bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-auto"
+              >
                 {[
                   { id: 'search', icon: Search },
                   { id: 'trending', icon: TrendingUp },
@@ -1050,26 +1065,29 @@ const App: React.FC = () => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
                   return (
-                    <button
+                    <motion.button
                       key={item.id}
+                      whileTap={{ scale: 0.85 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`relative p-2.5 rounded-full transition-all duration-300 ${
+                      className={`relative p-2.5 rounded-full transition-colors duration-300 ${
                         isActive 
-                          ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)] scale-110` 
-                          : 'text-gray-400 hover:bg-white/5 opacity-70'
+                          ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]` 
+                          : 'text-gray-400 hover:text-white hover:bg-white/5 opacity-70'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <motion.div animate={{ scale: isActive ? 1.15 : 1 }} transition={{ type: "spring", bounce: 0.4 }}>
+                        <Icon className="w-5 h-5" />
+                      </motion.div>
                       {isActive && (
                         <motion.div 
-                          layoutId="activeNav"
+                          layoutId="activeNavMobile"
                           className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full"
                         />
                       )}
-                    </button>
+                    </motion.button>
                   );
                 })}
-              </nav>
+              </motion.nav>
             </div>
 
           </main>
