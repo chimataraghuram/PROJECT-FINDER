@@ -455,7 +455,6 @@ const App: React.FC = () => {
             {/* 3. Right Island: Action Hub */}
             <div className="pointer-events-auto shrink-0 flex justify-end">
               <motion.div
-                layout
                 animate={{
                   scale: isCompact ? 0.9 : 1,
                   opacity: 1,

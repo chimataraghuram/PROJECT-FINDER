@@ -12,12 +12,12 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard, minimal
   const logout = async () => { if (auth) await signOut(auth); localStorage.removeItem('project-finder-token'); localStorage.removeItem('project-finder-user'); localStorage.removeItem('project-finder-favorites'); setUser(null); window.dispatchEvent(new Event('storage')); };
   if (user) return minimal ? (
     <button onClick={onViewDashboard} className="rounded-full hover:scale-105 transition-transform">
-      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`rounded-full border-2 border-orange-500/80 object-cover shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-300 ${isCompact ? 'w-10 h-10' : 'w-7 h-7'}`} alt="Profile" />
+      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`pointer-events-none rounded-full border-2 border-orange-500/80 object-cover shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-300 ${isCompact ? 'w-10 h-10' : 'w-7 h-7'}`} alt="Profile" />
     </button>
   ) : (
     <button onClick={onViewDashboard} className="flex items-center gap-3 pr-4 rounded-full hover:bg-white/5 transition-colors group">
-      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className="w-10 h-10 rounded-full border-[1.5px] border-orange-500/50 object-cover shadow-[0_0_10px_rgba(249,115,22,0.2)] group-hover:border-orange-500 transition-colors" alt="Profile" />
-      <span className="hidden sm:inline-block text-[11px] font-black tracking-widest uppercase text-white">
+      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className="pointer-events-none w-10 h-10 rounded-full border-[1.5px] border-orange-500/50 object-cover shadow-[0_0_10px_rgba(249,115,22,0.2)] group-hover:border-orange-500 transition-colors" alt="Profile" />
+      <span className="pointer-events-none hidden sm:inline-block text-[11px] font-black tracking-widest uppercase text-white">
         {user.displayName || 'Google User'}
       </span>
     </button>
