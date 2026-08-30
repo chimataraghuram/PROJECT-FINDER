@@ -278,25 +278,28 @@ This project is licensed under the **MIT License**.
 
 ---
 
-## 👨‍💻 Author
+## 🧑‍💻 Author
+<hr>
 
-**CHIMATA RAGHURAM (TECHBOY)**
-*Full-Stack Developer & AI Enthusiast*
+**CHIMATA RAGHURAM (TECHBOY)** _Full-Stack Developer & AI Enthusiast_
 
-<div style="display: flex; gap: 10px;">
+<br>
+
+<div style="display: flex; gap: 10px; margin-bottom: 20px;">
   <a href="https://chimataraghuram.vercel.app/">
-    <img src="https://img.shields.io/badge/🌐%20Portfolio-FF8C42?style=for-the-badge&logoColor=white" />
+    <img src="https://img.shields.io/badge/🌐_PORTFOLIO-F97316?style=for-the-badge&logoColor=white" alt="Portfolio" />
   </a>
   <a href="https://www.linkedin.com/in/chimataraghuram/">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+    <img src="https://img.shields.io/badge/LINKEDIN-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
   </a>
   <a href="https://github.com/chimataraghuram">
-    <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" />
+    <img src="https://img.shields.io/badge/GITHUB-000000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
   </a>
 </div>
 
----
+<hr>
+<br>
 
 <div align="center">
-  COOKED BY RAGHU❤️
+  COOKED BY RAGHU ❤️
 </div>
