@@ -470,9 +470,18 @@ export const fetchFirebaseSearchHistory = async (uid: string): Promise<any[]> =>
 };
 
 export const fetchGithubStarred = async (username: string): Promise<any[]> => {
-  const response = await fetch(`${BASE_URL}/user/${encodeURIComponent(username)}/starred`);
-  if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.message || 'Unable to load GitHub starred repositories'); }
-  return response.json();
+  try {
+    const response = await fetch(`${BASE_URL}/user/${encodeURIComponent(username)}/starred`, { cache: 'no-store' });
+    if (response.ok) return response.json();
+  } catch { /* Try GitHub directly below when the Render proxy is unavailable. */ }
+
+  const directResponse = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/starred?per_page=30`, { cache: 'no-store' });
+  if (!directResponse.ok) {
+    if (directResponse.status === 404) throw new Error('GitHub username not found');
+    if (directResponse.status === 403) throw new Error('GitHub rate limit reached. Try again later.');
+    throw new Error('Unable to load GitHub starred repositories');
+  }
+  return directResponse.json();
 };
 
 export const saveProject = async (project: Project, token: string): Promise<Project | null> => {
