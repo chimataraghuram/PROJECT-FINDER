@@ -472,6 +472,10 @@ const App: React.FC = () => {
                 user={currentUser}
                 savedProjects={favorites}
                 onNavigateToDiscover={() => setCurrentView('search')}
+                onSearch={(query) => {
+                  setCurrentView('search');
+                  handleSearch(query);
+                }}
               />
             )}
 
