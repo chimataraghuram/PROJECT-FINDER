@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
+import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
+import { auth, githubProvider } from '../services/firebase';
 import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History } from 'lucide-react';
 
@@ -22,6 +24,9 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
   const [githubSyncing, setGithubSyncing] = React.useState(false);
   const [githubSyncMessage, setGithubSyncMessage] = React.useState('');
+  const [githubAccount, setGithubAccount] = React.useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('project-finder-github-account') || 'null'); } catch { return null; }
+  });
   React.useEffect(() => { if (recentSearches.length) setSearchHistory(recentSearches); }, [recentSearches]);
   React.useEffect(() => {
     try {
@@ -172,25 +177,33 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               </div>
             </div>
             <button onClick={async () => {
-              const username = window.prompt('Enter your GitHub username to import public starred repositories:');
-              if (!username?.trim()) return;
-              setGithubSyncing(true); setGithubSyncMessage('Loading starred repositories…');
+              setGithubSyncing(true); setGithubSyncMessage(githubAccount ? 'Syncing your GitHub repositories…' : 'Connecting your GitHub account…');
               try {
-                const starred = await fetchGithubStarred(username.trim());
+                let account = githubAccount;
+                if (!account) {
+                  if (!auth?.currentUser) throw new Error('Sign in with Google before connecting GitHub');
+                  const linked = await linkWithPopup(auth.currentUser, githubProvider);
+                  const githubData = linked.user.providerData.find(provider => provider.providerId === 'github.com');
+                  const githubProfile: any = getAdditionalUserInfo(linked)?.profile || {};
+                  account = { username: githubProfile.login || githubData?.displayName || '', displayName: githubData?.displayName, photoURL: githubData?.photoURL };
+                  if (!account.username) throw new Error('GitHub account could not be identified');
+                  setGithubAccount(account); localStorage.setItem('project-finder-github-account', JSON.stringify(account));
+                }
+                const starred = await fetchGithubStarred(account.username);
                 const imported: Project[] = starred.map((repo: any) => ({
                   id: String(repo.id), name: repo.full_name || repo.name, description: repo.description || 'GitHub repository',
                   platform: 'GitHub', url: repo.html_url, liveUrl: repo.homepage || null, stars: repo.stargazers_count || 0,
                   language: repo.language || 'Unknown', tags: repo.topics || [], isPublisher: false,
-                  owner: { login: repo.owner?.login || username.trim(), avatar_url: repo.owner?.avatar_url || '', html_url: repo.owner?.html_url || `https://github.com/${username.trim()}` },
+                  owner: { login: repo.owner?.login || account.username, avatar_url: repo.owner?.avatar_url || '', html_url: repo.owner?.html_url || `https://github.com/${account.username}` },
                   slug: null, image: repo.owner?.avatar_url || null, readme: repo.description || ''
                 }));
                 onImportProjects?.(imported);
-                setGithubSyncMessage(`Imported ${imported.length} starred repositories`);
+                setGithubSyncMessage(`Connected as @${account.username} · imported ${imported.length} starred repositories`);
               } catch (error: any) { setGithubSyncMessage(error.message || 'GitHub sync failed'); }
               finally { setGithubSyncing(false); }
             }} disabled={githubSyncing} className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl bg-white text-black font-black uppercase tracking-widest text-xs hover:bg-gray-200 transition-all shadow-[0_5px_20px_rgba(255,255,255,0.15)] hover:shadow-[0_5px_25px_rgba(255,255,255,0.25)] disabled:opacity-60">
-              <Github className="w-4 h-4" />
-              {githubSyncing ? 'Syncing GitHub…' : 'Sync with GitHub'}
+              {githubAccount?.photoURL ? <img src={githubAccount.photoURL} alt="GitHub account" className="w-5 h-5 rounded-full" /> : <Github className="w-4 h-4" />}
+              {githubSyncing ? 'Connecting…' : githubAccount ? `Connected @${githubAccount.username}` : 'Connect GitHub Account'}
             </button>
             {githubSyncMessage && <p className={`text-[10px] text-center mt-3 ${githubSyncMessage.toLowerCase().includes('failed') || githubSyncMessage.toLowerCase().includes('not found') ? 'text-red-400' : 'text-green-400'}`}>{githubSyncMessage}</p>}
             <p className="text-[10px] text-center text-gray-500 mt-4 leading-relaxed px-4">Connect your GitHub to automatically import your starred repos and tech stack.</p>
