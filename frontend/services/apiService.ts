@@ -475,6 +475,9 @@ export const fetchGitHubUserProfile = async (username: string): Promise<any> => 
     return null;
   }
 };
+export const updateCollection = async (token: string, id: string, name: string): Promise<any> => { const response = await fetch(`${BASE_URL}/workspace/collections/${encodeURIComponent(id)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ name }) }); if (!response.ok) throw new Error('Collection update failed'); return response.json(); };
+export const deleteCollection = async (token: string, id: string): Promise<void> => { const response = await fetch(`${BASE_URL}/workspace/collections/${encodeURIComponent(id)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (!response.ok) throw new Error('Collection deletion failed'); };
+export const removeProjectFromCollection = async (token: string, collectionId: string, projectId: string): Promise<any> => { const response = await fetch(`${BASE_URL}/workspace/collections/${encodeURIComponent(collectionId)}/projects/${encodeURIComponent(projectId)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); if (!response.ok) throw new Error('Project removal failed'); return response.json(); };
 
 export const fetchResearchSession = async (token: string, sessionId: string): Promise<any> => {
   const response = await fetch(`${BASE_URL}/research/${encodeURIComponent(sessionId)}`, { headers: { Authorization: `Bearer ${token}` } });

@@ -22,6 +22,26 @@ export const addProjectToCollection = async (req, res) => {
   res.json(collection);
 };
 
+export const updateCollection = async (req, res) => {
+  const name = String(req.body.name || '').trim().slice(0, 100);
+  if (!name) return res.status(400).json({ message: 'Collection name is required' });
+  const collection = await Collection.findOneAndUpdate({ _id: req.params.collectionId, userId: req.user._id }, { $set: { name } }, { new: true }).populate('projects');
+  if (!collection) return res.status(404).json({ message: 'Collection not found' });
+  res.json(collection);
+};
+
+export const deleteCollection = async (req, res) => {
+  const deleted = await Collection.findOneAndDelete({ _id: req.params.collectionId, userId: req.user._id });
+  if (!deleted) return res.status(404).json({ message: 'Collection not found' });
+  res.status(204).end();
+};
+
+export const removeProjectFromCollection = async (req, res) => {
+  const collection = await Collection.findOneAndUpdate({ _id: req.params.collectionId, userId: req.user._id }, { $pull: { projects: req.params.projectId } }, { new: true }).populate('projects');
+  if (!collection) return res.status(404).json({ message: 'Collection not found' });
+  res.json(collection);
+};
+
 export const listNotes = async (req, res) => {
   const notes = await ProjectNote.find({ userId: req.user._id }).sort({ updatedAt: -1 });
   res.json(notes);
