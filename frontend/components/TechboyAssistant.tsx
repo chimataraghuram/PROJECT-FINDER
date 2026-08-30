@@ -221,8 +221,8 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={clearChat} className="px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors" title="Clear chat">
-                                    <Trash2 size={16} />
+                                <button onClick={clearChat} className="flex items-center gap-1 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors" title="Start a new chat">
+                                    <Trash2 size={14} /> <span className="hidden sm:inline">New Chat</span>
                                 </button>
                                 <button onClick={() => setIsOpen(false)} className="p-2 text-white/20 hover:text-white transition-colors">
                                     <X size={20} />
@@ -233,6 +233,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
 
                         {/* Messages Area */}
                         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
+                            {messages.length === 1 && !isTyping && <div className="rounded-2xl border border-orange-500/15 bg-orange-500/[0.04] p-4 text-center"><p className="text-xs font-bold text-gray-300">Explore this project with TECHBOY AI</p><p className="mt-1 text-[10px] text-gray-500">Ask about its architecture, code, stack, or how to run it.</p></div>}
                             {messages.map((msg, i) => (
                                 <motion.div
                                     initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
