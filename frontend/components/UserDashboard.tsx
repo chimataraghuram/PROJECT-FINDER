@@ -47,6 +47,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
     fetchProjectNotes(token).then(data => setNotes(data || [])).catch(() => {});
     fetchSearchHistory(token).then(data => { if (data?.length) setSearchHistory(data); }).catch(() => {});
   }, []);
+
+  const exportWorkspace = (format: 'markdown' | 'json') => {
+    const content = format === 'json'
+      ? JSON.stringify({ exportedAt: new Date().toISOString(), projects: savedProjects }, null, 2)
+      : `# PROJECT-FINDER Saved Projects\n\nExported: ${new Date().toLocaleString()}\n\n${savedProjects.map(project => `## ${project.name}\n- Platform: ${project.platform}\n- Stars: ${project.stars || 0}\n- Language: ${project.language || 'Unknown'}\n- URL: ${project.url}\n\n${project.description || ''}\n`).join('\n')}`;
+    const blob = new Blob([content], { type: format === 'json' ? 'application/json' : 'text/markdown' });
+    const link = document.createElement('a'); link.href = URL.createObjectURL(blob);
+    link.download = `project-finder-saved-projects.${format === 'json' ? 'json' : 'md'}`;
+    link.click(); URL.revokeObjectURL(link.href);
+  };
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -135,6 +145,10 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               <button onClick={onNavigateToDiscover} className="text-xs font-black text-orange-500 hover:text-orange-400 uppercase tracking-widest">
                 Discover More
               </button>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              <button onClick={() => exportWorkspace('markdown')} disabled={!savedProjects.length} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:border-orange-500/40 hover:text-white disabled:opacity-30">Export Markdown</button>
+              <button onClick={() => exportWorkspace('json')} disabled={!savedProjects.length} className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:border-orange-500/40 hover:text-white disabled:opacity-30">Export JSON</button>
             </div>
 
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
