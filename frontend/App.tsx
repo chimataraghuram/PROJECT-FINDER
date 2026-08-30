@@ -83,6 +83,8 @@ const DEFAULT_FAVORITES: Project[] = [
 import { IntroVideo } from './components/IntroVideo';
 
 const App: React.FC = () => {
+  const [toast, setToast] = useState<{message: string, icon?: React.ReactNode, visible: boolean}>({ message: '', visible: false });
+  const showToast = (message: string, icon?: React.ReactNode) => { setToast({ message, icon, visible: true }); setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000); };
   const [showIntro, setShowIntro] = useState(true);
   const [currentView, setCurrentView] = useState<ViewType>('search');
   
