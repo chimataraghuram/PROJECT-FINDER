@@ -45,9 +45,21 @@ interface ProjectCardProps {
   isComparing?: boolean;
   index?: number;
   onView?: (project: Project) => void;
+  isSearchResult?: boolean;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView, isSearchResult }) => {
+  const [isGlowing, setIsGlowing] = React.useState(false);
+  const glowTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (isSearchResult) {
+      setIsGlowing(true);
+      if (glowTimeoutRef.current) clearTimeout(glowTimeoutRef.current);
+      glowTimeoutRef.current = setTimeout(() => setIsGlowing(false), 2500);
+    }
+  };
+
   const healthSignals = [Boolean(project.description), Boolean(project.language && project.language !== 'Unknown'), Boolean(project.tags?.length), Boolean(project.liveUrl), (project.stars || 0) > 100].filter(Boolean).length;
   const healthLabel = healthSignals >= 4 ? 'Strong signals' : healthSignals >= 2 ? 'Good signals' : 'Limited signals';
   const [copied, setCopied] = useState(false);
@@ -208,7 +220,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
       viewport={{ once: true, margin: "-100px" }}
       whileHover={{ y: -8 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="group relative bg-[#0a0a0f] border border-white/5 p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl hover:border-orange-500/20 transition-all duration-500"
+      onMouseEnter={handleMouseEnter}
+      className={`group relative bg-[#0a0a0f] border p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-700 ${isGlowing ? 'border-orange-500 shadow-[0_0_40px_rgba(249,115,22,0.4)]' : 'border-white/5 hover:border-orange-500/20'}`}
     >
       {/* Top Row: Platform Pill & Actions */}
       <div className="flex items-start justify-between mb-6 relative z-20">

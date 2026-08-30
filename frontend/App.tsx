@@ -735,6 +735,7 @@ const App: React.FC = () => {
                                   onView={setLastViewedProject}
                                   onToggleCompare={toggleComparison}
                                   isComparing={comparisonQueue.some(p => p.id === project.id)}
+                                  isSearchResult={true}
                                 />
                               ))}
                             </div>
