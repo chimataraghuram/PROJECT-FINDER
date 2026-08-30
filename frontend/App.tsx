@@ -411,6 +411,8 @@ const App: React.FC = () => {
                   </span>
                 </motion.button>
                 
+                <div className="w-px h-6 bg-white/10 hidden sm:block" />
+                
                 <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
               </motion.div>
             </div>
