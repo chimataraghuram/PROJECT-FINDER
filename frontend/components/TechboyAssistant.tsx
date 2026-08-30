@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getLocalAIResponse } from '../services/aiLogic';
-import { fetchAIResponse } from '../services/apiService';
+import { fetchAIResponse, askResearchQuestion, askQuickResearchQuestion, streamResearchQuestion } from '../services/apiService';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -28,6 +28,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     currentSearch = "",
     lastProject = null
 }) => {
+    const safeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char)).replace(/\*\*(.*?)\*\*/g, '<b class="text-white font-black">$1</b>').replace(/\n/g, '<br/>');
     const [messages, setMessages] = useState<Message[]>([
         { 
             role: 'assistant', 
@@ -38,7 +39,11 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isSyncing, setIsSyncing] = useState(false);
+    const [researchMode, setResearchMode] = useState<'quick' | 'deep'>('quick');
+    const [researchStage, setResearchStage] = useState('');
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const abortRef = useRef<AbortController | null>(null);
 
     // 🔄 Load Chat History
     useEffect(() => {
@@ -85,8 +90,9 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         }
     }, [messages, isTyping]);
 
-    const handleSend = async (customPrompt?: string) => {
+    const handleSend = async (customPrompt?: string, modeOverride?: 'quick' | 'deep') => {
         const promptToUse = customPrompt || input;
+        const mode = modeOverride || researchMode;
         if (!promptToUse.trim() || isTyping) return;
 
         const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -94,6 +100,8 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         setMessages(prev => [...prev, { role: 'user', content: promptToUse, timestamp }]);
         if (!customPrompt) setInput('');
         setIsTyping(true);
+        abortRef.current = new AbortController();
+        setResearchStage(mode === 'deep' ? 'Understanding question…' : '');
 
         try {
             // 🤖 ATTEMPT BACKEND LLM (OpenRouter/Gemini)
@@ -106,13 +114,27 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                 } : null
             };
 
-            const response = await fetchAIResponse(promptToUse, context);
-            setMessages(prev => [...prev, { 
-                role: 'assistant', 
-                content: response, 
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-            }]);
+            let response: string;
+            const owner = lastProject?.owner?.login;
+            const repo = lastProject?.url.match(/github\.com\/[^/]+\/([^/?#]+)/)?.[1];
+            if (lastProject?.platform === 'GitHub' && owner && repo && localStorage.getItem('project-finder-token')) {
+                if (mode === 'quick') {
+                    const research = await askQuickResearchQuestion(promptToUse, undefined, { owner, repo });
+                    response = research.answer;
+                } else {
+                    setResearchStage('Searching and ranking repository evidence…');
+                    setResearchStage('Generating grounded answer…');
+                    let streamed = '';
+                    setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+                    for await (const event of streamResearchQuestion(promptToUse, { owner, repo }, abortRef.current.signal)) {
+                        if (event.token) { streamed += event.token; setMessages(prev => prev.map((message, index) => index === prev.length - 1 ? { ...message, content: streamed } : message)); }
+                    }
+                    response = '';
+                }
+            } else response = await fetchAIResponse(promptToUse, context);
+            if (response) setMessages(prev => [...prev, { role: 'assistant', content: response, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
         } catch (error) {
+            if (error instanceof DOMException && error.name === 'AbortError') return;
             console.warn("Backend AI failed, falling back to local rule-based logic:", error);
             
             // 🧠 FALLBACK TO LOCAL RULE-BASED LOGIC
@@ -125,7 +147,9 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
             }]);
         } finally {
+            abortRef.current = null;
             setIsTyping(false);
+            setResearchStage('');
         }
     };
 
@@ -138,9 +162,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     };
 
     const QUICK_ACTIONS = [
-        { label: "Suggest Projects", prompt: "Suggest project ideas based on my interests", icon: Rocket },
-        { label: "Brainstorm Tech", prompt: "Recommend a modern tech stack for a full-stack project", icon: Brain },
-        { label: "Difficulty Check", prompt: "How difficult are these projects for a beginner?", icon: Zap }
+        { label: "Explain Architecture", prompt: "Explain this repository's architecture and main data flow.", icon: Brain, mode: 'deep' as const },
+        { label: "Analyze Tech Stack", prompt: "Analyze the technologies, frameworks, databases, and dependencies used in this repository.", icon: Zap, mode: 'deep' as const },
+        { label: "How To Run", prompt: "How do I install and run this repository?", icon: Rocket, mode: 'quick' as const },
+        { label: "Find Authentication", prompt: "Where is authentication implemented and how does it work?", icon: Brain, mode: 'deep' as const },
+        { label: "Find Database", prompt: "Which database does this repository use and where is it configured?", icon: Zap, mode: 'quick' as const },
+        { label: "Find AI Components", prompt: "Find and explain the AI, embedding, or RAG components in this repository.", icon: Brain, mode: 'deep' as const }
     ];
 
     return (
@@ -151,7 +178,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-3rem)] max-w-[420px] h-[650px] bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
+                        className="w-[calc(100vw-3rem)] max-w-[360px] h-[520px] bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-3xl flex flex-col overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
                         <div className="p-6 bg-gradient-to-r from-orange-600/10 to-transparent border-b border-white/10 flex items-center justify-between">
@@ -193,6 +220,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 </button>
                             </div>
                         </div>
+                        <div className="px-6 pt-4 flex gap-2"><button onClick={() => setResearchMode('quick')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'quick' ? 'bg-orange-600 text-white' : 'bg-white/5 text-gray-500'}`}>⚡ Quick</button><button onClick={() => setResearchMode('deep')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest ${researchMode === 'deep' ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-500'}`}>🔬 Deep Research</button>{researchStage && <span className="ml-auto text-[9px] text-purple-300 self-center">{researchStage}</span>}</div>
 
                         {/* Messages Area */}
                         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
@@ -208,7 +236,8 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                             ? 'bg-gradient-to-br from-orange-600 to-red-600 text-white rounded-tr-none shadow-orange-500/20'
                                              : 'bg-white/5 text-gray-200 border border-white/10 rounded-tl-none backdrop-blur-md'
                                     }`}>
-                                        <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<b class="text-white font-black">$1</b>').replace(/\n/g, '<br/>') }} />
+                                        <div dangerouslySetInnerHTML={{ __html: safeHtml(msg.content) }} />
+                                        {msg.role === 'assistant' && msg.content && <div className="mt-2 flex gap-3"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button></div>}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                                             {msg.timestamp}
                                         </div>
@@ -235,7 +264,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     {QUICK_ACTIONS.map((action, i) => (
                                         <button
                                             key={i}
-                                            onClick={() => handleSend(action.prompt)}
+                                            onClick={() => { setResearchMode(action.mode); handleSend(action.prompt, action.mode); }}
                                             className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold text-gray-300 whitespace-nowrap hover:bg-white/10 hover:border-orange-500/30 transition-all active:scale-95"
                                         >
                                             <action.icon className="w-3 h-3 text-orange-500" />
@@ -256,11 +285,11 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 pr-14 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-gray-600 font-display disabled:opacity-50"
                                 />
                                 <button
-                                    onClick={() => handleSend()}
-                                    disabled={isTyping || !input.trim()}
+                                    onClick={() => isTyping ? abortRef.current?.abort() : handleSend()}
+                                    disabled={!isTyping && !input.trim()}
                                     className="absolute right-2 p-2.5 rounded-xl bg-orange-600/20 text-orange-500 hover:bg-orange-600 hover:text-white transition-all shadow-lg disabled:opacity-30"
                                 >
-                                    <Send size={18} />
+                                    {isTyping ? <X size={18} /> : <Send size={18} />}
                                 </button>
                             </div>
                             <p className="text-[8px] text-center text-gray-600 font-bold uppercase tracking-widest">
