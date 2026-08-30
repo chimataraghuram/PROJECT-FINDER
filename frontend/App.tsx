@@ -456,26 +456,29 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="flex items-center gap-4 bg-[#0a0a0f]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-3 shadow-2xl transition-all duration-300"
+                className={`flex items-center transition-all duration-300 border border-white/10 shadow-2xl ${isCompact ? 'gap-4 bg-[#0a0a0f]/90 backdrop-blur-3xl rounded-[2.5rem] p-3 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 backdrop-blur-xl rounded-[2rem] p-2'}`}
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="flex items-center gap-3 p-1 pr-6 rounded-full border border-orange-500/30 bg-[#0f172a] hover:bg-white/[0.04] group transition-all"
+                  className={`flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-300 ${isCompact ? 'gap-3 pr-6 bg-[#0f172a]' : 'gap-2 pr-3 bg-transparent'}`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-10 h-10 rounded-[0.9rem] bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform">
-                    <Bot className="w-5 h-5 text-white" />
+                  <div className={`bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-all duration-300 ${isCompact ? 'w-10 h-10 rounded-[0.9rem]' : 'w-7 h-7 rounded-xl'}`}>
+                    <Bot className={`text-white transition-all duration-300 ${isCompact ? 'w-5 h-5' : 'w-4 h-4'}`} />
                   </div>
-                  <div className="hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] text-[11px]">
+                  <div className={`hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] transition-all duration-300 overflow-hidden ${isCompact ? 'text-[11px] opacity-100 max-w-[100px]' : 'text-[9px] opacity-70 max-w-[80px]'}`}>
                     <span className="text-white">Techboy</span>
                     <span className="text-orange-500">AI</span>
                   </div>
                 </motion.button>
 
-                <div className="hidden sm:block w-px h-8 bg-white/10 shrink-0 mx-2" />
+                <div className={`hidden sm:block w-px bg-white/10 shrink-0 transition-all duration-300 ${isCompact ? 'h-8 mx-2' : 'h-6 mx-1'}`} />
 
-                <AuthButton isCompact={false} onViewDashboard={() => setCurrentView('dashboard')} />
+                <AuthButton
+                  onViewDashboard={() => setCurrentView(currentView === 'dashboard' ? 'search' : 'dashboard')}
+                  isCompact={isCompact}
+                />
               </motion.div>
             </div>
           </div>
