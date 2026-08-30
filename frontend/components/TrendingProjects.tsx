@@ -243,7 +243,7 @@ const TrendingCard: React.FC<{
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={(e) => { e.stopPropagation(); openSafe(project.url); }}
-                    className="py-3 rounded-xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.2)]"
+                    className="py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110"
                 >
                     <config.icon size={14} /> 
                     VIEW REPO
