@@ -124,7 +124,12 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                 project: lastProject ? {
                     name: lastProject.name,
                     description: lastProject.description,
-                    language: lastProject.language
+                    platform: lastProject.platform,
+                    language: lastProject.language,
+                    stars: lastProject.stars,
+                    technologies: lastProject.tags,
+                    repositoryUrl: lastProject.url,
+                    documentation: lastProject.readme
                 } : null
             };
 
