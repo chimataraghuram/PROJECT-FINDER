@@ -3,7 +3,7 @@ import { SearchBar } from './components/SearchBar';
 import { ProjectCard } from './components/ProjectCard';
 import Particles from './components/Particles';
 import { Project, SearchResult, SearchState } from './types';
-import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp, Play, Info } from 'lucide-react';
+import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp, Play, Info, ChevronRight } from 'lucide-react';
 import { Footer } from './components/Footer';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
@@ -11,7 +11,7 @@ import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
 import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
-import { saveProject, fetchFavorites, fetchTrending, fetchSearch } from './services/apiService';
+import { saveProject, fetchFavorites, fetchTrending, fetchSearch, recordSearchHistory } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import { openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
@@ -136,6 +136,8 @@ const App: React.FC = () => {
 
     try {
       const data = await fetchSearch(trimmedQuery, category, platform);
+      const token = localStorage.getItem('project-finder-token');
+      if (token) recordSearchHistory(token, trimmedQuery, platform, data.projects?.length || 0).catch(() => {});
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
     } catch (err: any) {
@@ -396,16 +398,17 @@ const App: React.FC = () => {
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="h-9 md:h-10 px-3 md:px-5 rounded-full border border-orange-500/30 bg-orange-500/10 flex items-center gap-2.5 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.15)] hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] transition-all"
+                  className="h-10 md:h-12 px-3 md:px-5 rounded-full border border-orange-500 bg-[#0f172a] flex items-center gap-3 group/aipill shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <div className="p-1.5 bg-orange-500 rounded-lg shadow-lg shrink-0">
-                    <Bot className="w-3.5 h-3.5 text-white" />
+                  <div className="w-6 h-6 md:w-7 md:h-7 bg-orange-500 rounded-lg shadow-lg shrink-0 flex items-center justify-center">
+                    <Bot className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
                   </div>
-                  <span className="hidden sm:inline-block text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/90 group-hover/aipill:text-orange-500 transition-colors">
-                    TECHBOY AI
+                  <span className="hidden sm:inline-block text-[11px] md:text-[13px] font-black uppercase tracking-[0.15em] transition-colors">
+                    <span className="text-white">TECHBOY</span> <span className="text-orange-500">AI</span>
                   </span>
+                  <ChevronRight className="w-4 h-4 text-orange-500 hidden sm:inline-block ml-1" />
                 </motion.button>
                 
                 <AuthButton onViewDashboard={() => setCurrentView('dashboard')} />
