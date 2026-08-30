@@ -185,7 +185,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                         initial={{ opacity: 0, y: -20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-2rem)] max-w-[480px] h-[min(720px,calc(100vh-7rem))] bg-[#0f1115] border border-white/5 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden pointer-events-auto"
+                        className="w-[calc(100vw-2rem)] max-w-[480px] h-[min(720px,calc(100vh-7rem))] glass-card rounded-3xl flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
                         <div className="p-6 bg-transparent border-b border-white/5 flex items-center justify-between">
