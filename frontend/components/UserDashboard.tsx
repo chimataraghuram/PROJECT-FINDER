@@ -182,10 +182,21 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                 let account = githubAccount;
                 if (!account) {
                   if (!auth?.currentUser) throw new Error('Sign in with Google before connecting GitHub');
-                  const linked = await linkWithPopup(auth.currentUser, githubProvider);
-                  const githubData = linked.user.providerData.find(provider => provider.providerId === 'github.com');
-                  const githubProfile: any = getAdditionalUserInfo(linked)?.profile || {};
-                  account = { username: githubProfile.login || githubData?.displayName || '', displayName: githubData?.displayName, photoURL: githubData?.photoURL };
+                  try {
+                    const linked = await linkWithPopup(auth.currentUser, githubProvider);
+                    const githubData = linked.user.providerData.find(provider => provider.providerId === 'github.com');
+                    const githubProfile: any = getAdditionalUserInfo(linked)?.profile || {};
+                    account = { username: githubProfile.login || githubData?.displayName || '', displayName: githubData?.displayName, photoURL: githubData?.photoURL };
+                  } catch (linkError: any) {
+                    // Keep sync usable if Firebase GitHub linking is not enabled yet.
+                    if (linkError?.code !== 'auth/operation-not-allowed') throw linkError;
+                    const username = window.prompt('GitHub linking is not enabled yet. Enter your GitHub username to sync your real public account:');
+                    if (!username?.trim()) throw new Error('GitHub connection cancelled');
+                    const profileResponse = await fetch(`https://api.github.com/users/${encodeURIComponent(username.trim())}`, { cache: 'no-store' });
+                    if (!profileResponse.ok) throw new Error('GitHub username not found');
+                    const profile = await profileResponse.json();
+                    account = { username: profile.login, displayName: profile.name, photoURL: profile.avatar_url, fallback: true };
+                  }
                   if (!account.username) throw new Error('GitHub account could not be identified');
                   setGithubAccount(account); localStorage.setItem('project-finder-github-account', JSON.stringify(account));
                 }
