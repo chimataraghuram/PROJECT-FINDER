@@ -11,6 +11,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  citations?: any[];
 }
 
 interface TechboyAssistantProps {
@@ -140,16 +141,18 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                 if (mode === 'quick') {
                     const research = await askQuickResearchQuestion(promptToUse, undefined, { owner, repo });
                     response = research.answer;
+                    var responseCitations = research.citations || [];
                 } else {
                     let streamed = '';
                     setMessages(prev => [...prev, { role: 'assistant', content: '', timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
                     for await (const event of streamResearchQuestion(promptToUse, { owner, repo }, abortRef.current.signal)) {
                         if (event.token) { streamed += event.token; setMessages(prev => prev.map((message, index) => index === prev.length - 1 ? { ...message, content: streamed } : message)); }
+                        if (event.citations) { setMessages(prev => prev.map((message, index) => index === prev.length - 1 ? { ...message, citations: event.citations } : message)); }
                     }
                     response = '';
                 }
             } else response = await fetchAIResponse(promptToUse, context);
-            if (response) setMessages(prev => [...prev, { role: 'assistant', content: response, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+            if (response) setMessages(prev => [...prev, { role: 'assistant', content: response, citations: responseCitations, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
         } catch (error) {
             if (error instanceof DOMException && error.name === 'AbortError') return;
             console.warn("Backend AI failed, falling back to local rule-based logic:", error);
@@ -259,6 +262,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     }`}>
                                         {msg.role === 'assistant' && <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-orange-400"><Bot size={13} /> TECHBOY AI <span className="text-white/30">· Research Assistant</span></div>}
                                         <div dangerouslySetInnerHTML={{ __html: safeHtml(msg.content) }} />
+                                        {msg.role === 'assistant' && msg.citations?.length ? <div className="mt-4 border-t border-white/10 pt-3"><div className="mb-2 text-[9px] font-black uppercase tracking-widest text-gray-500">Sources</div><div className="flex flex-wrap gap-2">{msg.citations.slice(0, 5).map((source: any, sourceIndex: number) => source.url ? <a key={source.id || sourceIndex} href={source.url} target="_blank" rel="noopener noreferrer" className="max-w-full truncate rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] text-orange-300 hover:border-orange-500/40">{source.filePath || source.section || source.repository?.name || `Source ${sourceIndex + 1}`} ↗</a> : null)}</div></div> : null}
                                         {msg.role === 'assistant' && msg.content && <div className="mt-3 flex items-center gap-3 border-t border-white/5 pt-2"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button><span className="ml-auto text-[9px] uppercase tracking-widest text-gray-600">Helpful?</span><button onClick={() => setFeedback(current => ({ ...current, [i]: 'up' }))} className={feedback[i] === 'up' ? 'text-green-400' : 'text-gray-500 hover:text-green-400'} title="Helpful"><ThumbsUp size={13} /></button><button onClick={() => setFeedback(current => ({ ...current, [i]: 'down' }))} className={feedback[i] === 'down' ? 'text-red-400' : 'text-gray-500 hover:text-red-400'} title="Not helpful"><ThumbsDown size={13} /></button></div>}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                                             {msg.timestamp}
