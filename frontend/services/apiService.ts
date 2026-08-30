@@ -1,4 +1,6 @@
 import { Project, SearchResult, GroundingSource } from "../types";
+import { db } from './firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? '/api' 
@@ -86,7 +88,10 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     if (filteredData.length === 0) {
         throw new Error("No high-quality results from API (generic or empty response)");
     }
-    const projects = filteredData.map(mapToFrontendProject);
+    const platformOrder: Record<string, number> = { 'GitHub': 0, 'Hugging Face': 1, 'Kaggle': 2, 'LinkedIn': 3 };
+    const projects = filteredData
+      .map(mapToFrontendProject)
+      .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
     
     return {
       summary: `Found ${projects.length} results for "${query}" on ${platform}${category !== 'All' ? ` in ${category}` : ''}.`,
@@ -140,6 +145,174 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
   }
 };
 
+export const understandSearchQuery = async (query: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/query/understand?q=${encodeURIComponent(query)}`);
+  if (!response.ok) throw new Error('Query understanding failed');
+  return response.json();
+};
+
+export const fetchDeepSearch = async (query: string, limit = 20, filters: Record<string, string | boolean> = {}): Promise<any> => {
+  const params = new URLSearchParams({ q: query, limit: String(limit) });
+  Object.entries(filters).forEach(([key, value]) => params.set(key, String(value)));
+  const response = await fetch(`${BASE_URL}/deep-search?${params.toString()}`);
+  if (!response.ok) throw new Error('Deep search failed');
+  return response.json();
+};
+
+export const fetchHybridSearch = async (query: string, limit = 20): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/deep-search/hybrid?q=${encodeURIComponent(query)}&limit=${limit}`);
+  if (!response.ok) throw new Error('Hybrid search failed');
+  return response.json();
+};
+
+export const askResearchQuestion = async (question: string, repositoryId?: string, repository?: { owner?: string; repo?: string }): Promise<any> => {
+  const token = localStorage.getItem('project-finder-token');
+  const response = await fetch(`${BASE_URL}/rag/answer`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ question, repositoryId, ...repository }) });
+  if (!response.ok) throw new Error('Research question failed');
+  return response.json();
+};
+
+export const askQuickResearchQuestion = async (question: string, repositoryId?: string, repository?: { owner?: string; repo?: string }): Promise<any> => {
+  const token = localStorage.getItem('project-finder-token');
+  const response = await fetch(`${BASE_URL}/quick-research/answer`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ question, repositoryId, ...repository }) });
+  if (!response.ok) throw new Error('Quick research unavailable');
+  return response.json();
+};
+
+export const streamResearchQuestion = async function* (question: string, repository?: { owner?: string; repo?: string }, signal?: AbortSignal) {
+  const token = localStorage.getItem('project-finder-token');
+  const response = await fetch(`${BASE_URL}/rag/stream`, { method: 'POST', signal, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ question, ...repository }) });
+  if (!response.ok || !response.body) throw new Error('Research stream unavailable');
+  const reader = response.body.getReader(); const decoder = new TextDecoder(); let buffer = '';
+  while (true) { const { done, value } = await reader.read(); if (done) break; buffer += decoder.decode(value, { stream: true }); const events = buffer.split('\n\n'); buffer = events.pop() || ''; for (const event of events) { if (event.startsWith('data: ')) yield JSON.parse(event.slice(6)); } }
+};
+
+export const ingestRepository = async (owner: string, repo: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/ingest/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { method: 'POST' });
+  if (!response.ok) throw new Error('Repository indexing failed');
+  return response.json();
+};
+
+export const startIngestionJob = async (owner: string, repo: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/jobs/ingest/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { method: 'POST' });
+  if (!response.ok) throw new Error('Unable to start indexing job');
+  return response.json();
+};
+
+export const getJobStatus = async (jobId: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/jobs/${encodeURIComponent(jobId)}`);
+  if (!response.ok) throw new Error('Unable to read job status');
+  return response.json();
+};
+
+export const searchRepositoryCode = async (query: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/repositories/code-search?q=${encodeURIComponent(query)}`);
+  if (!response.ok) throw new Error('Code search unavailable');
+  return response.json();
+};
+
+export const fetchIndexedRepository = async (repositoryId: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/repositories/indexed/${encodeURIComponent(repositoryId)}`);
+  if (!response.ok) throw new Error('Indexed repository unavailable');
+  return response.json();
+};
+
+export const fetchRepositoryIntelligence = async (owner: string, repo: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/repositories/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/intelligence`);
+  if (!response.ok) throw new Error('Repository intelligence unavailable');
+  return response.json();
+};
+
+export const analyzeRepository = async (repositoryId: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/analysis/${repositoryId}`);
+  if (!response.ok) throw new Error('Project analysis failed');
+  return response.json();
+};
+
+export const compareRepositories = async (repositoryIds: string[]): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/analysis/compare`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repositoryIds }) });
+  if (!response.ok) throw new Error('Project comparison failed');
+  return response.json();
+};
+
+export const fetchRecommendations = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/recommendations`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Recommendations failed');
+  return response.json();
+};
+
+export const fetchResearchSessions = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/research`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Research history failed');
+  return response.json();
+};
+
+export const listMcpTools = async (): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/mcp/tools`);
+  if (!response.ok) throw new Error('MCP tools unavailable');
+  return response.json();
+};
+
+export const callMcpTool = async (name: string, args: Record<string, unknown>): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/mcp/call`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, arguments: args }) });
+  if (!response.ok) throw new Error('MCP tool call failed');
+  return response.json();
+};
+
+export const createResearchSession = async (token: string, title: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/research`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ title }) });
+  if (!response.ok) throw new Error('Research session creation failed');
+  return response.json();
+};
+
+export const fetchSearchHistory = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/search-history`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Search history failed');
+  return response.json();
+};
+
+export const recordSearchHistory = async (token: string, query: string, platform = 'GitHub', resultCount = 0): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/search-history`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ query, platform, resultCount }) });
+  if (!response.ok) throw new Error('Search history recording failed');
+  return response.json();
+};
+
+export const fetchCollections = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/collections`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Collections failed');
+  return response.json();
+};
+
+export const fetchProjectNotes = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/notes`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Notes failed');
+  return response.json();
+};
+
+export const createCollection = async (token: string, name: string, description = ''): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/collections`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ name, description }) });
+  if (!response.ok) throw new Error('Collection creation failed');
+  return response.json();
+};
+
+export const saveProjectNote = async (token: string, repoUrl: string, body: string, tags: string[] = []): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/notes`, { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ repoUrl, body, tags }) });
+  if (!response.ok) throw new Error('Note save failed');
+  return response.json();
+};
+
+export const submitAIFeedback = async (token: string, interactionId: string, feedback: 'up' | 'down'): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/feedback/ai/${encodeURIComponent(interactionId)}`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ feedback }) });
+  if (!response.ok) throw new Error('Feedback submission failed');
+  return response.json();
+};
+
+export const addProjectToCollection = async (token: string, collectionId: string, projectId: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/workspace/collections/${encodeURIComponent(collectionId)}/projects`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ projectId }) });
+  if (!response.ok) throw new Error('Unable to add project to collection');
+  return response.json();
+};
+
 export const fetchTrending = async (platform: string = 'GitHub', category: string = 'All'): Promise<Project[]> => {
   // Removed static platform returns to ensure dynamic API calls
 
@@ -173,6 +346,10 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
     return filteredTrending.map(mapToFrontendProject);
   } catch (error) {
     console.warn(`[Backend API] ${platform} trending failed, falling back.`, error);
+
+    // Never label stale curated data as live GitHub trending data.
+    // Let the page show its error state so the user knows the live feed is unavailable.
+    if (platform.toLowerCase() === 'github') throw error;
     
     // Curated discovery fallbacks (No direct API calls)
     if (platform.toLowerCase() === 'hugging face') {
@@ -271,6 +448,26 @@ export const fetchGitHubUserProfile = async (username: string): Promise<any> => 
   }
 };
 
+export const recordFirebaseSearchHistory = async (uid: string, query: string, platform = 'GitHub', resultCount = 0): Promise<void> => {
+  if (!db || !uid) return;
+  const ref = doc(db, 'userSearchHistory', uid); const snapshot = await getDoc(ref);
+  const current = snapshot.exists() && Array.isArray(snapshot.data().items) ? snapshot.data().items : [];
+  const items = [{ query, platform, resultCount, createdAt: new Date().toISOString() }, ...current.filter((item: any) => item.query !== query)].slice(0, 50);
+  await setDoc(ref, { items, updatedAt: new Date().toISOString() }, { merge: true });
+};
+
+export const fetchFirebaseSearchHistory = async (uid: string): Promise<any[]> => {
+  if (!db || !uid) return [];
+  const snapshot = await getDoc(doc(db, 'userSearchHistory', uid));
+  return snapshot.exists() && Array.isArray(snapshot.data().items) ? snapshot.data().items : [];
+};
+
+export const fetchGithubStarred = async (username: string): Promise<any[]> => {
+  const response = await fetch(`${BASE_URL}/user/${encodeURIComponent(username)}/starred`);
+  if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.message || 'Unable to load GitHub starred repositories'); }
+  return response.json();
+};
+
 export const saveProject = async (project: Project, token: string): Promise<Project | null> => {
   try {
     const response = await fetch(`${BASE_URL}/save`, {
@@ -327,6 +524,12 @@ export const loginUser = async (email: string, password: string): Promise<any> =
   return await response.json();
 };
 
+export const fetchCurrentUser = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Session expired');
+  return response.json();
+};
+
 export const signupUser = async (username: string, email: string, password: string): Promise<any> => {
   const response = await fetch(`${BASE_URL}/auth/signup`, {
     method: 'POST',
@@ -338,6 +541,30 @@ export const signupUser = async (username: string, email: string, password: stri
     throw new Error(error.message || 'Signup failed');
   }
   return await response.json();
+};
+
+export const requestPasswordReset = async (email: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/auth/forgot-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+  if (!response.ok) throw new Error('Unable to request password reset');
+  return response.json();
+};
+
+export const resetPassword = async (token: string, password: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/auth/reset-password/${encodeURIComponent(token)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+  if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.message || 'Unable to reset password'); }
+  return response.json();
+};
+
+export const verifyEmail = async (token: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/auth/verify-email/${encodeURIComponent(token)}`);
+  if (!response.ok) { const error = await response.json().catch(() => ({})); throw new Error(error.message || 'Unable to verify email'); }
+  return response.json();
+};
+
+export const resendVerification = async (email: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/auth/resend-verification`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+  if (!response.ok) throw new Error('Unable to resend verification');
+  return response.json();
 };
 
 export const summarizeProject = (name: string, description: string, readme: string): any => {

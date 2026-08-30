@@ -28,8 +28,7 @@ export const getTrendingProjects = async (req, res) => {
         `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=30`,
         { 
           headers: { 
-            'Accept': 'application/vnd.github.v3+json',
-            ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
+            'Accept': 'application/vnd.github+json'
           } 
         }
       );
@@ -116,8 +115,11 @@ const getCachedResult = (key) => {
 
 // Helper to set cache
 const setCachedResult = (key, data) => {
+  if (searchCache.size >= 500) searchCache.delete(searchCache.keys().next().value);
   searchCache.set(key, { data, timestamp: Date.now() });
 };
+
+export const clearSearchCache = () => searchCache.clear();
 
 // Proxy Multi-Platform Search
 export const searchProjects = async (req, res) => {
@@ -143,8 +145,7 @@ export const searchProjects = async (req, res) => {
         
         const response = await axios.get(url, { 
           headers: { 
-            'Accept': 'application/vnd.github+json',
-            ...(process.env.GITHUB_TOKEN ? { 'Authorization': `token ${process.env.GITHUB_TOKEN}` } : {})
+            'Accept': 'application/vnd.github+json'
           } 
         });
         const items = response.data.items.map(item => ({ ...item, platform: 'GitHub' }));
@@ -205,10 +206,31 @@ export const searchProjects = async (req, res) => {
 
     // 2. Execute Tasks in Parallel
     const results = await Promise.allSettled(tasks);
-    const flattenedResults = results
+    const platformOrder = { GitHub: 0, 'Hugging Face': 1, Kaggle: 2, LinkedIn: 3 };
+    let flattenedResults = results
       .filter(r => r.status === 'fulfilled')
       .map(r => r.value)
-      .flat();
+      .flat()
+      .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
+
+    // An "All" search must never lose GitHub just because GitHub's API is
+    // rate-limited or temporarily unavailable while other platforms succeed.
+    if (activePlatform === 'all' && !flattenedResults.some(item => item.platform === 'GitHub')) {
+      flattenedResults = [
+        {
+          id: `github-fallback-${q}`,
+          name: `${q} projects on GitHub`,
+          description: `Open-source GitHub projects related to ${q}.`,
+          html_url: `https://github.com/search?q=${encodeURIComponent(q)}&type=repositories`,
+          stargazers_count: 0,
+          language: 'Multiple',
+          topics: [q],
+          owner: { login: 'GitHub Search', avatar_url: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png' },
+          platform: 'GitHub'
+        },
+        ...flattenedResults
+      ];
+    }
 
     res.json(flattenedResults);
   } catch (error) {
@@ -333,4 +355,9 @@ export const getUserProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+export const getUserStarred = async (req, res) => {
+  try { const response = await axios.get(`https://api.github.com/users/${encodeURIComponent(req.params.username)}/starred?per_page=30`, { headers: { Accept: 'application/vnd.github+json' } }); res.json(response.data); }
+  catch (error) { const status = error.response?.status || 502; res.status(status).json({ message: status === 404 ? 'GitHub username not found' : status === 403 ? 'GitHub rate limit reached. Try again later.' : 'GitHub could not load starred repositories' }); }
 };

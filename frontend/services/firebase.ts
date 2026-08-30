@@ -13,7 +13,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const isFirebaseConfigured = !!import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_API_KEY !== "YOUR_API_KEY";
+const requiredFirebaseKeys = ['VITE_FIREBASE_API_KEY', 'VITE_FIREBASE_AUTH_DOMAIN', 'VITE_FIREBASE_PROJECT_ID', 'VITE_FIREBASE_STORAGE_BUCKET', 'VITE_FIREBASE_MESSAGING_SENDER_ID', 'VITE_FIREBASE_APP_ID'];
+export const isFirebaseConfigured = requiredFirebaseKeys.every(key => Boolean(import.meta.env[key]) && import.meta.env[key] !== 'YOUR_API_KEY');
 
 const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 

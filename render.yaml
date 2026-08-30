@@ -11,9 +11,13 @@ services:
         value: 5000
       - key: NODE_ENV
         value: production
-      - key: MONGO_URI
+      - key: MONGODB_URI
         sync: false
       - key: GITHUB_TOKEN
         sync: false
-      - key: JWT_SECRET
+      - key: FIREBASE_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FRONTEND_ORIGINS
+        value: https://chimataraghuram.github.io
+      - key: OPENROUTER_API_KEY
         sync: false

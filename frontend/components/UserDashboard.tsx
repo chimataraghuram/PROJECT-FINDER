@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { Project } from '../types';
-import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory } from '../services/apiService';
+import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -10,22 +10,25 @@ interface UserDashboardProps {
   savedProjects: Project[];
   onNavigateToDiscover: () => void;
   onSearch?: (query: string) => void;
+  recentSearches?: any[];
 }
 
-export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover, onSearch }) => {
+export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProjects, onNavigateToDiscover, onSearch, recentSearches = [] }) => {
   const [recommendations, setRecommendations] = React.useState<any[]>([]);
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
   const [notes, setNotes] = React.useState<any[]>([]);
-  const [searchHistory, setSearchHistory] = React.useState<any[]>([]);
+  const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
+  React.useEffect(() => { if (recentSearches.length) setSearchHistory(recentSearches); }, [recentSearches]);
   React.useEffect(() => {
+    if ((user as any)?.uid) fetchFirebaseSearchHistory((user as any).uid).then(data => { if (data.length) setSearchHistory(data); }).catch(() => {});
     const token = localStorage.getItem('project-finder-token');
     if (!token) return;
     fetchRecommendations(token).then(data => setRecommendations(data.recommendations || [])).catch(() => {});
     fetchResearchSessions(token).then(data => setResearchSessions(data || [])).catch(() => {});
     fetchCollections(token).then(data => setCollections(data || [])).catch(() => {});
     fetchProjectNotes(token).then(data => setNotes(data || [])).catch(() => {});
-    fetchSearchHistory(token).then(data => setSearchHistory(data || [])).catch(() => {});
+    fetchSearchHistory(token).then(data => { if (data?.length) setSearchHistory(data); }).catch(() => {});
   }, []);
   
   const containerVariants = {

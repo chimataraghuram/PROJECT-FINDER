@@ -416,7 +416,8 @@ h1, h2, h3, h4, .font-display {
     left: 100%;
 }
 
-.glass-card {
+.glass-card,
+.frosted-card {
     background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.08) 0%,
             rgba(255, 255, 255, 0.03) 100%);
@@ -426,6 +427,39 @@ h1, h2, h3, h4, .font-display {
     box-shadow:
         0 8px 32px 0 rgba(0, 0, 0, 0.3),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Shared surface for profile, search, trending, and starred project UI. */
+.glass-card,
+.frosted-card {
+    transition: border-color 300ms ease, box-shadow 300ms ease, background 300ms ease;
+}
+
+.glass-card:hover,
+.frosted-card:hover {
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow:
+        0 18px 48px rgba(0, 0, 0, 0.38),
+        0 0 28px rgba(249, 115, 22, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.frosted-search {
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.09),
+            rgba(255, 255, 255, 0.035));
+    backdrop-filter: blur(28px) saturate(150%);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.frosted-search:focus-within {
+    border-color: rgba(249, 115, 22, 0.55);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.42),
+        0 0 30px rgba(249, 115, 22, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 @keyframes liquid-glass-shimmer {

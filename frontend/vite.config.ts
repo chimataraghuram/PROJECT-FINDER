@@ -17,6 +17,18 @@ export default defineConfig(({ mode }) => {
     },
     base: '/PROJECT-FINDER/', // Ensure absolute paths for correct asset loading on GitHub Pages
     plugins: [react()],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: (id) => {
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'react-vendor';
+            if (id.includes('node_modules/framer-motion')) return 'motion-vendor';
+            if (id.includes('node_modules/firebase')) return 'firebase-vendor';
+            if (id.includes('node_modules/lucide-react')) return 'icons-vendor';
+          }
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

@@ -278,6 +278,8 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [activePlatform, setActivePlatform] = useState('GitHub');
     const [activeCategory, setActiveCategory] = useState('All');
     const [error, setError] = useState<string | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+    const [rotation, setRotation] = useState(0);
 
     const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
     const CATEGORIES = [
@@ -289,8 +291,10 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
       { id: 'Fun', label: 'Fun Projects', icon: Sparkles },
     ];
 
-    const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory) => {
-        setLoading(true);
+    const loadTrending = useCallback(async (platform = activePlatform, category = activeCategory, background = false) => {
+        // Keep the current cards visible while the next live set is loading.
+        if (!background) setLoading(true);
+        else setIsRefreshing(true);
         setError(null);
         try {
             const data = await fetchTrending(platform, category);
@@ -298,11 +302,13 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 setProjects([]);
             } else {
                 setProjects(data);
+                setRotation(0);
             }
+            setLastUpdated(new Date());
         } catch (e: any) {
             setError(e.message || "Failed to load projects");
         } finally {
-            setLoading(false);
+            if (!background) setLoading(false);
             setIsRefreshing(false);
         }
     }, [activePlatform, activeCategory]);
@@ -310,14 +316,27 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     useEffect(() => {
         loadTrending(activePlatform, activeCategory);
 
-        // Auto-refresh every 10 minutes to respect API rate limits
+        // Refresh live projects automatically without replacing the current UI with skeletons.
         const interval = setInterval(() => {
             console.log(`Auto-refreshing trending data for ${activePlatform}/${activeCategory}...`);
-            loadTrending(activePlatform, activeCategory);
-        }, 600000);
+            loadTrending(activePlatform, activeCategory, true);
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [activePlatform, activeCategory, loadTrending]);
+
+    // Keep the Trending page feeling live: rotate the visible feed every second.
+    // This uses the already-loaded results and does not make an API request per second.
+    useEffect(() => {
+        const rotationInterval = setInterval(() => {
+            setRotation(current => projects.length > 1 ? (current + 1) % projects.length : 0);
+        }, 60000);
+        return () => clearInterval(rotationInterval);
+    }, [projects.length]);
+
+    const visibleProjects = projects.length > 1
+        ? projects.slice(rotation).concat(projects.slice(0, rotation))
+        : projects;
 
     const handleRefresh = () => {
         setIsRefreshing(true);
@@ -379,6 +398,9 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 </motion.h1>
                 <p className="text-gray-400 font-bold text-lg md:text-xl max-w-2xl mx-auto opacity-60">
                     Discover what's hot across the tech ecosystem in real-time
+                </p>
+                <p className="mt-3 text-[10px] font-black uppercase tracking-[0.25em] text-orange-400/70">
+                    {isRefreshing ? 'Finding newer projects…' : lastUpdated ? `Live feed updated ${lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Live feed loading…'}
                 </p>
 
                 {/* Platforms & Manual Refresh */}
@@ -490,7 +512,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                     </div>
                 ) : (
                     <AnimatePresence mode="popLayout">
-                        {projects.map((project, index) => (
+                        {visibleProjects.map((project, index) => (
                             <TrendingCard 
                                 key={project.id || `${project.name}-${index}`} 
                                 project={project}

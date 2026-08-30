@@ -8,7 +8,8 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/project-finder');
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.warn(`MongoDB Connection Warning: ${error.message} (Local DB not found - continuing for API Proxy testing)`);
+    if (process.env.NODE_ENV === 'production') throw error;
+    console.warn(`MongoDB Connection Warning: ${error.message} (continuing for local API proxy testing)`);
   }
 };
 

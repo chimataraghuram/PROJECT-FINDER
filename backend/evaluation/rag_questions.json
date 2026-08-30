@@ -1,0 +1,8 @@
+[
+  { "id": "purpose", "question": "What does this project do?", "expectedEvidence": ["readme"] },
+  { "id": "database", "question": "What database does this project use?", "expectedEvidence": ["readme", "tree"] },
+  { "id": "authentication", "question": "Where is authentication implemented?", "expectedEvidence": ["readme", "tree"] },
+  { "id": "api", "question": "How is the API structured?", "expectedEvidence": ["readme", "tree"] },
+  { "id": "setup", "question": "How do I run the project?", "expectedEvidence": ["readme"] },
+  { "id": "testing", "question": "How is this project tested?", "expectedEvidence": ["readme", "tree"] }
+]
