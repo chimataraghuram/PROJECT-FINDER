@@ -20,6 +20,7 @@ interface TechboyAssistantProps {
     setIsOpen: (open: boolean) => void;
     currentSearch?: string;
     lastProject?: Project | null;
+    restoredSession?: { id?: string; _id?: string; messages?: Message[] } | null;
 }
 
 export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({ 
@@ -28,6 +29,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     setIsOpen,
     currentSearch = "",
     lastProject = null
+    , restoredSession = null
 }) => {
     const safeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char))
         .replace(/```([\s\S]*?)```/g, '<pre class="my-3 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-[11px] text-orange-100"><code>$1</code></pre>')
@@ -54,6 +56,13 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const scrollRef = useRef<HTMLDivElement>(null);
     const abortRef = useRef<AbortController | null>(null);
     const stageTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        if (restoredSession?.messages?.length) {
+            setMessages(restoredSession.messages.map(message => ({ ...message, timestamp: message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })));
+            setIsOpen(true);
+        }
+    }, [restoredSession, setIsOpen]);
 
     // 🔄 Load Chat History
     useEffect(() => {

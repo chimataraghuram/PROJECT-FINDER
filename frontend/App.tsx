@@ -185,6 +185,7 @@ const App: React.FC = () => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
+  const [restoredResearchSession, setRestoredResearchSession] = useState<any>(null);
   const [lastViewedProject, setLastViewedProject] = useState<Project | null>(null);
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -502,6 +503,10 @@ const App: React.FC = () => {
                 onSearch={(query) => {
                   setCurrentView('search');
                   handleSearch(query);
+                }}
+                onOpenResearchSession={(session) => {
+                  setRestoredResearchSession(session);
+                  setIsAIAssistantOpen(true);
                 }}
                 onImportProjects={(imported) => {
                   setFavorites(current => {
@@ -869,6 +874,7 @@ const App: React.FC = () => {
               setIsOpen={setIsAIAssistantOpen} 
               currentSearch={localStorage.getItem('last-search-query') || ""}
               lastProject={lastViewedProject}
+              restoredSession={restoredResearchSession}
             />
 
             {/* --- MOBILE BOTTOM NAVIGATION --- */}
