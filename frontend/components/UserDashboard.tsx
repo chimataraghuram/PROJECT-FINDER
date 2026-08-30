@@ -4,7 +4,7 @@ import { User } from 'firebase/auth';
 import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
 import { auth, githubProvider } from '../services/firebase';
-import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
+import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, createCollection, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
 import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2, Bell } from 'lucide-react';
 
 interface UserDashboardProps {
@@ -102,6 +102,17 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
       const updated = await renameResearchSession(token, session._id || session.id, title);
       setResearchSessions(current => current.map(item => (item._id === session._id || item.id === session.id) ? { ...item, ...updated } : item));
     } catch { /* keep the current title when the request fails */ }
+  };
+
+  const addCollection = async () => {
+    if (!user) return;
+    const name = window.prompt('New collection name')?.trim();
+    if (!name) return;
+    try {
+      const token = await user.getIdToken();
+      const collection = await createCollection(token, name);
+      setCollections(current => [collection, ...current]);
+    } catch { /* keep the current collection list when creation fails */ }
   };
   
   const containerVariants = {
@@ -323,11 +334,14 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-3">
               <Star className="w-5 h-5 text-orange-500" />
               <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Collections</h2>
+              </div>
+              <button onClick={addCollection} className="rounded-xl border border-orange-500/30 bg-orange-500/10 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-orange-300 hover:bg-orange-500/20">New Collection</button>
             </div>
-            {collections.length ? <div className="flex flex-wrap gap-2">{collections.slice(0, 8).map((collection, index) => <span key={collection._id || collection.id || index} className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-orange-300">{collection.name || 'Untitled collection'}</span>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
+            {collections.length ? <div className="flex flex-wrap gap-2">{collections.slice(0, 8).map((collection, index) => <span key={collection._id || collection.id || index} className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-orange-300">{collection.name || 'Untitled collection'} · {collection.projects?.length || 0}</span>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
