@@ -15,9 +15,9 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard, minimal
       <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`rounded-full border-2 border-orange-500/80 object-cover shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-300 ${isCompact ? 'w-10 h-10' : 'w-7 h-7'}`} alt="Profile" />
     </button>
   ) : (
-    <button onClick={onViewDashboard} className={`flex items-center rounded-full hover:bg-white/5 transition-colors group ${isCompact ? 'gap-3 pr-4' : 'gap-2 pr-3'}`}>
-      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`rounded-full border-[1.5px] border-orange-500/50 object-cover shadow-[0_0_10px_rgba(249,115,22,0.2)] group-hover:border-orange-500 transition-all duration-300 ${isCompact ? 'w-10 h-10' : 'w-7 h-7'}`} alt="Profile" />
-      <span className={`hidden sm:inline-block font-black tracking-widest uppercase text-white transition-all duration-300 ${isCompact ? 'text-[11px]' : 'text-[9px] opacity-70'}`}>
+    <button onClick={onViewDashboard} className={`flex items-center rounded-full hover:bg-white/5 transition-all duration-500 ease-out group ${isCompact ? 'gap-0 pr-0' : 'gap-2 pr-3'}`}>
+      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`rounded-full border-[1.5px] border-orange-500/50 object-cover shadow-[0_0_10px_rgba(249,115,22,0.2)] group-hover:border-orange-500 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12' : 'w-8 h-8'}`} alt="Profile" />
+      <span className={`hidden sm:inline-block font-black tracking-widest uppercase text-white transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[150px] opacity-70 text-[9px]'}`}>
         {user.displayName || 'Google User'}
       </span>
     </button>
