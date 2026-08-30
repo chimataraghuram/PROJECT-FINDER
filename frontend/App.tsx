@@ -692,7 +692,7 @@ const App: React.FC = () => {
                                               <div className="flex flex-col">
                                                   <span className="text-[7px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1">Discovery</span>
                                                   <div className="flex items-baseline gap-1 leading-none">
-                                                      <span className="text-base font-black text-white">{filteredProjects.length}</span>
+                                                      <motion.span key={filteredProjects.length} initial={{ scale: 1.5, color: "#f97316", textShadow: "0 0 20px rgba(249,115,22,1)" }} animate={{ scale: 1, color: "#ffffff", textShadow: "0 0 0px rgba(249,115,22,0)" }} transition={{ duration: 0.5, type: "spring", bounce: 0.5 }} className="text-base font-black text-white inline-block">{filteredProjects.length}</motion.span>
                                                       <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider">Repos</span>
                                                   </div>
                                               </div>
