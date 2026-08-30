@@ -13,6 +13,11 @@ const readCache = <T,>(key: string): T | null => {
 const writeCache = (key: string, value: unknown) => {
   try { localStorage.setItem(key, JSON.stringify({ value, cachedAt: new Date().toISOString() })); } catch { /* storage may be unavailable */ }
 };
+const githubApiError = (status: number) => status === 401
+  ? new Error('GitHub authentication expired. Reconnect your GitHub account.')
+  : status === 403 || status === 429
+    ? new Error('GitHub API rate limit reached. Cached results will be used; please try again later.')
+    : new Error(`GitHub API unavailable (${status}).`);
 
 // Mapping helper to ensure UI stability
 const mapToFrontendProject = (item: any): Project => {
@@ -369,7 +374,7 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       const topic = category !== 'All' ? ` topic:${category.toLowerCase()}` : '';
       const githubQuery = encodeURIComponent(`stars:>500 created:>2024-01-01${topic}`);
       const directResponse = await fetch(`https://api.github.com/search/repositories?q=${githubQuery}&sort=stars&order=desc&per_page=30`, { cache: 'no-store' });
-      if (!directResponse.ok) throw error;
+      if (!directResponse.ok) throw githubApiError(directResponse.status);
       const directData = await directResponse.json();
       return (directData.items || []).map(mapToFrontendProject);
     }
