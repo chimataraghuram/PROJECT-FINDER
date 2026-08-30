@@ -36,6 +36,9 @@ export interface Project {
   difficulty?: string;
   category?: string[];
   github?: string;
+  updatedAt?: string;
+  pushed_at?: string;
+  createdAt?: string;
 }
 
 

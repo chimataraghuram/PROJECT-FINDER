@@ -105,6 +105,7 @@ const App: React.FC = () => {
   const [resultSort, setResultSort] = useState<'relevance' | 'stars' | 'name'>('relevance');
   const [languageFilter, setLanguageFilter] = useState('All');
   const [minStars, setMinStars] = useState('0');
+  const [dateFilter, setDateFilter] = useState<'all' | 'week' | 'month' | 'year'>('all');
 
   const [favorites, setFavorites] = useState<Project[]>(() => {
     const saved = localStorage.getItem('project-finder-favorites');
@@ -280,13 +281,15 @@ const App: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     if (!result?.projects) return [];
+    const cutoff = dateFilter === 'all' ? 0 : Date.now() - ({ week: 7, month: 30, year: 365 }[dateFilter] * 86400000);
     const filtered = (filterPlatform === 'All' ? [...result.projects] : result.projects.filter(p => p.platform === filterPlatform))
       .filter(project => languageFilter === 'All' || project.language === languageFilter)
-      .filter(project => (project.stars || 0) >= Number(minStars));
+      .filter(project => (project.stars || 0) >= Number(minStars))
+      .filter(project => !cutoff || ![project.updatedAt, project.pushed_at, project.createdAt].find(Boolean) || new Date(project.updatedAt || project.pushed_at || project.createdAt || 0).getTime() >= cutoff);
     if (resultSort === 'stars') return filtered.sort((a, b) => (b.stars || 0) - (a.stars || 0));
     if (resultSort === 'name') return filtered.sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  }, [result, filterPlatform, resultSort, languageFilter, minStars]);
+  }, [result, filterPlatform, resultSort, languageFilter, minStars, dateFilter]);
 
   const availableLanguages = useMemo(() => ['All', ...Array.from(new Set((result?.projects || []).map(project => project.language).filter(Boolean))).sort()], [result]);
 
@@ -624,6 +627,9 @@ const App: React.FC = () => {
                               </select>
                               <select value={minStars} onChange={event => setMinStars(event.target.value)} className="rounded-2xl border border-white/10 bg-[#1e293b]/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50">
                                 <option value="0">Stars: Any</option><option value="100">Stars: 100+</option><option value="1000">Stars: 1K+</option><option value="10000">Stars: 10K+</option>
+                              </select>
+                              <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="rounded-2xl border border-white/10 bg-[#1e293b]/80 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50">
+                                <option value="all">Updated: Any time</option><option value="week">Updated: This week</option><option value="month">Updated: This month</option><option value="year">Updated: This year</option>
                               </select>
                               <div className="bg-[#1e293b]/60 backdrop-blur-3xl p-1.5 rounded-2xl border border-white/10 flex flex-wrap gap-1 shadow-2xl">
                                 {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => {
