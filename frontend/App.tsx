@@ -704,43 +704,43 @@ const App: React.FC = () => {
                               </div>
 
                               {/* Middle side: Filters Grid */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full lg:flex-1 shrink">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full lg:flex-1 shrink">
                                   {/* Sort */}
                                   <div className="relative group/select">
-                                      <ListFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="relevance">Sort: Relevance</option>
-                                        <option value="stars">Sort: GitHub Stars</option>
-                                        <option value="name">Sort: Name</option>
+                                      <ListFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                        <option value="relevance" className="bg-[#0f172a]">Sort: Relevance</option>
+                                        <option value="stars" className="bg-[#0f172a]">Sort: GitHub Stars</option>
+                                        <option value="name" className="bg-[#0f172a]">Sort: Name</option>
                                       </select>
-                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
+                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Language */}
                                   <div className="relative group/select">
-                                      <Code className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        {availableLanguages.map(language => <option key={language} value={language}>{language === 'All' ? 'Language: All' : language}</option>)}
+                                      <Code className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                        {availableLanguages.map(language => <option key={language} value={language} className="bg-[#0f172a]">{language === 'All' ? 'Language: All' : language}</option>)}
                                       </select>
-                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
+                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Stars */}
                                   <div className="relative group/select">
-                                      <Star className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="0">Stars: Any</option><option value="100">Stars: 100+</option><option value="1000">Stars: 1K+</option><option value="10000">Stars: 10K+</option>
+                                      <Star className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                        <option value="0" className="bg-[#0f172a]">Stars: Any</option><option value="100" className="bg-[#0f172a]">Stars: 100+</option><option value="1000" className="bg-[#0f172a]">Stars: 1K+</option><option value="10000" className="bg-[#0f172a]">Stars: 10K+</option>
                                       </select>
-                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
+                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Updated */}
                                   <div className="relative group/select">
-                                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
-                                        <option value="all">Updated: Any time</option><option value="week">Updated: This week</option><option value="month">Updated: This month</option><option value="year">Updated: This year</option>
+                                      <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" strokeWidth={2.5} />
+                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="w-full h-11 pl-11 pr-10 rounded-full border border-white/10 bg-transparent hover:bg-white/[0.02] transition-colors text-[10px] font-bold uppercase tracking-wider text-gray-200 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                        <option value="all" className="bg-[#0f172a]">Updated: Any time</option><option value="week" className="bg-[#0f172a]">Updated: This week</option><option value="month" className="bg-[#0f172a]">Updated: This month</option><option value="year" className="bg-[#0f172a]">Updated: This year</option>
                                       </select>
-                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
+                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
                               </div>
 
