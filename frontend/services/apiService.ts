@@ -476,6 +476,12 @@ export const fetchGitHubUserProfile = async (username: string): Promise<any> => 
   }
 };
 
+export const fetchResearchSession = async (token: string, sessionId: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/research/${encodeURIComponent(sessionId)}`, { headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Research session loading failed');
+  return response.json();
+};
+
 export const deleteResearchSession = async (token: string, sessionId: string): Promise<void> => {
   const response = await fetch(`${BASE_URL}/research/${encodeURIComponent(sessionId)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
   if (!response.ok) throw new Error('Research session deletion failed');
