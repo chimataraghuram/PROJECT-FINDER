@@ -4,8 +4,8 @@ import { User } from 'firebase/auth';
 import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
 import { auth, githubProvider } from '../services/firebase';
-import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
-import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History } from 'lucide-react';
+import { fetchRecommendations, fetchResearchSessions, deleteResearchSession, fetchCollections, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
+import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2 } from 'lucide-react';
 
 interface UserDashboardProps {
   user: User;
@@ -56,6 +56,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
     const link = document.createElement('a'); link.href = URL.createObjectURL(blob);
     link.download = `project-finder-saved-projects.${format === 'json' ? 'json' : 'md'}`;
     link.click(); URL.revokeObjectURL(link.href);
+  };
+
+  const removeResearchSession = async (sessionId: string) => {
+    if (!user || !window.confirm('Delete this research session?')) return;
+    try {
+      const token = await user.getIdToken();
+      await deleteResearchSession(token, sessionId);
+      setResearchSessions(current => current.filter(session => session._id !== sessionId && session.id !== sessionId));
+    } catch { /* keep the card intact when the request fails */ }
   };
   
   const containerVariants = {
@@ -268,7 +277,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               <Clock className="w-5 h-5 text-orange-500" />
               <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Research</h2>
             </div>
-            {researchSessions.length ? <div className="space-y-2">{researchSessions.slice(0, 5).map((session, index) => <button key={session._id || session.id || index} onClick={() => session.title && onSearch?.(session.title)} className="w-full rounded-xl border border-white/5 bg-white/[0.03] px-3 py-3 text-left hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages{session.updatedAt ? ` · Updated ${new Date(session.updatedAt).toLocaleDateString()}` : ''}</span></button>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
+            {researchSessions.length ? <div className="space-y-2">{researchSessions.slice(0, 5).map((session, index) => <div key={session._id || session.id || index} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><button onClick={() => session.title && onSearch?.(session.title)} className="min-w-0 flex-1 py-1 text-left"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages{session.updatedAt ? ` · Updated ${new Date(session.updatedAt).toLocaleDateString()}` : ''}</span></button><button aria-label="Delete research session" title="Delete session" onClick={() => removeResearchSession(session._id || session.id)} className="rounded-lg p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button></div>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">

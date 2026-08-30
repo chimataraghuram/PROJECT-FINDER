@@ -23,3 +23,9 @@ export const addResearchMessage = async (req, res) => {
   await session.save();
   res.json(session);
 };
+
+export const deleteResearchSession = async (req, res) => {
+  const deleted = await ResearchSession.findOneAndDelete({ _id: req.params.sessionId, userId: req.user._id });
+  if (!deleted) return res.status(404).json({ message: 'Research session not found' });
+  res.status(204).end();
+};

@@ -455,6 +455,11 @@ export const fetchGitHubUserProfile = async (username: string): Promise<any> => 
   }
 };
 
+export const deleteResearchSession = async (token: string, sessionId: string): Promise<void> => {
+  const response = await fetch(`${BASE_URL}/research/${encodeURIComponent(sessionId)}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+  if (!response.ok) throw new Error('Research session deletion failed');
+};
+
 export const recordFirebaseSearchHistory = async (uid: string, query: string, platform = 'GitHub', resultCount = 0): Promise<void> => {
   if (!db || !uid) return;
   const ref = doc(db, 'userSearchHistory', uid); const snapshot = await getDoc(ref);
