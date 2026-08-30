@@ -24,6 +24,13 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [githubSyncMessage, setGithubSyncMessage] = React.useState('');
   React.useEffect(() => { if (recentSearches.length) setSearchHistory(recentSearches); }, [recentSearches]);
   React.useEffect(() => {
+    try {
+      const localHistory = JSON.parse(localStorage.getItem('project-finder-recent-searches') || '[]');
+      if (Array.isArray(localHistory) && localHistory.length) setSearchHistory(current => {
+        const merged = [...current, ...localHistory];
+        return merged.filter((item, index, items) => item?.query && items.findIndex(other => other.query === item.query) === index).slice(0, 50);
+      });
+    } catch { /* Ignore malformed local history and continue with account history. */ }
     if ((user as any)?.uid) fetchFirebaseSearchHistory((user as any).uid).then(data => { if (data.length) setSearchHistory(data); }).catch(() => {});
     const token = localStorage.getItem('project-finder-token');
     if (!token) return;
@@ -200,7 +207,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
                 {searchHistory.slice(0, 8).map((item, idx) => (
                   <button 
                     key={idx}
-                    onClick={() => onSearch && onSearch(item.query)}
+                    onClick={() => item?.query && onSearch && onSearch(item.query)}
                     className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-lg text-xs text-gray-300 transition-all text-left"
                   >
                     {item.query}
