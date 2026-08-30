@@ -460,6 +460,12 @@ export const deleteResearchSession = async (token: string, sessionId: string): P
   if (!response.ok) throw new Error('Research session deletion failed');
 };
 
+export const renameResearchSession = async (token: string, sessionId: string, title: string): Promise<any> => {
+  const response = await fetch(`${BASE_URL}/research/${encodeURIComponent(sessionId)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ title }) });
+  if (!response.ok) throw new Error('Research session rename failed');
+  return response.json();
+};
+
 export const recordFirebaseSearchHistory = async (uid: string, query: string, platform = 'GitHub', resultCount = 0): Promise<void> => {
   if (!db || !uid) return;
   const ref = doc(db, 'userSearchHistory', uid); const snapshot = await getDoc(ref);

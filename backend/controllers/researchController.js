@@ -29,3 +29,15 @@ export const deleteResearchSession = async (req, res) => {
   if (!deleted) return res.status(404).json({ message: 'Research session not found' });
   res.status(204).end();
 };
+
+export const renameResearchSession = async (req, res) => {
+  const title = String(req.body.title || '').trim().slice(0, 160);
+  if (!title) return res.status(400).json({ message: 'A session title is required' });
+  const session = await ResearchSession.findOneAndUpdate(
+    { _id: req.params.sessionId, userId: req.user._id },
+    { $set: { title } },
+    { new: true, select: 'title createdAt updatedAt' }
+  ).lean();
+  if (!session) return res.status(404).json({ message: 'Research session not found' });
+  res.json(session);
+};
