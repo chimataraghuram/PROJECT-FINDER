@@ -114,7 +114,7 @@ const TrendingCard: React.FC<{
             {/* Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-            {/* Top Row: Rank, Trending, Menu */}
+            {/* Top Row: Rank, Trending, Menu/Compare */}
             <div className="flex items-center justify-between mb-5 relative z-30">
                 <div className="flex items-center gap-2.5">
                     <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-gray-300">
@@ -125,21 +125,31 @@ const TrendingCard: React.FC<{
                         <span className="text-[9px] font-black text-orange-500 uppercase tracking-widest">Trending</span>
                     </div>
                 </div>
-                <button className="text-gray-500 hover:text-white transition-colors">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
-                </button>
+                <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }}
+                    className={`p-2 rounded-full transition-all ${
+                      isComparing
+                      ? 'bg-orange-500/20 text-orange-500'
+                      : 'text-gray-400 hover:bg-purple-500/20 hover:text-purple-500'
+                    }`}
+                    title="Compare Project"
+                >
+                    <BarChart3 size={16} />
+                </motion.button>
             </div>
 
             {/* Metrics Box */}
             <div className="flex items-center justify-between px-3 py-2.5 rounded-2xl bg-[#020617]/50 border border-white/5 mb-5 relative z-30 shadow-inner w-full">
-                <div className="flex items-center justify-between flex-1">
+                <div className="grid grid-cols-4 gap-1 flex-1 place-items-center">
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Security Status" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                         <Shield size={14} className="group-hover/metric:scale-110 transition-transform" />
                         <span className="text-[8px] font-bold tracking-wider">Secure</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="AI Summary" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onSummarize(); }}>
                         <Brain size={14} className="group-hover/metric:scale-110 transition-transform" />
-                        <span className="text-[8px] font-bold tracking-wider text-center leading-[10px]">Well<br/>Docs</span>
+                        <span className="text-[8px] font-bold tracking-wider text-center leading-[10px]">Well<br/>Documented</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Share" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}>
                         <Share2 size={14} className="group-hover/metric:scale-110 transition-transform" />
@@ -151,9 +161,9 @@ const TrendingCard: React.FC<{
                     </div>
                 </div>
                 
-                <div className="w-px h-6 bg-white/10 mx-2 md:mx-3" />
+                <div className="w-px h-8 bg-white/10 mx-2 md:mx-3" />
                 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 pl-1">
                     <Star size={16} className="text-orange-500 fill-orange-500" />
                     <div className="flex flex-col">
                         <span className="text-xs font-black text-orange-500 leading-none mb-0.5">
