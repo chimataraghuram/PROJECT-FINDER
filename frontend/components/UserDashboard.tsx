@@ -278,6 +278,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
             </div>
             {collections.length ? <div className="flex flex-wrap gap-2">{collections.slice(0, 8).map((collection, index) => <span key={collection._id || collection.id || index} className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-orange-300">{collection.name || 'Untitled collection'}</span>)}</div> : <p className="text-[11px] italic text-gray-500">Create collections to organize your projects.</p>}
           </motion.div>
+
+          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
+            <div className="flex items-center gap-3 mb-6"><Sparkles className="w-5 h-5 text-orange-500" /><h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recommended For You</h2></div>
+            {recommendations.length ? <div className="grid grid-cols-1 md:grid-cols-2 gap-3">{recommendations.slice(0, 6).map((recommendation, index) => { const project = recommendation.project || recommendation; return <button key={recommendation._id || recommendation.id || index} onClick={() => project.name && onSearch?.(project.name)} className="rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-left hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><span className="block truncate text-sm font-bold text-white">{project.name || 'Recommended project'}</span><span className="mt-1 block line-clamp-2 text-[10px] text-gray-500">{project.description || recommendation.reason || 'Personalized project recommendation'}</span></button>; })}</div> : <p className="text-[11px] italic text-gray-500">Recommendations will appear as you explore projects.</p>}
+          </motion.div>
         </div>
 
       </div>
