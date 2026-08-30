@@ -646,56 +646,56 @@ const App: React.FC = () => {
                       >
                         {/* Project Grid */}
                         <div>
-                          <div className="w-full p-4 md:p-6 rounded-[2rem] border border-white/5 bg-[#0a0a0f]/80 backdrop-blur-2xl flex flex-col lg:flex-row items-stretch gap-6 mb-10 group shadow-2xl">
+                          <div className="w-full p-3 md:p-4 rounded-[1.5rem] border border-white/5 bg-[#0a0a0f]/80 backdrop-blur-2xl flex flex-col lg:flex-row items-stretch gap-4 mb-8 group shadow-2xl">
                               
                               {/* Left side: Search Query & Status Pill */}
-                              <div className="relative p-[1px] rounded-[1.5rem] bg-gradient-to-r from-orange-500/40 via-transparent to-transparent shadow-xl w-full lg:w-auto shrink-0 flex">
-                                  <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-orange-500/20 to-transparent blur-md pointer-events-none rounded-l-[1.5rem]" />
-                                  <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-8 bg-[#0a0a0f]/90 rounded-[1.5rem] p-4 sm:px-6 sm:py-4 h-full w-full">
+                              <div className="relative p-[1px] rounded-2xl bg-gradient-to-r from-orange-500/40 via-transparent to-transparent shadow-xl w-full lg:w-auto shrink-0 flex">
+                                  <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-orange-500/20 to-transparent blur-md pointer-events-none rounded-l-2xl" />
+                                  <div className="relative flex flex-col sm:flex-row sm:items-center gap-3 lg:gap-6 bg-[#0a0a0f]/90 rounded-2xl p-3 sm:px-4 sm:py-2 h-full w-full">
                                       
                                       {/* Search Query */}
-                                      <div className="flex items-center gap-4">
-                                          <div className="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/20 shrink-0 shadow-[0_0_15px_rgba(249,115,22,0.2)]">
-                                              <Search size={24} className="text-orange-500" />
+                                      <div className="flex items-center gap-3">
+                                          <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.2)]">
+                                              <Search size={16} className="text-orange-500" />
                                           </div>
                                           <div className="flex flex-col">
-                                              <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-medium leading-none mb-1.5">Results for</span>
-                                              <div className="flex items-center gap-2">
-                                                  <span className="text-xl md:text-2xl font-black text-white truncate max-w-[200px] md:max-w-[250px]">"{localStorage.getItem('last-search-query') || 'All Projects'}"</span>
+                                              <span className="text-[8px] text-gray-500 uppercase tracking-[0.2em] font-medium leading-none mb-1">Results for</span>
+                                              <div className="flex items-center gap-1.5">
+                                                  <span className="text-base md:text-lg font-black text-white truncate max-w-[150px] md:max-w-[200px]">"{localStorage.getItem('last-search-query') || 'All Projects'}"</span>
                                               </div>
                                           </div>
                                       </div>
 
-                                      <div className="hidden sm:block w-px h-12 bg-white/5 shrink-0" />
+                                      <div className="hidden sm:block w-px h-8 bg-white/5 shrink-0" />
                                       
-                                      <div className="flex items-center gap-6 lg:gap-8 mt-2 sm:mt-0">
+                                      <div className="flex items-center gap-4 lg:gap-6 mt-2 sm:mt-0">
                                           {/* Repositories Count */}
-                                          <div className="flex items-center gap-3">
-                                              <div className="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 shrink-0">
-                                                  <Folder className="w-5 h-5 text-indigo-400" />
+                                          <div className="flex items-center gap-2">
+                                              <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 shrink-0">
+                                                  <Folder className="w-4 h-4 text-indigo-400" />
                                               </div>
                                               <div className="flex flex-col">
-                                                  <span className="text-[8px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1.5">Discovery</span>
+                                                  <span className="text-[7px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1">Discovery</span>
                                                   <div className="flex items-baseline gap-1 leading-none">
-                                                      <span className="text-xl font-black text-white">{filteredProjects.length}</span>
-                                                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Repos</span>
+                                                      <span className="text-base font-black text-white">{filteredProjects.length}</span>
+                                                      <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider">Repos</span>
                                                   </div>
                                               </div>
                                           </div>
 
-                                          <div className="hidden sm:block w-px h-12 bg-white/5 shrink-0" />
+                                          <div className="hidden sm:block w-px h-8 bg-white/5 shrink-0" />
 
                                           {/* Status */}
-                                          <div className="flex items-center gap-3">
-                                              <div className="p-2.5 rounded-xl bg-green-500/10 border border-green-500/20 shrink-0 relative flex items-center justify-center">
-                                                  <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
+                                          <div className="flex items-center gap-2">
+                                              <div className="p-2 rounded-xl bg-green-500/10 border border-green-500/20 shrink-0 relative flex items-center justify-center">
+                                                  <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
                                                   <div className="absolute inset-0 rounded-full border border-green-500/50 animate-ping" />
                                               </div>
                                               <div className="flex flex-col">
-                                                  <span className="text-[8px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1.5">Status</span>
-                                                  <div className="flex flex-col leading-none">
-                                                      <span className="text-[11px] font-black text-green-400 uppercase tracking-wider">Updated</span>
-                                                      <span className="text-[11px] font-black text-green-400 uppercase tracking-wider">Just Now</span>
+                                                  <span className="text-[7px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1">Status</span>
+                                                  <div className="flex flex-col leading-none gap-0.5">
+                                                      <span className="text-[9px] font-black text-green-400 uppercase tracking-wider">Updated</span>
+                                                      <span className="text-[9px] font-black text-green-400 uppercase tracking-wider">Just Now</span>
                                                   </div>
                                               </div>
                                           </div>
@@ -704,48 +704,48 @@ const App: React.FC = () => {
                               </div>
 
                               {/* Middle side: Filters Grid */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:flex-1 shrink">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full lg:flex-1 shrink">
                                   {/* Sort */}
                                   <div className="relative group/select">
-                                      <ListFilter className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="w-full h-12 pl-11 pr-10 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                      <ListFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
+                                      <select value={resultSort} onChange={event => setResultSort(event.target.value as typeof resultSort)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
                                         <option value="relevance">Sort: Relevance</option>
                                         <option value="stars">Sort: GitHub Stars</option>
                                         <option value="name">Sort: Name</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Language */}
                                   <div className="relative group/select">
-                                      <Code className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="w-full h-12 pl-11 pr-10 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                      <Code className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
+                                      <select value={languageFilter} onChange={event => setLanguageFilter(event.target.value)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
                                         {availableLanguages.map(language => <option key={language} value={language}>{language === 'All' ? 'Language: All' : language}</option>)}
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Stars */}
                                   <div className="relative group/select">
-                                      <Star className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="w-full h-12 pl-11 pr-10 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                      <Star className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
+                                      <select value={minStars} onChange={event => setMinStars(event.target.value)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
                                         <option value="0">Stars: Any</option><option value="100">Stars: 100+</option><option value="1000">Stars: 1K+</option><option value="10000">Stars: 10K+</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
 
                                   {/* Updated */}
                                   <div className="relative group/select">
-                                      <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-500 w-4 h-4 pointer-events-none group-hover/select:scale-110 transition-transform" />
-                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="w-full h-12 pl-11 pr-10 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
+                                      <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-500 w-3.5 h-3.5 pointer-events-none group-hover/select:scale-110 transition-transform" />
+                                      <select value={dateFilter} onChange={event => setDateFilter(event.target.value as typeof dateFilter)} className="w-full h-10 pl-9 pr-8 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors text-[9px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-orange-500/50 appearance-none cursor-pointer">
                                         <option value="all">Updated: Any time</option><option value="week">Updated: This week</option><option value="month">Updated: This month</option><option value="year">Updated: This year</option>
                                       </select>
-                                      <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 pointer-events-none" />
+                                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5 pointer-events-none" />
                                   </div>
                               </div>
 
                               {/* Right side: Vertical Platforms List */}
-                              <div className="bg-white/[0.02] p-2 rounded-2xl border border-white/5 flex flex-col gap-1 w-full lg:w-56 shrink-0 h-fit">
+                              <div className="bg-white/[0.02] p-1.5 rounded-2xl border border-white/5 flex flex-col gap-1 w-full lg:w-48 shrink-0 h-fit">
                                 {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => {
                                   const isActive = filterPlatform === p;
                                   const Icon = p === 'All' ? Globe : p === 'GitHub' ? Github : p === 'Hugging Face' ? Brain : p === 'Kaggle' ? BarChart3 : Linkedin;
@@ -758,25 +758,25 @@ const App: React.FC = () => {
                                         const lastQuery = localStorage.getItem('last-search-query');
                                         if (lastQuery) handleSearch(lastQuery, selectedCategory, p);
                                       }}
-                                      className={`relative px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-between group/plat ${
+                                      className={`relative px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-between group/plat ${
                                         isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                                       }`}
                                     >
                                       {isActive && (
                                         <motion.div
                                           layoutId="activePlatformList"
-                                          className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 rounded-xl shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+                                          className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500 rounded-xl shadow-[0_0_15px_rgba(234,88,12,0.4)]"
                                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                         />
                                       )}
-                                      <div className="flex items-center gap-3 relative z-10">
-                                        <Icon size={14} className={`transition-transform duration-300 group-hover/plat:scale-110 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'}`} />
+                                      <div className="flex items-center gap-2.5 relative z-10">
+                                        <Icon size={12} className={`transition-transform duration-300 group-hover/plat:scale-110 ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'}`} />
                                         <span>{p}</span>
                                       </div>
                                       
                                       {isActive && (
-                                        <div className="relative z-10 w-4 h-4 rounded-full bg-white flex items-center justify-center shadow-lg">
-                                            <Check size={10} className="text-orange-600" strokeWidth={4} />
+                                        <div className="relative z-10 w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center shadow-lg">
+                                            <Check size={8} className="text-orange-600" strokeWidth={4} />
                                         </div>
                                       )}
                                     </button>
@@ -784,8 +784,7 @@ const App: React.FC = () => {
                                 })}
                               </div>
                           </div>
-
-                          {filteredProjects.length > 0 ? (
+                    {filteredProjects.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                               {filteredProjects.map((project, index) => (
                                 <ProjectCard
