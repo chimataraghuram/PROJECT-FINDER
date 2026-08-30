@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw, Code2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
@@ -172,9 +172,11 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         { label: "Explain Architecture", prompt: "Explain this repository's architecture and main data flow.", icon: Brain, mode: 'deep' as const },
         { label: "Analyze Tech Stack", prompt: "Analyze the technologies, frameworks, databases, and dependencies used in this repository.", icon: Zap, mode: 'deep' as const },
         { label: "How To Run", prompt: "How do I install and run this repository?", icon: Rocket, mode: 'quick' as const },
+        { label: "Explain Code", prompt: "Explain the most important code paths and files in this repository.", icon: Code2, mode: 'deep' as const },
         { label: "Find Authentication", prompt: "Where is authentication implemented and how does it work?", icon: Brain, mode: 'deep' as const },
         { label: "Find Database", prompt: "Which database does this repository use and where is it configured?", icon: Zap, mode: 'quick' as const },
-        { label: "Find AI Components", prompt: "Find and explain the AI, embedding, or RAG components in this repository.", icon: Brain, mode: 'deep' as const }
+        { label: "Find AI Components", prompt: "Find and explain the AI, embedding, or RAG components in this repository.", icon: Brain, mode: 'deep' as const },
+        { label: "Find Similar Projects", prompt: "Find similar projects and explain how they compare with this repository.", icon: Sparkles, mode: 'deep' as const }
     ];
 
     return (
