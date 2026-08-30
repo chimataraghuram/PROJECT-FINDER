@@ -1,7 +1,12 @@
 import ResearchSession from '../models/ResearchSession.js';
 
 export const listResearchSessions = async (req, res) => {
-  const sessions = await ResearchSession.find({ userId: req.user._id }).select('-messages').sort({ updatedAt: -1 }).limit(50).lean();
+  const sessions = await ResearchSession.aggregate([
+    { $match: { userId: req.user._id } },
+    { $sort: { updatedAt: -1 } },
+    { $limit: 50 },
+    { $project: { title: 1, createdAt: 1, updatedAt: 1, messageCount: { $size: { $ifNull: ['$messages', []] } } } }
+  ]);
   res.json(sessions);
 };
 
