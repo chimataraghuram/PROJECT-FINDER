@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { Project } from '../types';
 import { fetchRecommendations, fetchResearchSessions, fetchCollections, fetchProjectNotes, fetchSearchHistory } from '../services/apiService';
-import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut } from 'lucide-react';
 
 interface UserDashboardProps {
   user: User;
@@ -82,9 +82,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
           </h1>
           <p className="text-gray-400 font-medium mb-4">{user.email}</p>
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
-            <span className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-wider text-gray-400">
-              Pro Member
-            </span>
             <span className="px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-[10px] font-black uppercase tracking-wider text-orange-400">
               {totalSaved} Saved Projects
             </span>
@@ -92,8 +89,22 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
         </div>
 
         <div className="md:ml-auto flex gap-3">
-          <button className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-gray-400 hover:text-white transition-all">
-            <Settings className="w-5 h-5" />
+          <button 
+            onClick={async () => {
+              const { auth } = await import('../services/firebase');
+              const { signOut } = await import('firebase/auth');
+              if (auth) {
+                await signOut(auth);
+                localStorage.removeItem('project-finder-token');
+                localStorage.removeItem('project-finder-user');
+                window.dispatchEvent(new Event('storage'));
+                window.location.reload();
+              }
+            }}
+            className="px-5 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-2xl flex items-center gap-2 text-red-400 hover:text-red-300 transition-all font-bold text-xs"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline-block">SIGN OUT</span>
           </button>
         </div>
       </motion.div>
@@ -104,57 +115,21 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
         {/* Left Col: Stats & Activity */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <motion.div variants={itemVariants} className="glass-card p-6 rounded-[2.5rem] bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-indigo-600/20 rounded-2xl">
-                  <TrendingUp className="w-6 h-6 text-indigo-400" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Discovery Power</h3>
-                  <p className="text-2xl font-black text-white">Top 5%</p>
-                </div>
-              </div>
-              <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: '85%' }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  className="h-full bg-indigo-500"
-                />
-              </div>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="glass-card p-6 rounded-[2.5rem] bg-gradient-to-br from-orange-500/10 to-transparent border-orange-500/20">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-orange-600/20 rounded-2xl">
-                  <Star className="w-6 h-6 text-orange-400" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-white/60 uppercase tracking-widest">Saves Today</h3>
-                  <p className="text-2xl font-black text-white">+{totalSaved > 5 ? '12' : '3'}</p>
-                </div>
-              </div>
-              <p className="text-[10px] text-orange-500/70 font-bold uppercase tracking-widest">+20% vs yesterday</p>
-            </motion.div>
-          </div>
-
-          {/* Recent Activity */}
+          {/* Saved Projects Hub */}
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-orange-500" />
-                <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Activity</h2>
+                <Heart className="w-5 h-5 text-orange-500 fill-orange-500/20" />
+                <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Saved Projects</h2>
               </div>
               <button onClick={onNavigateToDiscover} className="text-xs font-black text-orange-500 hover:text-orange-400 uppercase tracking-widest">
-                Explore More
+                Discover More
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               {savedProjects.length > 0 ? (
-                savedProjects.slice(0, 3).map((project, idx) => (
+                savedProjects.map((project, idx) => (
                   <div key={idx} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-white/10 transition-all cursor-pointer group">
                     <div className="p-3 bg-orange-600/10 rounded-xl group-hover:bg-orange-600/20">
                       <Heart className="w-5 h-5 text-orange-500 fill-orange-500" />
@@ -229,9 +204,6 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
               <p className="text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] mb-3">AI Recommendation</p>
               {recommendations.length > 0 ? <div className="space-y-3">{recommendations.slice(0, 3).map((item, index) => <div key={index}><p className="text-xs text-white font-bold">{item.repository?.owner}/{item.repository?.name}</p><p className="text-[10px] text-gray-400">{item.reasons?.[0] || 'Matches your saved projects'}</p></div>)}</div> : <p className="text-xs text-gray-400 leading-relaxed italic">Save indexed projects to receive evidence-based recommendations.</p>}
             </div>
-            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10"><p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-2">Research History</p><p className="text-2xl font-black text-white">{researchSessions.length}</p><p className="text-[10px] text-gray-500 uppercase tracking-widest">saved sessions</p></div>
-            <div className="mt-6 grid grid-cols-2 gap-3"><div className="p-4 bg-white/5 rounded-2xl"><p className="text-[9px] text-gray-500 uppercase tracking-widest">Collections</p><p className="text-xl font-black text-white">{collections.length}</p></div><div className="p-4 bg-white/5 rounded-2xl"><p className="text-[9px] text-gray-500 uppercase tracking-widest">Notes</p><p className="text-xl font-black text-white">{notes.length}</p></div></div>
-            <div className="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/10"><p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] mb-3">Recent Searches</p>{searchHistory.length ? <div className="space-y-2">{searchHistory.slice(0, 5).map((item, index) => <p key={index} className="text-xs text-gray-300 truncate">{item.query}</p>)}</div> : <p className="text-xs text-gray-600 italic">No searches recorded yet.</p>}</div>
           </div>
         </motion.div>
 
