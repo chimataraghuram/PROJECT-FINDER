@@ -55,7 +55,7 @@ const ReadmePreviewModal: React.FC<{ isOpen: boolean; onClose: () => void; profi
                     initial={{ opacity: 0, scale: 0.9, y: 30 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 30 }}
-                    className="relative w-full max-w-4xl bg-[#0f172a] border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+                    className="relative w-full max-w-4xl glass-card border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
                 >
                     <div className="p-8 border-b border-white/10 flex items-center justify-between bg-white/5">
                         <div className="flex items-center gap-4">
