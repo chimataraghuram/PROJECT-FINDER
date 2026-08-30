@@ -196,6 +196,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   };
 
   
+    
     return (
     <motion.div
       layout
@@ -205,96 +206,86 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
       viewport={{ once: true, margin: "-100px" }}
       whileHover={{ y: -8 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="group relative bg-[#0a0a0f] border border-white/5 p-6 md:p-8 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl hover:border-orange-500/20 transition-all duration-500"
+      className="group relative bg-[#0a0a0f] border border-white/5 p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl hover:border-orange-500/20 transition-all duration-500"
     >
       {/* Top Row: Platform Pill & Actions */}
-      <div className="flex items-start justify-between mb-8 relative z-20">
+      <div className="flex items-start justify-between mb-6 relative z-20">
         {/* Platform Pill */}
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border bg-black shadow-lg ${badgeClasses}`}>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border bg-black shadow-lg ${badgeClasses}`}>
           {icon}
-          <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-white">{platformName}</span>
+          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white">{platformName}</span>
         </div>
 
         {/* Action Icons */}
-        <div className="flex items-center gap-2 md:gap-3">
-          <button onClick={handleAnalyze} disabled={isAnalyzing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Pro-Grade AI Review">
-            {isAnalyzing ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
-          </button>
-          {isGithub && (
-            <button onClick={handleSummarize} disabled={isSummarizing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="AI Summary">
-              {isSummarizing ? <Loader2 size={16} className="animate-spin" /> : <Brain size={16} />}
-            </button>
-          )}
-          <button onClick={handleResearch} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Ask grounded research assistant">
-            <MessageCircle size={16} />
-          </button>
-          {isGithub && (
-            <button onClick={handleIndex} disabled={isIndexing} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Index repository evidence">
-              <FolderPlus size={16} className={isIndexing ? 'animate-pulse' : ''} />
-            </button>
-          )}
-          <button onClick={handleShare} className="p-2.5 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Share Project">
-            {copied ? <Check size={16} className="text-green-500" /> : <Share2 size={16} />}
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 mr-1" title="Stars">
+            <Star size={12} className="text-orange-500 fill-orange-500" />
+            <span className="text-[10px] font-black text-orange-500">
+              {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars || 0}
+            </span>
+          </div>
+          <button onClick={handleShare} className="p-2 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Share Project">
+            {copied ? <Check size={14} className="text-green-500" /> : <Share2 size={14} />}
           </button>
           <button 
             onClick={(e) => { e.preventDefault(); onToggleFavorite?.(project); }} 
-            className={`p-2.5 rounded-full border transition-colors flex items-center justify-center ${isFavorite ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            className={`p-2 rounded-full border transition-colors flex items-center justify-center ${isFavorite ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
             title="Save to Collection"
           >
-            <Heart size={16} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? "text-red-500" : ""} />
+            <Heart size={14} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? "text-red-500" : ""} />
           </button>
           <button 
             onClick={(e) => { e.preventDefault(); onToggleCompare?.(project); }} 
-            className={`p-2.5 rounded-full border transition-colors flex items-center justify-center ${isComparing ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            className={`p-2 rounded-full border transition-colors flex items-center justify-center ${isComparing ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
             title="Compare"
           >
-            <BarChart3 size={16} />
+            <BarChart3 size={14} />
           </button>
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 relative z-20 flex flex-col">
-        <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+        <h3 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tight line-clamp-2">
           {project.name}
         </h3>
         
-        <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-6">
+        <p className="text-gray-400 text-xs md:text-sm leading-relaxed mb-4 line-clamp-3">
           {project.description || "A powerful open-source tool for the modern web."}
         </p>
         
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-6 opacity-50" />
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-4 opacity-50" />
 
-        <div className="flex flex-wrap items-center gap-3 mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-6">
           {project.tags?.slice(0, 3).map((tag, i) => (
-            <span key={i} className="px-4 py-1.5 rounded-full border border-white/10 bg-transparent text-[10px] font-black text-gray-400 tracking-[0.15em] uppercase hover:text-white hover:border-white/20 transition-colors">
+            <span key={i} className="px-3 py-1 rounded-full border border-white/10 bg-transparent text-[9px] font-black text-gray-400 tracking-[0.15em] uppercase hover:text-white hover:border-white/20 transition-colors">
               {tag}
             </span>
           ))}
         </div>
 
-        <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-4">
+        <div className="mt-auto pt-4 flex flex-col sm:flex-row gap-3">
           {project.liveUrl && project.liveUrl !== '#' ? (
             <>
               <button 
                 onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
-                className="flex-1 py-4 px-6 rounded-2xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 hover:bg-white/5 transition-colors"
+                className="flex-1 py-3 px-4 rounded-xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
               >
-                {icon} VIEW REPO <ExternalLink size={14} />
+                {icon} VIEW REPO <ExternalLink size={12} />
               </button>
               <button 
                 onClick={(e) => { e.preventDefault(); openSafe(project.liveUrl); }}
-                className="flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
               >
-                LIVE DEMO <ExternalLink size={14} />
+                LIVE DEMO <ExternalLink size={12} />
               </button>
             </>
           ) : (
             <button 
               onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
-              className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
             >
-              {icon} VIEW REPO <span className="ml-2 font-light text-lg leading-none">&rarr;</span>
+              {icon} VIEW REPO <span className="ml-2 font-light text-base leading-none">&rarr;</span>
             </button>
           )}
         </div>
