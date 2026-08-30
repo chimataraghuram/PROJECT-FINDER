@@ -23,6 +23,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
   const [openCollection, setOpenCollection] = React.useState<any | null>(null);
+  const [historyFilter, setHistoryFilter] = React.useState<'all' | 'searches' | 'research'>('all');
   const [notes, setNotes] = React.useState<any[]>([]);
   const [searchHistory, setSearchHistory] = React.useState<any[]>(recentSearches);
   const [githubSyncing, setGithubSyncing] = React.useState(false);
@@ -314,34 +315,12 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
-            <div className="flex items-center gap-3 mb-6">
-              <History className="w-5 h-5 text-orange-500" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Searches</h2>
+            <div className="flex items-center justify-between gap-3 mb-6"><div className="flex items-center gap-3"><History className="w-5 h-5 text-orange-500" /><h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Research History</h2></div><div className="flex rounded-xl border border-white/10 bg-white/5 p-1">{(['all', 'searches', 'research'] as const).map(filter => <button key={filter} onClick={() => setHistoryFilter(filter)} className={`rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest ${historyFilter === filter ? 'bg-orange-500 text-white' : 'text-gray-500 hover:text-white'}`}>{filter === 'all' ? 'All' : filter}</button>)}</div></div>
+            <div className="max-h-72 overflow-y-auto custom-scrollbar space-y-2 pr-1">
+              {(historyFilter !== 'research' && searchHistory.length > 0) && <div className="border-b border-white/5 pb-2">{searchHistory.slice(0, 50).map((item, idx) => <button key={`search-${idx}`} onClick={() => item?.query && onSearch?.(item.query)} className="flex w-full items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 text-left hover:border-orange-500/30"><span className="truncate text-xs text-gray-300">{item.query}</span><span className="ml-2 text-[9px] uppercase text-orange-400">Search</span></button>)}</div>}
+              {(historyFilter !== 'searches' && researchSessions.length > 0) && researchSessions.slice(0, 50).map((session, index) => <div key={session._id || session.id || index} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 hover:border-orange-500/30"><button onClick={async () => { const token = await user.getIdToken(); const full = await fetchResearchSession(token, session._id || session.id); onOpenResearchSession?.(full); }} className="min-w-0 flex-1 py-1 text-left"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages · Research</span></button><button aria-label="Rename research session" onClick={() => editResearchSession(session)} className="rounded-lg p-2 text-gray-600 hover:text-orange-400"><Settings className="h-3.5 w-3.5" /></button><button aria-label="Delete research session" onClick={() => removeResearchSession(session._id || session.id)} className="rounded-lg p-2 text-gray-600 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button></div>)}
+              {((historyFilter === 'all' && !searchHistory.length && !researchSessions.length) || (historyFilter === 'searches' && !searchHistory.length) || (historyFilter === 'research' && !researchSessions.length)) && <p className="py-8 text-center text-[11px] italic text-gray-500">No history in this filter yet.</p>}
             </div>
-            
-            {searchHistory.length > 0 ? (
-              <div className="max-h-44 overflow-y-auto custom-scrollbar flex flex-wrap content-start gap-2 pr-1">
-                {searchHistory.slice(0, 8).map((item, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => item?.query && onSearch && onSearch(item.query)}
-                    className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-lg text-xs text-gray-300 transition-all text-left"
-                  >
-                    {item.query}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-[11px] text-gray-500 italic">Your recent searches will appear here.</p>
-            )}
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
-            <div className="flex items-center gap-3 mb-6">
-              <Clock className="w-5 h-5 text-orange-500" />
-              <h2 className="text-xl font-black text-white uppercase tracking-tighter italic">Recent Research</h2>
-            </div>
-            {researchSessions.length ? <div className="max-h-56 overflow-y-auto custom-scrollbar space-y-2 pr-1">{researchSessions.slice(0, 50).map((session, index) => <div key={session._id || session.id || index} className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2 hover:border-orange-500/30 hover:bg-white/[0.06] transition-all"><button onClick={async () => { const token = await user.getIdToken(); const full = await fetchResearchSession(token, session._id || session.id); onOpenResearchSession?.(full); }} className="min-w-0 flex-1 py-1 text-left"><span className="block truncate text-xs font-bold text-gray-200">{session.title || 'Untitled research session'}</span><span className="text-[9px] uppercase tracking-widest text-gray-500">{session.messageCount || 0} messages{session.updatedAt ? ` · Updated ${new Date(session.updatedAt).toLocaleDateString()}` : ''}</span></button><button aria-label="Rename research session" title="Rename session" onClick={() => editResearchSession(session)} className="rounded-lg p-2 text-gray-600 hover:bg-orange-500/10 hover:text-orange-400"><Settings className="h-3.5 w-3.5" /></button><button aria-label="Delete research session" title="Delete session" onClick={() => removeResearchSession(session._id || session.id)} className="rounded-lg p-2 text-gray-600 hover:bg-red-500/10 hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button></div>)}</div> : <p className="text-[11px] italic text-gray-500">Your research sessions will appear here.</p>}
           </motion.div>
 
           <motion.div variants={itemVariants} className="glass-card p-8 rounded-[3rem]">
