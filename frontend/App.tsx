@@ -363,6 +363,7 @@ const App: React.FC = () => {
               <motion.div
                 layout
                 initial={{ opacity: 0, y: -20 }}
+                style={{ borderRadius: 9999 }}
                 animate={{
                   opacity: 1,
                   y: 0,
@@ -408,6 +409,7 @@ const App: React.FC = () => {
             <div className="pointer-events-auto absolute left-1/2 -translate-x-1/2 shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
               <motion.nav
                 layout
+                style={{ borderRadius: 9999 }}
                 animate={{
                   scale: isCompact ? 0.95 : 1,
                   opacity: 1,
@@ -422,7 +424,8 @@ const App: React.FC = () => {
                   return (
                     <motion.button
                       key={item.id}
-                      layout="position"
+                      layout
+                      style={{ borderRadius: 9999 }}
                       whileHover={{ y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
