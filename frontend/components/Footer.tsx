@@ -60,10 +60,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             </h4>
                             <div className="space-y-4">
                                 <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    Techboy Project Finder is your AI-powered gateway to discovering top-tier open-source projects. Whether you're hunting for inspiration, datasets, or specific codebases, our engine aggregates the best resources across the web.
+                                    Techboy Project Finder is an AI-powered discovery workspace for real open-source projects. It combines GitHub-first search, live trending data, personalized history, saved collections, and TECHBOY AI research in one place.
                                 </p>
                                 <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    Use <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> to query specific technologies across GitHub, HuggingFace, and Kaggle. Or, visit the <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> hub to see what the global developer community is building right now.
+                                    Use <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> to find real repositories across platforms, then refine results by stars, language, date, and source. Visit <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> for live GitHub trends updated every minute.
                                 </p>
                             </div>
 
@@ -72,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 {[
                                     { icon: <Search className="w-4 h-4" />, title: activeLabels.discover, desc: "Cross-platform search." },
                                     { icon: <Flame className="w-4 h-4" />, title: activeLabels.trending, desc: "Real-time tech trends." },
-                                    { icon: <Star className="w-4 h-4" />, title: activeLabels.saved, desc: "Save your favorites." }
+                                    { icon: <Star className="w-4 h-4" />, title: activeLabels.saved, desc: "Organize collections." }
                                 ].map((step, i) => (
                                     <div key={i} className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-orange-500/20 transition-all group overflow-hidden relative">
                                         <div className="absolute -right-2 -top-2 w-8 h-8 bg-orange-500/5 blur-xl group-hover:bg-orange-500/10 transition-colors" />
@@ -110,9 +110,9 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
 
                         <div className="space-y-6">
                             {[
-                                { title: "1. Search Globally", desc: "Enter any concept (e.g., 'React UI' or 'AI Models') into the search bar. We instantly pull matching source code, models, and datasets from multiple platforms." },
-                                { title: "2. Explore Trends", desc: "Not sure what to build? Navigate to Trending Projects to browse real-time feeds of the most active and highly-starred repositories updated daily." },
-                                { title: "3. Save & Analyze", desc: "Click the Star icon to bookmark interesting projects to your personal dashboard. Use TECHBOY AI to automatically summarize dense repository files." }
+                                { title: "1. Search Globally", desc: "Search a technology or idea. GitHub projects appear first, with filters for stars, language, platform, and recent activity." },
+                                { title: "2. Explore Trends", desc: "Open Trending Projects to browse real GitHub repositories and live activity refreshed every minute." },
+                                { title: "3. Save & Research", desc: "Star projects, organize them into named collections, revisit your research history, and ask TECHBOY AI for grounded technical help." }
                             ].map((step, i) => (
                                 <div key={i} className="flex gap-5 group p-1">
                                     <div className="relative flex-shrink-0">
