@@ -144,7 +144,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </span>
         </div>
 
-        <div className="flex overflow-x-auto md:flex-wrap gap-2 md:gap-3 justify-start md:justify-center max-w-4xl w-full px-4 md:px-0 pb-4 md:pb-0 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex flex-wrap gap-2 md:gap-3 justify-center max-w-4xl w-full px-2 md:px-0">
           {QUICK_TAGS.map((tag, i) => (
             <motion.button
               key={tag.label}
@@ -160,7 +160,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 damping: 25
               }}
               onClick={() => { setQuery(tag.label); onSearch(tag.label); }}
-              className="group frosted-card flex items-center shrink-0 snap-start gap-2 md:gap-2.5 px-4 md:px-6 py-2 md:py-3 rounded-full text-gray-400 hover:text-white transition-all duration-300 text-[11px] md:text-sm font-semibold ring-1 ring-white/5 hover:ring-orange-500/20"
+              className="group frosted-card flex items-center shrink-0 gap-1.5 md:gap-2.5 px-3 md:px-6 py-1.5 md:py-3 rounded-full text-gray-400 hover:text-white transition-all duration-300 text-[10px] md:text-sm font-semibold ring-1 ring-white/5 hover:ring-orange-500/20"
             >
               <span className="text-base md:text-lg group-hover:scale-125 group-hover:rotate-12 transition-transform duration-500">{tag.icon}</span>
               <span className="tracking-wide">{tag.label}</span>
