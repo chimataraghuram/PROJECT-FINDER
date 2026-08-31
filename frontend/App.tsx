@@ -1078,7 +1078,7 @@ const App: React.FC = () => {
                         {item.isProfile ? (
                           <img 
                             src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || currentUser.email}`} 
-                            className="w-7 h-7 rounded-full object-cover border border-white/30"
+                            className="w-7 h-7 min-w-[28px] min-h-[28px] rounded-full object-cover border border-white/30 shrink-0"
                             alt="Profile"
                           />
                         ) : (
