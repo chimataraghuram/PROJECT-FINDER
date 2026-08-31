@@ -177,13 +177,15 @@ const TrendingCard: React.FC<{
                     <div className="w-12 h-12 rounded-[1rem] bg-[#0f172a] border border-white/10 flex items-center justify-center p-2 shadow-lg">
                         {getPlatformAvatar()}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#020617] border border-white/10 flex items-center justify-center shadow-lg">
-                        <img 
-                            src={project.owner?.avatar_url || `https://ui-avatars.com/api/?name=${project.owner?.login || project.platform}`} 
-                            alt={project.owner?.login} 
-                            className="w-full h-full object-cover rounded-full"
-                        />
-                    </div>
+                    {(project.platform?.toLowerCase() === 'github' || !project.platform) && (
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#020617] border border-white/10 flex items-center justify-center shadow-lg">
+                            <img 
+                                src={project.owner?.avatar_url || `https://ui-avatars.com/api/?name=${project.owner?.login || project.platform}`} 
+                                alt={project.owner?.login} 
+                                className="w-full h-full object-cover rounded-full"
+                            />
+                        </div>
+                    )}
                 </div>
                 <div>
                     <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-0.5">By Author</p>
