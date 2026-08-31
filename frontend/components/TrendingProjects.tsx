@@ -212,7 +212,7 @@ const TrendingCard: React.FC<{
                     </div>
                     {/* Placeholder for Red Glowing Lightning */}
                     <div className="shrink-0 w-14 h-14 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <svg className="w-8 h-8 text-red-500" style={{ filter: 'drop-shadow(0 0 10px rgba(239,68,68,1)) drop-shadow(0 0 25px rgba(239,68,68,0.8))' }} viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
                 </div>
 
