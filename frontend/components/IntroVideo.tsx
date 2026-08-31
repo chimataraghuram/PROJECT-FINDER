@@ -109,7 +109,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                     transition={{ delay: 0.7 }}
                     className="fixed bottom-10 left-0 right-0 flex justify-center w-full"
                 >
-                    <span className="text-[9px] md:text-[10px] font-bold tracking-[0.25em] text-gray-500 uppercase">
+                    <span className="text-[9px] md:text-[10px] font-black tracking-[0.25em] text-gray-400 uppercase drop-shadow-md">
                         COOKED BY RAGHU❤️
                     </span>
                 </motion.div>
