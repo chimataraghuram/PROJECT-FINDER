@@ -511,7 +511,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2, delay: 0.1 }}
-                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full shadow-xl transition-all duration-500 ease-out ${isCompact ? 'gap-1 p-1' : 'gap-2 p-1.5'}`}
+                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full shadow-xl transition-all duration-500 ease-out ${(!currentUser || isCompact) ? 'gap-1 p-1' : 'gap-2 p-1.5'}`}
               >
                 <motion.button
                   whileTap={{ scale: 0.85 }}
@@ -520,9 +520,11 @@ const App: React.FC = () => {
                 >
                   <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-5 h-5' : 'w-4 h-4'}`} />
                 </motion.button>
-                <div className="transition-all duration-500 ease-out">
-                  <AuthButton minimal isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
-                </div>
+                {!currentUser && (
+                  <div className="transition-all duration-500 ease-out">
+                    <AuthButton minimal isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
+                  </div>
+                )}
               </motion.div>
             </div>
           </div>
@@ -1056,10 +1058,11 @@ const App: React.FC = () => {
                 {[
                   { id: 'search', icon: Search },
                   { id: 'trending', icon: TrendingUp },
-                  { id: 'favorites', icon: Heart }
+                  { id: 'favorites', icon: Heart },
+                  ...(currentUser ? [{ id: 'dashboard', isProfile: true }] : [])
                 ].map((item) => {
                   const isActive = currentView === item.id;
-                  const Icon = item.icon;
+                  const Icon = item.icon as any;
                   return (
                     <motion.button
                       key={item.id}
@@ -1072,7 +1075,15 @@ const App: React.FC = () => {
                       }`}
                     >
                       <motion.div animate={{ scale: isActive ? 1.15 : 1 }} transition={{ type: "spring", bounce: 0.4 }}>
-                        <Icon className="w-5 h-5" />
+                        {item.isProfile ? (
+                          <img 
+                            src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || currentUser.email}`} 
+                            className="w-5 h-5 rounded-full object-cover border border-white/30"
+                            alt="Profile"
+                          />
+                        ) : (
+                          <Icon className="w-5 h-5" />
+                        )}
                       </motion.div>
                       {isActive && (
                         <motion.div 
