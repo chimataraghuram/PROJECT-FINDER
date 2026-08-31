@@ -124,7 +124,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <img src="https://img.icons8.com/material-outlined/24/ffffff/github.png" width="20"/> GitHub
+          <img src="https://cdn.simpleicons.org/github/white" width="20"/> GitHub
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
           Real-time trending, searchable, filterable repository discovery with GitHub results prioritized first.
@@ -134,7 +134,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 20px;">🤗</span> Hugging Face
+          <img src="https://cdn.simpleicons.org/huggingface/FFD21E" width="20"/> Hugging Face
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
           AI model discovery with direct model links and platform-aware project cards.
@@ -146,7 +146,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <img src="https://img.icons8.com/color/24/000000/kaggle.png" width="20"/> Kaggle
+          <img src="https://cdn.simpleicons.org/kaggle/20BEFF" width="20"/> Kaggle
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
           Dataset discovery with direct dataset links and unified cross-platform results.
@@ -156,7 +156,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <img src="https://img.icons8.com/color/24/000000/linkedin.png" width="20"/> LinkedIn
+          <img src="https://cdn.simpleicons.org/linkedin/0A66C2" width="20"/> LinkedIn
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
           Professional discovery links presented alongside technical project resources.
