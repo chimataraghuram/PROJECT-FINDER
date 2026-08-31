@@ -370,7 +370,7 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
+                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <motion.div className="relative shrink-0"
@@ -404,7 +404,7 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} ${isCompact ? 'backdrop-blur-[40px]' : 'backdrop-blur-2xl'} border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-500 ease-out shrink-0`}
+                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-500 ease-out shrink-0`}
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
@@ -461,7 +461,7 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={`flex items-center transition-all duration-500 ease-out border border-white/10 shadow-2xl ${isCompact ? 'gap-2 bg-[#0a0a0f]/90 backdrop-blur-3xl rounded-[2.5rem] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 backdrop-blur-xl rounded-[2rem] p-2'}`}
+                className={`flex items-center transition-all duration-500 ease-out border border-white/10 shadow-2xl ${isCompact ? 'gap-2 bg-[#0a0a0f]/90 rounded-[2.5rem] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 rounded-[2rem] p-2'} backdrop-blur-2xl`}
               >
                 <motion.button
                   onClick={() => setIsAIAssistantOpen(true)}

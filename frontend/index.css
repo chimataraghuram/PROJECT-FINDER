@@ -37,6 +37,8 @@ h1, h2, h3, h4, .font-display {
     border-radius: 50%;
     filter: blur(60px);
     mix-blend-mode: screen;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .aurora-1 {
