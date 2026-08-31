@@ -10,7 +10,7 @@ import { TechStack } from './TechStack';
 // Custom SVG for Hugging Face logo
 // Official Hugging Face Icon (SimpleIcons)
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
-    <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" className={className || "w-5 h-5"} style={{ filter: 'brightness(0) invert(1)' }} alt="Hugging Face" />
+    <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" className={className || "w-5 h-5"} alt="Hugging Face" />
   );
 
 // Official Kaggle Icon (SimpleIcons)

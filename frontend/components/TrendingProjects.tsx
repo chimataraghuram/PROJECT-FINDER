@@ -8,7 +8,7 @@ import { openSafe } from '../src/utils/urlHelper';
 // Custom SVG for Hugging Face logo
 // Official Hugging Face Icon (SimpleIcons)
 const HuggingFaceEmoji = ({ className = "w-5 h-5" }) => (
-    <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" className={className} style={{ filter: 'brightness(0) invert(1)' }} alt="Hugging Face" />
+    <img src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" className={className} alt="Hugging Face" />
   );
 
 // Official Kaggle Icon (SimpleIcons)
