@@ -65,47 +65,47 @@ The Ultimate Research & Discovery Engine 🚀
 
 ### 2. Hero Section & Main Search
 *The clean and powerful landing page designed for ultimate project discovery.*
-<img src="./PROJECT SCREENSHOT/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/2.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 3. Dynamic Sticky Navigation
 *A sleek glassmorphic navigation bar that intelligently adapts as you scroll.*
-<img src="./PROJECT SCREENSHOT/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/3.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 4. Advanced Search & Filtering
 *Comprehensive search results with robust filtering by platform, language, and activity.*
-<img src="./PROJECT SCREENSHOT/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/4.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 5. Trending Ecosystem Feeds
 *Live feeds showcasing the hottest repositories across GitHub and other major platforms.*
-<img src="./PROJECT SCREENSHOT/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/5.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 6. Real-Time Project Leaderboards
 *Beautifully ranked project cards featuring live metadata, tech stacks, and quick-action links.*
-<img src="./PROJECT SCREENSHOT/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/6.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 7. Your Personalized Library
 *A dedicated workspace to organize, manage, and revisit your saved project inspirations.*
-<img src="./PROJECT SCREENSHOT/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/7.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 8. Seamless Collection Browsing
 *A smooth, continuous scrolling experience through your curated project lists.*
-<img src="./PROJECT SCREENSHOT/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/8.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 9. TECHBOY AI Assistant
 *An integrated, context-aware AI partner ready to analyze any project repository.*
-<img src="./PROJECT SCREENSHOT/9.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/9.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 10. Intelligent AI Conversations
 *Ask deep technical questions about architecture, code, and tech stacks in real-time.*
-<img src="./PROJECT SCREENSHOT/10.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/10.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 11. User Profile & Integrations
 *A secure dashboard to manage your account, connect GitHub, and export your research data.*
-<img src="./PROJECT SCREENSHOT/11.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/11.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 ### 12. Platform Documentation & Footer
 *Comprehensive usage guides and developer portfolio integration for complete transparency.*
-<img src="./PROJECT SCREENSHOT/12.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
+<img src="./docs/screenshots/12.png" width="90%" style="border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 40px;" />
 
 </div>
 
