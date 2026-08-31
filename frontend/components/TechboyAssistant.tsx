@@ -42,7 +42,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const [messages, setMessages] = useState<Message[]>([
         { 
             role: 'assistant', 
-            content: "I'm TECHBOY AI, your advanced project research partner. Ask me anything about these projects or what you should build next!",
+            content: "Hi! I'm TECHBOY AI. Ask me about a project's architecture, code, tech stack, or what you should build next!",
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
     ]);
@@ -256,7 +256,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
 
                         {/* Messages Area */}
                         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4 no-scrollbar">
-                            {messages.length === 1 && !isTyping && <div className="rounded-2xl border border-orange-500/15 bg-orange-500/[0.04] p-4 text-center"><p className="text-xs font-bold text-gray-300">Explore this project with TECHBOY AI</p><p className="mt-1 text-[10px] text-gray-500">Ask about its architecture, code, stack, or how to run it.</p></div>}
+                            
                             {messages.map((msg, i) => (
                                 <motion.div
                                     initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
