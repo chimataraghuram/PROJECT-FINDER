@@ -501,7 +501,7 @@ const App: React.FC = () => {
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12' : 'w-8 h-8'}`} alt="Logo" />
+                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-10 h-10' : 'w-8 h-8'}`} alt="Logo" />
                 </div>
                 <span className={`text-xs font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[100px] opacity-100'}`}>Project Finder</span>
               </motion.div>
@@ -511,17 +511,17 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2, delay: 0.1 }}
-                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full p-1.5 shadow-xl transition-all duration-500 ease-out ${isCompact ? 'gap-1' : 'gap-2'}`}
+                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full shadow-xl transition-all duration-500 ease-out ${isCompact ? 'gap-1 p-1' : 'gap-2 p-1.5'}`}
               >
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12' : 'w-8 h-8'}`}
+                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-10 h-10' : 'w-8 h-8'}`}
                 >
-                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-6 h-6' : 'w-4 h-4'}`} />
+                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-5 h-5' : 'w-4 h-4'}`} />
                 </motion.button>
-                <div className={`transition-all duration-500 ease-out ${isCompact ? 'scale-150 origin-right' : 'scale-100'}`}>
-                  <AuthButton minimal onViewDashboard={() => setCurrentView('dashboard')} />
+                <div className="transition-all duration-500 ease-out">
+                  <AuthButton minimal isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
                 </div>
               </motion.div>
             </div>

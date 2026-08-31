@@ -11,8 +11,8 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ onViewDashboard, minimal
   const login = async () => { if (window.location.hostname === '127.0.0.1') { window.location.href = window.location.href.replace('127.0.0.1', 'localhost'); return; } if (!auth || !isFirebaseConfigured) return alert('Google sign-in is not configured.'); setLoading(true); try { await signInWithPopup(auth, googleProvider); } catch (error: any) { const message = error?.code === 'auth/unauthorized-domain' ? `Google sign-in is blocked for ${window.location.hostname}. Add this domain in Firebase Console → Authentication → Settings → Authorized domains.` : (error.message || 'Google sign-in failed'); alert(message); } finally { setLoading(false); } };
   const logout = async () => { if (auth) await signOut(auth); localStorage.removeItem('project-finder-token'); localStorage.removeItem('project-finder-user'); localStorage.removeItem('project-finder-favorites'); setUser(null); window.dispatchEvent(new Event('storage')); };
   if (user) return minimal ? (
-    <button onClick={onViewDashboard} className="rounded-full hover:scale-105 transition-transform">
-      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`pointer-events-none rounded-full border-2 border-orange-500/80 object-cover shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-300 ${isCompact ? 'w-10 h-10' : 'w-7 h-7'}`} alt="Profile" />
+    <button onClick={onViewDashboard} className="rounded-full hover:scale-105 transition-transform flex items-center justify-center">
+      <img src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || user.email}`} className={`pointer-events-none rounded-full border-2 border-orange-500/80 object-cover shadow-[0_0_10px_rgba(249,115,22,0.3)] transition-all duration-500 ease-out ${isCompact ? 'w-10 h-10' : 'w-8 h-8'}`} alt="Profile" />
     </button>
   ) : (
     <button onClick={onViewDashboard} className="flex items-center gap-3 pr-4 rounded-full hover:bg-white/5 transition-colors group">
