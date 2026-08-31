@@ -108,24 +108,24 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 type="button"
                 onClick={handleSurprise}
                 disabled={isLoading}
-                className="hidden sm:flex items-center gap-2 px-5 py-3 md:py-4 rounded-full border border-orange-500/40 bg-orange-500/5 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/60 transition-all duration-300 font-bold text-[10px] md:text-xs uppercase tracking-widest active:scale-95"
+                className="flex items-center justify-center shrink-0 w-10 h-10 md:w-auto md:h-auto gap-0 md:gap-2 px-0 md:px-5 py-0 md:py-4 rounded-full border border-orange-500/40 bg-orange-500/5 text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/60 transition-all duration-300 font-bold text-[10px] md:text-xs uppercase tracking-widest active:scale-95"
               >
-                <Zap className="w-3.5 h-3.5 md:w-4 md:h-4" fill="currentColor" />
-                <span>Surprise Me</span>
+                <Zap className="w-4 h-4 md:w-4 md:h-4 shrink-0" fill="currentColor" />
+                <span className="hidden md:inline whitespace-nowrap">Surprise Me</span>
               </button>
 
               {/* Explore Button */}
               <button
                 type="submit"
                 disabled={isLoading || !query.trim()}
-                className="flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400 text-white font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 active:scale-95"
+                className="flex items-center justify-center shrink-0 w-10 h-10 md:w-auto md:h-auto gap-0 md:gap-2 px-0 md:px-8 py-0 md:py-4 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-400 hover:to-pink-400 text-white font-bold text-[10px] md:text-xs uppercase tracking-widest transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 active:scale-95"
               >
                 {isLoading ? (
-                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin shrink-0" />
                 ) : (
                   <>
-                    <Search className="w-4 h-4 md:w-5 md:h-5" />
-                    <span>Explore</span>
+                    <Search className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                    <span className="hidden md:inline whitespace-nowrap">Explore</span>
                   </>
                 )}
               </button>
