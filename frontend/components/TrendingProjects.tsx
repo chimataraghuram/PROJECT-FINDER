@@ -210,9 +210,9 @@ const TrendingCard: React.FC<{
                             {project.description || 'Discover this amazing open-source contribution across platform.'}
                         </p>
                     </div>
-                    {/* Placeholder for Green Lightning / Project Logo */}
-                    <div className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 shadow-[0_0_20px_rgba(45,212,191,0.2)] flex items-center justify-center border border-teal-300/30">
-                        <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    {/* Placeholder for Red Glowing Lightning */}
+                    <div className="shrink-0 w-14 h-14 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                     </div>
                 </div>
 
