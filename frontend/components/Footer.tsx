@@ -234,7 +234,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
 
                 {/* Footer Bottom Bar - Unified */}
                 <div className="pt-4 flex justify-center items-center">
-                    <div className="flex items-center gap-2 text-sm font-bold text-red-500 uppercase tracking-widest">
+                    <div className="flex items-center gap-2 text-sm font-black text-red-500 uppercase tracking-widest drop-shadow-md">
                         COOKED BY RAGHU <Heart size={14} className="text-red-500 fill-red-500 animate-pulse" />
                     </div>
                 </div>
