@@ -51,14 +51,16 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
                         src={introVideo} 
                         autoPlay 
                         muted 
-                        playsInline 
+                        playsInline
+                        preload="auto"
+                        poster={mascotLogo}
                         onEnded={() => {
                             if (!isFading) {
                                 setIsFading(true);
                                 setTimeout(onComplete, 1000);
                             }
                         }}
-                        className="w-full h-full object-contain object-center"
+                        className="w-full h-full object-contain object-center transition-opacity duration-700"
                         style={{ transform: 'scale(1.1)' }}
                     />
                 </motion.div>
