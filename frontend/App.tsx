@@ -443,7 +443,7 @@ const App: React.FC = () => {
                       {isActive && (
                         <motion.div 
                           layoutId="activeTabUnderline" 
-                          className="absolute bottom-1 inset-x-4 h-0.5 bg-white/60 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] z-20" 
+                          className="absolute bottom-1.5 w-1/2 left-1/2 -translate-x-1/2 h-[3px] md:h-0.5 bg-white/80 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)] z-20" 
                         />
                       )}
                     </motion.button>
