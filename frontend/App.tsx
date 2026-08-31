@@ -496,14 +496,14 @@ const App: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2 }}
                 whileTap={{ scale: 0.95 }}
-                className={`pointer-events-auto flex items-center cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full py-1.5 shadow-xl group/moblogo transition-all duration-500 ease-out ${isCompact ? 'gap-0 pr-1 pl-1' : 'gap-2 pr-4 pl-1.5'}`}
+                className={`pointer-events-auto flex items-center cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full py-1.5 shadow-xl group/moblogo transition-all duration-500 ease-out ${isCompact ? 'gap-2 pr-4 pl-1.5' : 'gap-2 pr-4 pl-1.5'}`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
                   <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-14 h-14' : 'w-8 h-8'}`} alt="Logo" />
                 </div>
-                <span className={`text-xs font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[100px] opacity-100'}`}>Project Finder</span>
+                <span className={`font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out whitespace-nowrap origin-left ${isCompact ? 'text-[9px] opacity-70' : 'text-xs opacity-100'}`}>Project Finder</span>
               </motion.div>
 
               {/* Actions Pill (Right) */}
