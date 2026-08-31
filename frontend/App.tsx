@@ -501,7 +501,7 @@ const App: React.FC = () => {
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-10 h-10' : 'w-8 h-8'}`} alt="Logo" />
+                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-14 h-14' : 'w-8 h-8'}`} alt="Logo" />
                 </div>
                 <span className={`text-xs font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[100px] opacity-100'}`}>Project Finder</span>
               </motion.div>
@@ -516,9 +516,9 @@ const App: React.FC = () => {
                 <motion.button
                   whileTap={{ scale: 0.85 }}
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-10 h-10' : 'w-8 h-8'}`}
+                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-14 h-14' : 'w-8 h-8'}`}
                 >
-                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-5 h-5' : 'w-4 h-4'}`} />
+                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-7 h-7' : 'w-4 h-4'}`} />
                 </motion.button>
                 {!currentUser && (
                   <div className="transition-all duration-500 ease-out">
@@ -988,7 +988,7 @@ const App: React.FC = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
                     <div className="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center border border-gray-800 animate-pulse">
-                      <Heart className="w-10 h-10 text-gray-700" />
+                      <Heart className="w-14 h-14 text-gray-700" />
                     </div>
                     <div className="space-y-2">
                       <h3 className="text-xl font-bold text-white">Your collection is empty</h3>
@@ -1078,11 +1078,11 @@ const App: React.FC = () => {
                         {item.isProfile ? (
                           <img 
                             src={currentUser.photoURL || `https://ui-avatars.com/api/?name=${currentUser.displayName || currentUser.email}`} 
-                            className="w-5 h-5 rounded-full object-cover border border-white/30"
+                            className="w-7 h-7 rounded-full object-cover border border-white/30"
                             alt="Profile"
                           />
                         ) : (
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-7 h-7" />
                         )}
                       </motion.div>
                       {isActive && (
