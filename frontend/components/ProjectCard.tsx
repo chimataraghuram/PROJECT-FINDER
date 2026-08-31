@@ -8,34 +8,27 @@ import { openSafe } from '../src/utils/urlHelper';
 import { TechStack } from './TechStack';
 
 // Custom SVG for Hugging Face logo
+// Official Hugging Face Icon (SimpleIcons)
 const HuggingFaceIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className || "w-5 h-5"}
-  >
-    <path d="M2 12h20M2 12l4-5M2 12l4 5M22 12l-4-5M22 12l-4 5" />
-    <path d="M12 7v10" />
-    <circle cx="12" cy="12" r="2" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"}>
+    <path d="M11.597 1.258a1.296 1.296 0 0 1 1.054.1l1.523.86a2.628 2.628 0 0 0 2.617 0l1.523-.86a1.295 1.295 0 0 1 1.764.444l.808 1.408a2.627 2.627 0 0 0 1.91 1.25l1.742.222a1.296 1.296 0 0 1 1.134 1.436l-.234 1.74a2.628 2.628 0 0 0 .736 2.158l1.242 1.242a1.296 1.296 0 0 1 0 1.834l-1.242 1.24a2.626 2.626 0 0 0-.736 2.157l.234 1.74a1.295 1.295 0 0 1-1.134 1.438l-1.742.22a2.63 2.63 0 0 0-1.91 1.25l-.808 1.41a1.296 1.296 0 0 1-1.764.442l-1.523-.86a2.628 2.628 0 0 0-2.617 0l-1.523.86a1.296 1.296 0 0 1-1.764-.442l-.808-1.41a2.627 2.627 0 0 0-1.91-1.25l-1.742-.22a1.296 1.296 0 0 1-1.134-1.436l.234-1.74a2.632 2.632 0 0 0-.736-2.158L.146 12.917a1.296 1.296 0 0 1 0-1.834l1.242-1.242a2.63 2.63 0 0 0 .736-2.157l-.234-1.74a1.295 1.295 0 0 1 1.134-1.438l1.742-.22a2.626 2.626 0 0 0 1.91-1.25l.808-1.41a1.296 1.296 0 0 1 1.611-.541Zm.403 21.652c5.845 0 10.584-4.739 10.584-10.584S17.845 1.742 12 1.742 1.416 6.481 1.416 12.326s4.739 10.584 10.584 10.584ZM7.922 13.91a4.896 4.896 0 0 0 8.156 0 .422.422 0 0 1 .63-.035c.164.152.19.4.057.587a5.741 5.741 0 0 1-9.53 0 .422.422 0 0 1 .057-.587.422.422 0 0 1 .63.035Zm-1.82-3.155a1.282 1.282 0 1 1 0-2.564 1.282 1.282 0 0 1 0 2.564Zm9.796 0a1.282 1.282 0 1 1 0-2.564 1.282 1.282 0 0 1 0 2.564Z"/>
   </svg>
 );
 
-// Custom SVG for Kaggle logo
+// Official Kaggle Icon (SimpleIcons)
 const KaggleIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className || "w-5 h-5"}
-  >
-    <path d="M18.825 23.859c-.022.09-.092.126-.168.141h-3.32c-.172 0-.254-.078-.344-.19l-5.66-7.394-1.298 1.155v6.29c0 .16-.06.257-.23.238H5.53c-.158.02-.234-.082-.234-.238V.23C5.305.074 5.37 0 5.53 0h2.274c.17 0 .23.082.23.23v14.288l7.094-8.312c.094-.108.188-.18.36-.18h3.35c.18 0 .26.078.188.223l-6.19 7.18 6.44 9.94c.09.138.02.327-.45.49z" />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"}>
+    <path d="M18.825 23.859c-.022.09-.092.126-.168.141h-3.32c-.172 0-.254-.078-.344-.19L11.516 19.34l-3.32 3.19v1.272c0 .125-.094.202-.204.202H5.064c-.11 0-.195-.08-.195-.202V.219C4.869.094 4.963 0 5.064 0h2.928c.11 0 .204.094.204.219v15.023L14.776.438A.268.268 0 0 1 14.98 0h3.407c.101 0 .195.055.226.133.031.086.008.188-.047.242L11.758 7.375l7.027 16.273c.047.11.024.235-.047.305Z" />
   </svg>
 );
+
+// Official LinkedIn Icon (SimpleIcons)
+const LinkedInIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"}>
+    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+  </svg>
+);
+
 
 interface ProjectCardProps {
   project: Project;
@@ -173,7 +166,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
     badgeClasses = 'bg-blue-500/10 text-blue-200 border-blue-500/30';
     platformName = 'Kaggle';
   } else if (isLinkedIn) {
-    icon = <Linkedin className="w-4 h-4" />;
+    icon = <LinkedInIcon className="w-4 h-4" />;
     badgeClasses = 'bg-blue-600/10 text-blue-400 border-blue-600/30';
     platformName = 'LinkedIn';
   } else {
