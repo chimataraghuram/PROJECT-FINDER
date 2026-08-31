@@ -142,9 +142,6 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             {/* Architect Card */}
                             <div className="p-6 md:p-8 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-orange-500/30 transition-all duration-500 group relative overflow-hidden shadow-2xl">
                                 <div className="absolute -right-8 -top-8 w-24 h-24 bg-orange-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <div className="flex items-center justify-between mb-4 relative z-10">
-                                    <span className="px-3.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-[0.25em]">Lead</span>
-                                </div>
                                 <h4 className="text-2xl md:text-3xl font-black text-white mb-2 tracking-tighter transition-colors group-hover:text-orange-100">Chimata Raghuram</h4>
                                 <p className="text-[10px] font-black text-orange-500/60 uppercase tracking-[0.2em] mb-8 group-hover:text-orange-400 transition-colors">Full Stack AI Developer</p>
                                 
@@ -236,25 +233,9 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                 </div>
 
                 {/* Footer Bottom Bar - Unified */}
-                <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="flex flex-col items-center md:items-start gap-4">
-                        <div className="flex items-center gap-4">
-                            <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest opacity-40">
-                                © {currentYear} Techboy Project Finder
-                            </p>
-                            <div className="w-1 h-1 rounded-full bg-gray-800" />
-                            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                                COOKED BY <span className="text-white">TECHBOY RAGHU</span> <Heart size={10} className="text-red-500 fill-red-500 animate-pulse" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-6">
-                        {['React', 'Vite', 'Tailwind', 'Firebase'].map(tech => (
-                            <span key={tech} className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-800 hover:text-orange-500/30 transition-colors pointer-events-none">
-                                {tech}
-                            </span>
-                        ))}
+                <div className="pt-4 flex justify-center items-center">
+                    <div className="flex items-center gap-2 text-sm font-bold text-red-500 uppercase tracking-widest">
+                        COOKED BY RAGHU <Heart size={14} className="text-red-500 fill-red-500 animate-pulse" />
                     </div>
                 </div>
             </div>
