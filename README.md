@@ -156,7 +156,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <img src="https://cdn.simpleicons.org/linkedin/0A66C2" width="20"/> LinkedIn
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="20"/> LinkedIn
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
           Professional discovery links presented alongside technical project resources.
