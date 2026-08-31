@@ -290,28 +290,36 @@ This project is licensed under the **MIT License**.
 
 ---
 
-## 🧑‍💻 Author
-<hr>
-
-**CHIMATA RAGHURAM (TECHBOY)** _Full-Stack Developer & AI Enthusiast_
-
-<br>
-
-<div style="display: flex; gap: 10px; margin-bottom: 20px;">
-  <a href="https://chimataraghuram.vercel.app/">
-    <img src="https://img.shields.io/badge/🌐_PORTFOLIO-F97316?style=for-the-badge&logoColor=white" alt="Portfolio" />
-  </a>
-  <a href="https://www.linkedin.com/in/chimataraghuram/">
-    <img src="https://img.shields.io/badge/LINKEDIN-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
-  </a>
-  <a href="https://github.com/chimataraghuram">
-    <img src="https://img.shields.io/badge/GITHUB-000000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
-  </a>
-</div>
-
-<hr>
-<br>
+## 👨‍💻 Author
 
 <div align="center">
-  COOKED BY RAGHU ❤️
+  <br />
+  <a href="https://chimataraghuram.vercel.app/">
+    <img src="https://github.com/chimataraghuram.png?size=200" width="120" style="border-radius: 50%; box-shadow: 0 10px 30px rgba(249,115,22,0.3); border: 2px solid rgba(249,115,22,0.5); margin-bottom: 20px;" alt="Chimata Raghuram" />
+  </a>
+
+  <h3 style="margin-bottom: 0;">CHIMATA RAGHURAM (TECHBOY)</h3>
+  <p style="color: #94a3b8; font-size: 1.1em; margin-top: 5px;"><em>Full-Stack Developer & AI Enthusiast</em></p>
+
+  <br />
+
+  <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;">
+    <a href="https://chimataraghuram.vercel.app/">
+      <img src="https://img.shields.io/badge/PORTFOLIO-%23F97316.svg?style=for-the-badge&logo=Web&logoColor=white" alt="Portfolio" />
+    </a>
+    <a href="https://www.linkedin.com/in/chimataraghuram/">
+      <img src="https://img.shields.io/badge/LINKEDIN-%230A66C2.svg?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+    </a>
+    <a href="https://github.com/chimataraghuram">
+      <img src="https://img.shields.io/badge/GITHUB-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+    </a>
+  </div>
+
+  <br />
+  <hr style="border: 1px solid rgba(255,255,255,0.05); width: 50%; margin: 0 auto;" />
+  <br />
+
+  <p align="center" style="letter-spacing: 0.25em; font-weight: 900; color: #94a3b8; font-size: 14px; text-transform: uppercase;">
+    COOKED BY RAGHU ❤️
+  </p>
 </div>
