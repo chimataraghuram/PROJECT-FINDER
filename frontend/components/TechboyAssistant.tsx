@@ -203,14 +203,14 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     ];
 
     return (
-        <div className="fixed top-24 right-6 z-[100] pointer-events-none">
+        <div className="fixed inset-0 md:inset-auto md:top-24 md:right-6 z-[3000] pointer-events-none flex flex-col justify-end md:block p-3 md:p-0 pb-24 md:pb-0">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                        className="w-[calc(100vw-2rem)] max-w-[480px] h-[min(720px,calc(100vh-7rem))] glass-card rounded-3xl flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden pointer-events-auto"
+                        exit={{ opacity: 0, y: 40, scale: 0.95 }}
+                        className="w-full md:w-[calc(100vw-2rem)] max-w-[480px] h-[75vh] md:h-[min(720px,calc(100vh-7rem))] bg-[#0f172a]/95 md:bg-transparent md:glass-card backdrop-blur-3xl rounded-3xl flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] md:shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden pointer-events-auto border border-white/10 md:border-0 mx-auto"
                     >
                         {/* Header */}
                         <div className="p-6 bg-transparent border-b border-white/5 flex items-center justify-between">
