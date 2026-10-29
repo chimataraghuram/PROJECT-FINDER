@@ -11,7 +11,7 @@ PROJECT FINDER
 </h1>
 
 <p style="color: #f97316; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 20px; opacity: 0.8;">
-The Ultimate Research & Discovery Engine 🚀
+The Ultimate Research & Discovery Engine • Integrated GitHub API 🚀
 </p>
 
 <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;">
@@ -29,10 +29,11 @@ The Ultimate Research & Discovery Engine 🚀
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=500&lines=Discover+Your+Next+Big+Idea;Explore+Trending+Tech+Projects;AI-Powered+Project+Summaries;Multi-Platform+Discovery)](https://git.io/typing-svg)
 
 <p align="center" style="max-width: 800px; margin: 0 auto; line-height: 1.8; color: #cbd5e1; font-size: 1.05rem;">
-  <strong>Project Finder</strong> is a premium research workspace for developers and students. It combines GitHub-first discovery, live trending repositories, multi-platform resources, RAG-powered TECHBOY AI, saved collections, and persistent research history in one focused interface.
+  <strong>Project Finder</strong> is a premium research workspace for developers and students. It combines deep **Integrated GitHub API** repository discovery, live trending repositories, multi-platform resources, RAG-powered TECHBOY AI, saved collections, and persistent research history in one focused interface.
 </p>
 
 <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 30px;">
+  <img src="https://img.shields.io/badge/GitHub%20API-Integrated-%23181717.svg?style=flat-square&logo=github&logoColor=white" height="25" />
   <img src="https://img.shields.io/badge/React%2019-%2320232a.svg?style=flat-square&logo=react&logoColor=%2361DAFB" height="25" />
   <img src="https://img.shields.io/badge/Node.js-%23339933.svg?style=flat-square&logo=nodedotjs&logoColor=white" height="25" />
   <img src="https://img.shields.io/badge/OpenRouter-%237C3AED.svg?style=flat-square&logo=openai&logoColor=white" height="25" />
@@ -124,10 +125,10 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
     <td width="50%" style="padding: 10px; border: none;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; transition: 0.3s; height: 160px;">
         <h3 style="color: #ffffff; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-          <img src="https://cdn.simpleicons.org/github/white" width="20"/> GitHub
+          <img src="https://cdn.simpleicons.org/github/white" width="20"/> GitHub (Integrated GitHub API)
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Real-time trending, searchable, filterable repository discovery with GitHub results prioritized first.
+          Integrated GitHub API-powered real-time trending, searchable, filterable repository discovery with GitHub results prioritized first.
         </p>
       </div>
     </td>
@@ -198,8 +199,8 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 - ☁️ **Google Authentication**: Firebase Google Sign-In with persistent sessions and UID-based user data.
 - 🗂️ **Saved Collections**: Create named square collections, assign starred projects, open collections, rename, delete, and remove projects.
 - 🕘 **Research History**: Combined searchable history with internal scrolling and saved research conversations.
-- 🔎 **Search Filters**: GitHub-first results with platform, language, minimum stars, date, and sort filters.
-- 🔔 **GitHub Updates**: Detects changed stars and repository activity for saved GitHub projects.
+- 🔎 **Search Filters & Integrated GitHub API**: Real-time GitHub-first results, live query parsing, repository inspection, platform, language, minimum stars, date, and sort filters via the integrated GitHub API.
+- 🔔 **GitHub Updates**: Detects changed stars and repository activity for saved GitHub projects via direct GitHub API synchronization.
 - 📴 **Resilient Discovery**: Local caching and GitHub fallback behavior when Render or public APIs are unavailable.
 - 📱 **High-Density UI**: Premium glassmorphic interface with mobile-first optimizations for desktop-class research.
 - 🚀 **Live API Proxy**: Proxied requests for high-frequency, authentic discovery with zero-loop reliability.
@@ -209,6 +210,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 
 ## 🛠️ Tech Stack
 
+- **Core Engine**: **Integrated GitHub API** (REST & Octokit for real-time repository search, metrics, stars, and activity tracking)
 - **Frontend**: [React v19](https://reactjs.org/), [Vite](https://vitejs.dev/), [Framer Motion](https://www.framer.com/motion/), [Lucide React](https://lucide.dev/)
 - **Backend**: [Node.js](https://nodejs.org/) (Express) with [Mongoose](https://mongoosejs.com/)
 - **AI Integration**: [OpenRouter API](https://openrouter.ai/) & [Google Gemini AI](https://ai.google.dev/)
