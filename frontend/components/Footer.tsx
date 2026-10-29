@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 </span>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="h-[2px] w-8 bg-orange-500 rounded-full" />
-                                    <span className="text-[11px] uppercase tracking-[0.4em] text-orange-400 font-black">Innovation Engine</span>
+                                    <span className="text-[11px] uppercase tracking-[0.3em] text-orange-400 font-black">Innovation Engine • Integrated GitHub API</span>
                                 </div>
                             </div>
                         </div>
@@ -60,10 +60,10 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             </h4>
                             <div className="space-y-4">
                                 <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    Techboy Project Finder is an AI-powered discovery workspace for real open-source projects. It combines GitHub-first search, live trending data, personalized history, saved collections, and TECHBOY AI research in one place.
+                                    Techboy Project Finder is an AI-powered discovery workspace for real open-source projects. Built on an <span className="text-orange-400 font-semibold">Integrated GitHub API</span>, it combines GitHub-first repository discovery, live trending data, personalized history, saved collections, and TECHBOY AI research in one place.
                                 </p>
                                 <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-lg font-medium transition-all duration-500">
-                                    Use <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> to find real repositories across platforms, then refine results by stars, language, date, and source. Visit <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> for live GitHub trends updated every minute.
+                                    Use <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">{activeLabels.discover}</span> to find real repositories via the <span className="text-white font-bold underline decoration-orange-500/40 underline-offset-4">Integrated GitHub API</span> across platforms, then refine results by stars, language, date, and source. Visit <span className="text-white font-bold underline decoration-blue-500/40 underline-offset-4 font-black">{activeLabels.trending}</span> for live GitHub trends updated every minute.
                                 </p>
                             </div>
 
@@ -110,7 +110,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
 
                         <div className="space-y-6">
                             {[
-                                { title: "1. Search Globally", desc: "Search a technology or idea. GitHub projects appear first, with filters for stars, language, platform, and recent activity." },
+                                { title: "1. Search Globally", desc: "Search a technology or idea. Powered by the integrated GitHub API, repositories appear first with live filters for stars, language, and recent activity." },
                                 { title: "2. Explore Trends", desc: "Open Trending Projects to browse real GitHub repositories and live activity refreshed every minute." },
                                 { title: "3. Save & Research", desc: "Star projects, organize them into named collections, revisit your research history, and ask TECHBOY AI for grounded technical help." }
                             ].map((step, i) => (
