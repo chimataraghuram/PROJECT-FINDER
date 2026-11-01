@@ -293,29 +293,32 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
         </div>
 
         <div className="mt-auto pt-4 flex flex-col sm:flex-row gap-3">
-          {project.liveUrl && project.liveUrl !== '#' ? (
-            <>
+          {(() => {
+            const platformActionLabel = isHF ? 'VIEW MODEL' : isKaggle ? 'VIEW DATASET' : isLinkedIn ? 'VIEW POST' : 'VIEW REPO';
+            return project.liveUrl && project.liveUrl !== '#' ? (
+              <>
+                <button 
+                  onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
+                >
+                  {icon} {platformActionLabel} <ExternalLink size={12} />
+                </button>
+                <button 
+                  onClick={(e) => { e.preventDefault(); openSafe(project.liveUrl); }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
+                >
+                  LIVE DEMO <ExternalLink size={12} />
+                </button>
+              </>
+            ) : (
               <button 
                 onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
-                className="flex-1 py-3 px-4 rounded-xl bg-transparent border border-white/20 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
               >
-                {icon} VIEW REPO <ExternalLink size={12} />
+                {icon} {platformActionLabel} <span className="ml-2 font-light text-base leading-none">&rarr;</span>
               </button>
-              <button 
-                onClick={(e) => { e.preventDefault(); openSafe(project.liveUrl); }}
-                className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
-              >
-                LIVE DEMO <ExternalLink size={12} />
-              </button>
-            </>
-          ) : (
-            <button 
-              onClick={(e) => { e.preventDefault(); openSafe(project.url); }}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110 transition-all"
-            >
-              {icon} VIEW REPO <span className="ml-2 font-light text-base leading-none">&rarr;</span>
-            </button>
-          )}
+            );
+          })()}
         </div>
       </div>
 
