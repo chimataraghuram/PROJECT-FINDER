@@ -113,34 +113,40 @@ const TrendingCard: React.FC<{
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            whileHover={{ y: -12, scale: 1.02 }}
+            whileHover={{ y: -8 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className={`group relative glass-card p-5 md:p-6 flex flex-col h-full overflow-hidden border border-white/5 rounded-[2rem]`}
+            className="group relative bg-[#090b10] p-6 md:p-7 flex flex-col h-full rounded-[2.5rem] overflow-hidden border border-red-500/30 shadow-[0_0_50px_rgba(0,0,0,0.8),inset_0_0_20px_rgba(239,68,68,0.06)] hover:border-red-500/60 transition-all duration-500"
         >
-            {/* Background Glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            {/* Ambient Neon Red Edge Glow */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-red-600/15 rounded-full blur-3xl pointer-events-none group-hover:bg-red-600/25 transition-all duration-700" />
+            <div className="absolute -bottom-24 -right-24 w-52 h-52 bg-red-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-red-500/20 transition-all duration-700" />
 
-            {/* Top Modern Header: Rank, Trending Badge, Star Count & Action Capsule */}
-            <div className="flex items-center justify-between gap-2 mb-6 relative z-30">
-                {/* Left: Rank, Trending badge, and Stars */}
-                <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                    <div className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-gray-300">
+            {/* Subtle red wave bottom curve decoration */}
+            <svg className="absolute bottom-0 left-0 right-0 w-full h-24 pointer-events-none opacity-20" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <path d="M0,80 C30,40 70,100 100,60 L100,100 L0,100 Z" fill="none" stroke="url(#redGrad)" strokeWidth="0.8" />
+                <defs>
+                    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#ef4444" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#dc2626" stopOpacity="0.1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            {/* Row 1: #Rank, Trending Pill & Action Pill Capsule */}
+            <div className="flex items-center justify-between gap-3 mb-6 relative z-30">
+                {/* Left: #Rank and Trending Badge */}
+                <div className="flex items-center gap-2">
+                    <div className="px-3.5 py-1.5 rounded-full bg-[#121620] border border-white/10 text-xs font-black text-white/90 shadow-inner">
                         #{rank}
                     </div>
-                    <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/30">
-                        <Flame size={11} className="text-orange-500 animate-pulse" />
-                        <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">Trending</span>
-                    </div>
-                    <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20" title="Stars">
-                        <Star size={11} className="text-orange-500 fill-orange-500" />
-                        <span className="text-[10px] font-black text-orange-400">
-                            {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}
-                        </span>
+                    <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                        <Flame size={13} className="text-red-400 animate-pulse" />
+                        <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">Trending</span>
                     </div>
                 </div>
 
-                {/* Right: Modern Unified Action Capsule */}
-                <div className="flex items-center p-1 rounded-full bg-white/[0.03] border border-white/10 shadow-inner backdrop-blur-md shrink-0">
+                {/* Right: Glass Action Capsule */}
+                <div className="flex items-center p-1 rounded-full bg-[#121620]/90 border border-white/10 shadow-inner backdrop-blur-md">
                     <button 
                         onClick={(e) => {
                             e.preventDefault();
@@ -156,14 +162,14 @@ const TrendingCard: React.FC<{
                     </button>
                     <button 
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }} 
-                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isFavorite ? 'text-red-400 bg-red-500/15' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
+                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isFavorite ? 'text-red-400 bg-red-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
                         title="Save to Collection"
                     >
                         <Heart size={12} fill={isFavorite ? "currentColor" : "none"} />
                     </button>
                     <button 
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }} 
-                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isComparing ? 'text-orange-400 bg-orange-500/15' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
+                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isComparing ? 'text-red-400 bg-red-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
                         title="Compare"
                     >
                         <BarChart3 size={12} />
@@ -174,7 +180,7 @@ const TrendingCard: React.FC<{
                             e.stopPropagation();
                             onAskAI?.(project, "Evaluate repository maintenance health, activity level, and check if it is unmaintained or dead before investing time.");
                         }} 
-                        className="w-7 h-7 rounded-full text-orange-400 hover:text-white hover:bg-orange-500 transition-all flex items-center justify-center ml-0.5" 
+                        className="w-7 h-7 rounded-full text-red-400 hover:text-white hover:bg-red-500 transition-all flex items-center justify-center ml-0.5" 
                         title="Techboy AI: Health & Longevity Radar"
                     >
                         <Bot size={13} />
@@ -182,77 +188,93 @@ const TrendingCard: React.FC<{
                 </div>
             </div>
 
-            {/* Author Area */}
-            <div className="flex items-center gap-3 mb-6 relative z-30">
-                <div className="relative">
-                    <div className="w-12 h-12 rounded-[1rem] bg-[#0f172a] border border-white/10 flex items-center justify-center p-2 shadow-lg">
-                        {getPlatformAvatar()}
-                    </div>
-                    {(project.platform?.toLowerCase() === 'github' || !project.platform) && (
-                        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#020617] border border-white/10 flex items-center justify-center shadow-lg">
-                            <img 
-                                src={project.owner?.avatar_url || `https://ui-avatars.com/api/?name=${project.owner?.login || project.platform}`} 
-                                alt={project.owner?.login} 
-                                className="w-full h-full object-cover rounded-full"
-                            />
+            {/* Row 2: Author Badge (Left with neon halo) & Star Counter Pill (Right) */}
+            <div className="flex items-center justify-between gap-3 mb-6 relative z-30">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="relative">
+                        <div className="w-14 h-14 rounded-2xl bg-[#0e121b] border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.35)] flex items-center justify-center p-2.5">
+                            {getPlatformAvatar()}
                         </div>
-                    )}
+                        {(project.platform?.toLowerCase() === 'github' || !project.platform) && (
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0a0d14] border-2 border-white/20 overflow-hidden shadow-md">
+                                <img 
+                                    src={project.owner?.avatar_url || `https://ui-avatars.com/api/?name=${project.owner?.login || project.platform}`} 
+                                    alt={project.owner?.login} 
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        )}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">By Author</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                            <a 
+                                href={project.owner?.html_url || '#'} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="text-base font-black text-white hover:text-red-400 transition-colors tracking-tight truncate"
+                                onClick={(e) => { e.stopPropagation(); openSafe(project.owner?.html_url); }}
+                            >
+                                @{project.owner?.login || 'unknown'}
+                            </a>
+                            <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_8px_rgba(59,130,246,0.6)]">
+                                <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest mb-0.5">By Author</p>
-                    <div className="flex items-center gap-1.5">
-                        <a 
-                            href={project.owner?.html_url || '#'} 
-                            target="_blank" 
-                            rel="noreferrer"
-                            className="text-sm md:text-base font-bold text-white hover:text-blue-400 transition-colors tracking-tight"
-                            onClick={(e) => { e.stopPropagation(); openSafe(project.owner?.html_url); }}
-                        >
-                            @{project.owner?.login || 'unknown'}
-                        </a>
-                        <div className="w-3.5 h-3.5 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-[0_0_8px_rgba(59,130,246,0.5)]">
-                            <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                    </div>
+
+                {/* Stars Badge - Dedicated orange/red rounded capsule */}
+                <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-[#131722] border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.15)] shrink-0">
+                    <Star size={13} className="text-orange-500 fill-orange-500" />
+                    <span className="text-xs font-black text-orange-400 tracking-wider">
+                        {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}
+                    </span>
                 </div>
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 relative z-20 flex flex-col">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="flex-1 min-w-0">
-                        <h3 className="text-xl md:text-2xl font-black bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 text-transparent bg-clip-text truncate pb-1">
-                            {project.name}
-                        </h3>
-                        <p className="text-gray-400 text-[12px] md:text-[13px] font-medium leading-relaxed mt-2 opacity-90 line-clamp-3">
-                            {project.description || 'Discover this amazing open-source contribution across platform.'}
-                        </p>
-                    </div>
-                    {/* Placeholder for Red Glowing Lightning */}
-                    <div className="shrink-0 w-14 h-14 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-red-500" style={{ filter: 'drop-shadow(0 0 10px rgba(239,68,68,1)) drop-shadow(0 0 25px rgba(239,68,68,0.8))' }} viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    </div>
+            {/* Row 3: Title with Red Neon Underline Accent & 3D Glowing Red Icon Badge */}
+            <div className="relative z-20 mb-4 flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-3xl font-black text-white tracking-tight truncate pb-1">
+                        {project.name}
+                    </h3>
+                    {/* Glowing Red Underline Accent Bar */}
+                    <div className="w-10 h-1 rounded-full bg-gradient-to-r from-red-500 to-rose-600 shadow-[0_0_10px_rgba(239,68,68,0.8)] mt-1 mb-3" />
+                    <p className="text-gray-400 text-xs md:text-sm font-medium leading-relaxed opacity-90 line-clamp-3">
+                        {project.description || 'Discover this amazing open-source contribution across platform.'}
+                    </p>
                 </div>
 
-                <div className="mt-auto">
+                {/* 3D Glowing Red Squircle Tile with Lightning */}
+                <div className="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a0e14] via-[#2a1017] to-[#12090d] border border-red-500/40 flex items-center justify-center shadow-[0_10px_30px_rgba(239,68,68,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)] rotate-6 group-hover:rotate-12 transition-transform duration-500">
+                    <svg className="w-8 h-8 text-red-500 fill-red-500" style={{ filter: 'drop-shadow(0 0 12px rgba(239,68,68,1))' }} viewBox="0 0 24 24">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                </div>
+            </div>
+
+            {/* Row 4: Language & Topic Tags */}
+            <div className="mt-auto pt-3 relative z-20">
+                <div className="flex items-center gap-2 mb-3.5">
                     {project.language && (
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-2.5 h-2.5 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.5)]" />
-                            <span className="text-[10px] font-black text-white uppercase tracking-widest">{project.language}</span>
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 shadow-[0_0_12px_rgba(45,212,191,0.2)]">
+                            <span className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
+                            <span className="text-[10px] font-black text-teal-300 uppercase tracking-widest">{project.language}</span>
                         </div>
                     )}
+                </div>
 
-                    <div className="flex flex-wrap gap-2 mb-6">
-                        {project.tags?.slice(0, 3).map((tag: string, i: number) => (
-                            <span key={i} className="px-3 py-1 rounded-xl bg-white/5 border border-white/5 text-[9px] font-bold text-gray-300 uppercase tracking-wider shadow-inner">
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                    {project.tags?.slice(0, 3).map((tag: string, i: number) => (
+                        <span key={i} className="px-3.5 py-1 rounded-full bg-[#121620] border border-white/10 text-[9px] font-bold text-gray-300 uppercase tracking-wider shadow-inner">
+                            {tag}
+                        </span>
+                    ))}
                 </div>
             </div>
 
-            {/* Bottom Actions */}
+            {/* Row 5: Bottom CTA Action Buttons (View Repo with glowing red gradient & Outline Live Demo) */}
             <div className="grid grid-cols-2 gap-3 mt-auto relative z-20">
                 <motion.a 
                     href={project.url}
@@ -261,10 +283,10 @@ const TrendingCard: React.FC<{
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={(e) => { e.stopPropagation(); openSafe(project.url); }}
-                    className="py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(249,115,22,0.3)] hover:shadow-orange-500/50 hover:brightness-110"
+                    className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-rose-600 text-white text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(239,68,68,0.45)] hover:shadow-red-500/70 hover:brightness-110"
                 >
-                    <config.icon size={14} /> 
-                    {config.label}
+                    <config.icon size={15} /> 
+                    {config.label} &rarr;
                 </motion.a>
 
                 <motion.a 
@@ -278,7 +300,7 @@ const TrendingCard: React.FC<{
                         if (project.liveUrl && project.liveUrl !== '#') openSafe(project.liveUrl);
                         else e.preventDefault();
                     }}
-                    className={`py-3 rounded-xl border-2 ${project.liveUrl && project.liveUrl !== '#' ? 'border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2`}
+                    className={`py-3.5 px-4 rounded-2xl border-2 ${project.liveUrl && project.liveUrl !== '#' ? 'border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner`}
                 >
                     <ExternalLink size={14} /> 
                     LIVE DEMO
