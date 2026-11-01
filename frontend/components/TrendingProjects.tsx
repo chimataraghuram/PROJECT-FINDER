@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Github, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2, Folder, Activity, TrendingUp } from 'lucide-react';
+import { Star, Github, Check, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2, Folder, Activity, TrendingUp } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrending } from '../services/apiService';
 import { openSafe } from '../src/utils/urlHelper';
@@ -31,6 +31,7 @@ interface TrendingProjectsProps {
     onToggleComparison: (project: Project) => void;
     comparisonQueue: Project[];
     onSummarize: (projectName: string) => void;
+    onAskAI?: (project: Project, prompt?: string) => void;
 }
 
 const TrendingBadge = () => (
@@ -85,7 +86,9 @@ const TrendingCard: React.FC<{
     onCompare: () => void;
     onSummarize: () => void;
     onShare: (url: string) => void;
-}> = ({ project, rank, isFavorite, isComparing, onToggle, onCompare, onSummarize, onShare }) => {
+    onAskAI?: (project: Project, prompt?: string) => void;
+}> = ({ project, rank, isFavorite, isComparing, onToggle, onCompare, onSummarize, onShare, onAskAI }) => {
+    const [copied, setCopied] = useState(false);
     const getPlatformConfig = () => {
         const platform = project.platform?.toLowerCase() || '';
         if (platform.includes('hugging')) return { label: 'View Model', icon: Bot, color: 'text-yellow-400', brandColor: 'orange' };
@@ -117,55 +120,65 @@ const TrendingCard: React.FC<{
             {/* Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-            {/* Top Row: Rank, Trending, Menu/Compare */}
-            <div className="flex items-center justify-between mb-5 relative z-30">
-                <div className="flex items-center gap-2.5">
-                    <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-gray-300">
+            {/* Top Modern Header: Rank, Trending Badge, Star Count & Action Capsule */}
+            <div className="flex items-center justify-between gap-2 mb-6 relative z-30">
+                {/* Left: Rank, Trending badge, and Stars */}
+                <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <div className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-gray-300">
                         #{rank}
                     </div>
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30">
-                        <Flame size={12} className="text-orange-500" />
-                        <span className="text-[9px] font-black text-orange-500 uppercase tracking-widest">Trending</span>
+                    <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/30">
+                        <Flame size={11} className="text-orange-500 animate-pulse" />
+                        <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">Trending</span>
                     </div>
-                </div>
-                <motion.button 
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }}
-                    className={`p-2 rounded-full transition-all ${
-                      isComparing
-                      ? 'bg-orange-500/20 text-orange-500'
-                      : 'text-gray-400 hover:bg-purple-500/20 hover:text-purple-500'
-                    }`}
-                    title="Compare Project"
-                >
-                    <BarChart3 size={16} />
-                </motion.button>
-            </div>
-
-            {/* Metrics Box */}
-            <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#020617]/50 border border-white/5 mb-5 relative z-30 shadow-inner w-full">
-                <div className="grid grid-cols-2 gap-2 flex-1 place-items-center">
-                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-white transition-colors group/metric" title="Share" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShare(project.url); }}>
-                        <Share2 size={16} className="group-hover/metric:scale-110 transition-transform" />
-                        <span className="text-[9px] font-bold tracking-wider">Share</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 cursor-pointer text-gray-400 hover:text-red-500 transition-colors group/metric" title="Save" onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }}>
-                        <Heart size={16} fill={isFavorite ? "currentColor" : "none"} className={`group-hover/metric:scale-110 transition-transform ${isFavorite ? 'text-red-500' : ''}`} />
-                        <span className="text-[9px] font-bold tracking-wider">Loved</span>
-                    </div>
-                </div>
-                
-                <div className="w-px h-8 bg-white/10 mx-3 md:mx-4" />
-                
-                <div className="flex items-center gap-2 shrink-0 pl-1">
-                    <Star size={18} className="text-orange-500 fill-orange-500" />
-                    <div className="flex flex-col">
-                        <span className="text-sm font-black text-orange-500 leading-none mb-0.5">
+                    <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20" title="Stars">
+                        <Star size={11} className="text-orange-500 fill-orange-500" />
+                        <span className="text-[10px] font-black text-orange-400">
                             {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars}
                         </span>
-                        <span className="text-[9px] font-bold text-gray-400 tracking-wider">Stars</span>
                     </div>
+                </div>
+
+                {/* Right: Modern Unified Action Capsule */}
+                <div className="flex items-center p-1 rounded-full bg-white/[0.03] border border-white/10 shadow-inner backdrop-blur-md shrink-0">
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onShare(project.url);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }} 
+                        className="w-7 h-7 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center" 
+                        title="Share Project"
+                    >
+                        {copied ? <Check size={12} className="text-green-400" /> : <Share2 size={12} />}
+                    </button>
+                    <button 
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggle(); }} 
+                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isFavorite ? 'text-red-400 bg-red-500/15' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
+                        title="Save to Collection"
+                    >
+                        <Heart size={12} fill={isFavorite ? "currentColor" : "none"} />
+                    </button>
+                    <button 
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCompare(); }} 
+                        className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${isComparing ? 'text-orange-400 bg-orange-500/15' : 'text-gray-400 hover:text-white hover:bg-white/10'}`} 
+                        title="Compare"
+                    >
+                        <BarChart3 size={12} />
+                    </button>
+                    <button 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onAskAI?.(project, "Evaluate repository maintenance health, activity level, and check if it is unmaintained or dead before investing time.");
+                        }} 
+                        className="w-7 h-7 rounded-full text-orange-400 hover:text-white hover:bg-orange-500 transition-all flex items-center justify-center ml-0.5" 
+                        title="Techboy AI: Health & Longevity Radar"
+                    >
+                        <Bot size={13} />
+                    </button>
                 </div>
             </div>
 
@@ -275,7 +288,7 @@ const TrendingCard: React.FC<{
     );
 };
 
-export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, onToggleFavorite, onToggleComparison, comparisonQueue, onSummarize }) => {
+export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, onToggleFavorite, onToggleComparison, comparisonQueue, onSummarize, onAskAI }) => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -543,6 +556,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                                 onCompare={() => onToggleComparison(project)}
                                 onSummarize={() => onSummarize(project.name)}
                                 onShare={handleShare}
+                                onAskAI={onAskAI}
                             />
                         ))}
                     </AnimatePresence>

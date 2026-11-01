@@ -572,6 +572,7 @@ const App: React.FC = () => {
                   setCurrentView('search');
                   handleSearch(`Summarize ${projectName}`);
                 }}
+                onAskAI={handleOpenAIAssistant}
               />
             )}
 
@@ -1025,6 +1026,7 @@ const App: React.FC = () => {
                   onToggleComparison={toggleComparison}
                   comparisonQueue={comparisonQueue}
                   onSummarize={(name) => handleSearch(`Summarize ${name}`)}
+                  onAskAI={handleOpenAIAssistant}
                 />
               </div>
             )}
