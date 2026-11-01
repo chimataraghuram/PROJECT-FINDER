@@ -218,44 +218,51 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
       className={`group relative bg-[#0a0a0f] border p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-700 ${isGlowing ? 'border-orange-500 shadow-[0_0_40px_rgba(249,115,22,0.4)]' : 'border-white/5 hover:border-orange-500/20'}`}
     >
       {/* Top Row: Platform Pill & Actions */}
-      <div className="flex items-start justify-between mb-6 relative z-20">
-        {/* Platform Pill */}
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border bg-black shadow-lg ${badgeClasses}`}>
-          {icon}
-          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white">{platformName}</span>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-2.5 mb-5 relative z-20">
+        {/* Platform Pill & Star Count */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border bg-black shadow-lg ${badgeClasses}`}>
+            {icon}
+            <span className="text-[9px] font-black uppercase tracking-widest text-white">{platformName}</span>
+          </div>
 
-        {/* Action Icons */}
-        <div className="flex items-center gap-1.5 md:gap-2">
-          <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 mr-1" title="Stars">
-            <Star size={12} className="text-orange-500 fill-orange-500" />
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/20" title="Stars">
+            <Star size={11} className="text-orange-500 fill-orange-500" />
             <span className="text-[10px] font-black text-orange-500">
               {typeof project.stars === 'number' ? project.stars.toLocaleString() : project.stars || 0}
             </span>
           </div>
-          <button onClick={handleShare} className="p-2 rounded-full bg-white/[0.02] border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition-colors" title="Share Project">
-            {copied ? <Check size={14} className="text-green-500" /> : <Share2 size={14} />}
+        </div>
+
+        {/* Action Icons Group */}
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 ml-auto">
+          <button 
+            onClick={handleShare} 
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/[0.03] border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center shrink-0" 
+            title="Share Project"
+          >
+            {copied ? <Check size={13} className="text-green-500" /> : <Share2 size={13} />}
           </button>
           <button 
             onClick={(e) => { e.preventDefault(); onToggleFavorite?.(project); }} 
-            className={`p-2 rounded-full border transition-colors flex items-center justify-center ${isFavorite ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border transition-colors flex items-center justify-center shrink-0 ${isFavorite ? 'bg-red-500/10 border-red-500/30 text-red-500' : 'bg-white/[0.03] border-white/10 text-gray-400 hover:text-white hover:bg-white/10'}`} 
             title="Save to Collection"
           >
-            <Heart size={14} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? "text-red-500" : ""} />
+            <Heart size={13} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? "text-red-500" : ""} />
           </button>
           <button 
             onClick={(e) => { e.preventDefault(); onToggleCompare?.(project); }} 
-            className={`p-2 rounded-full border transition-colors flex items-center justify-center ${isComparing ? 'bg-orange-500/10 border-orange-500/20 text-orange-500' : 'bg-white/[0.02] border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`} 
+            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full border transition-colors flex items-center justify-center shrink-0 ${isComparing ? 'bg-orange-500/10 border-orange-500/30 text-orange-500' : 'bg-white/[0.03] border-white/10 text-gray-400 hover:text-white hover:bg-white/10'}`} 
             title="Compare"
           >
-            <BarChart3 size={14} />
+            <BarChart3 size={13} />
           </button>
           <button 
             onClick={(e) => { e.preventDefault(); onView?.(project); onAskAI?.(project, "Evaluate repository maintenance health, activity level, and check if it is unmaintained or dead before investing time."); }} 
-            className="p-2 rounded-full border transition-all flex items-center justify-center bg-orange-500/10 border-orange-500/30 text-orange-400 hover:text-white hover:bg-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.5)]" 
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border transition-all flex items-center justify-center shrink-0 bg-orange-500/10 border-orange-500/30 text-orange-400 hover:text-white hover:bg-orange-500 hover:shadow-[0_0_12px_rgba(249,115,22,0.5)]" 
             title="Techboy AI: Health & Longevity Radar (Avoid Dead Repos)"
           >
-            <Bot size={14} />
+            <Bot size={13} />
           </button>
         </div>
       </div>
