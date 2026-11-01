@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Project, SummaryData } from '../types';
-import { Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus, MessageCircle, Star } from 'lucide-react';
+import { Bot, Github, ExternalLink, Code, Sparkles, Linkedin, Heart, Share2, Check, Brain, Loader2, X, Terminal, Cpu, Lightbulb, ShieldCheck, BarChart3, Activity, Zap, FolderPlus, MessageCircle, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchProjectReadme, summarizeProject, askResearchQuestion, startIngestionJob, getJobStatus, submitAIFeedback, analyzeRepository } from '../services/apiService';
 import { analyzeProject, ProjectAnalysis } from '../services/aiService';
@@ -37,9 +37,10 @@ interface ProjectCardProps {
   index?: number;
   onView?: (project: Project) => void;
   isSearchResult?: boolean;
+  onAskAI?: (project: Project, prompt?: string) => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView, isSearchResult }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, onToggleFavorite, onToggleCompare, isComparing, index = 0, onView, isSearchResult, onAskAI }) => {
   const [isGlowing, setIsGlowing] = React.useState(false);
   const glowTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -248,6 +249,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
             title="Compare"
           >
             <BarChart3 size={14} />
+          </button>
+          <button 
+            onClick={(e) => { e.preventDefault(); onView?.(project); onAskAI?.(project, "Evaluate repository maintenance health, activity level, and check if it is unmaintained or dead before investing time."); }} 
+            className="p-2 rounded-full border transition-all flex items-center justify-center bg-orange-500/10 border-orange-500/30 text-orange-400 hover:text-white hover:bg-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.5)]" 
+            title="Techboy AI: Health & Longevity Radar (Avoid Dead Repos)"
+          >
+            <Bot size={14} />
           </button>
         </div>
       </div>
