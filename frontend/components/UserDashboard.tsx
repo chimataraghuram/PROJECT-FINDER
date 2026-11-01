@@ -230,43 +230,55 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
     } catch { /* assignment remains unchanged */ }
   };
 
-  // Gamification Milestones calculation
+  // Official GitHub-style Achievement Badges with real achievement artwork
   const badges = [
     {
       id: 'pull-shark',
-      name: 'Pull Shark Contributor',
+      name: 'Pull Shark',
       tier: 'x2 Unlocked',
-      description: 'Actively participating in GitHub pull requests and project evolution.',
-      icon: GitPullRequest,
+      subtitle: 'PR Contributor',
+      description: 'Actively opened, merged, and leveled up pull requests across the ecosystem.',
+      badgeImg: 'https://raw.githubusercontent.com/Schweinepriester/github-profile-achievements/main/images/pull-shark-default.png',
       unlocked: true,
-      color: 'from-orange-500/20 to-red-500/20 text-orange-400 border-orange-500/30'
+      glow: 'shadow-[0_0_25px_rgba(234,88,12,0.35)]',
+      border: 'border-orange-500/40',
+      pillBg: 'bg-orange-500/20 text-orange-300 border-orange-500/40'
     },
     {
-      id: 'master-explorer',
+      id: 'starstruck',
       name: 'Master Explorer',
       tier: savedProjects.length >= 10 ? 'Level 2' : savedProjects.length >= 1 ? 'Level 1' : 'Locked',
-      description: `Discovered and bookmarked ${savedProjects.length} ecosystem projects.`,
-      icon: Award,
+      subtitle: 'Starstruck Curator',
+      description: `Discovered, starred, and bookmarked ${savedProjects.length} open-source repositories.`,
+      badgeImg: 'https://raw.githubusercontent.com/Schweinepriester/github-profile-achievements/main/images/starstruck-default.png',
       unlocked: savedProjects.length > 0,
-      color: savedProjects.length > 0 ? 'from-amber-500/20 to-yellow-500/20 text-yellow-400 border-yellow-500/30' : 'from-gray-800 to-gray-900 text-gray-500 border-white/5 opacity-50'
+      glow: 'shadow-[0_0_25px_rgba(234,179,8,0.35)]',
+      border: 'border-amber-500/40',
+      pillBg: 'bg-amber-500/20 text-amber-300 border-amber-500/40'
     },
     {
-      id: 'techboy-partner',
-      name: 'AI Deep Researcher',
+      id: 'galaxy-brain',
+      name: 'Galaxy Brain',
       tier: researchSessions.length >= 3 ? 'Expert' : 'Active',
-      description: `Conducted ${researchSessions.length} deep technical AI investigations.`,
-      icon: Sparkles,
+      subtitle: 'AI Deep Researcher',
+      description: `Conducted ${researchSessions.length} deep architecture investigations with Techboy AI.`,
+      badgeImg: 'https://raw.githubusercontent.com/Schweinepriester/github-profile-achievements/main/images/galaxy-brain-default.png',
       unlocked: true,
-      color: 'from-purple-500/20 to-pink-500/20 text-purple-300 border-purple-500/30'
+      glow: 'shadow-[0_0_25px_rgba(168,85,247,0.35)]',
+      border: 'border-purple-500/40',
+      pillBg: 'bg-purple-500/20 text-purple-300 border-purple-500/40'
     },
     {
-      id: 'stack-architect',
-      name: 'Stack Architect',
+      id: 'arctic-vault',
+      name: 'Arctic Code Vault',
       tier: collections.length >= 3 ? 'Master' : collections.length >= 1 ? 'Curator' : 'Novice',
-      description: `Engineered ${collections.length} curated technology stacks.`,
-      icon: Layers,
+      subtitle: 'Stack Architect',
+      description: `Curated and engineered ${collections.length} reusable multi-repo technology stacks.`,
+      badgeImg: 'https://raw.githubusercontent.com/Schweinepriester/github-profile-achievements/main/images/arctic-code-vault-contributor-default.png',
       unlocked: collections.length > 0,
-      color: collections.length > 0 ? 'from-blue-500/20 to-cyan-500/20 text-cyan-400 border-cyan-500/30' : 'from-gray-800 to-gray-900 text-gray-500 border-white/5 opacity-50'
+      glow: 'shadow-[0_0_25px_rgba(6,182,212,0.35)]',
+      border: 'border-cyan-500/40',
+      pillBg: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
     }
   ];
   
@@ -328,10 +340,15 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 <p className="text-gray-400 font-medium">{user.email}</p>
                 <span className="text-gray-600">•</span>
                 
-                {/* G Connected Pill */}
-                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 rounded-full border border-white/10 shadow-inner">
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                  <span className="text-[10px] font-bold text-gray-200 tracking-wide">G-Connected</span>
+                {/* G Connected Pill - Matches Uploaded Screenshot exactly */}
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-[#121620] rounded-full border border-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                  <svg className="w-4 h-4 shrink-0 drop-shadow-sm" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                  </svg>
+                  <span className="text-xs font-black text-white tracking-wide">G-Connected</span>
                 </div>
 
                 <span className="text-gray-600">•</span>
@@ -374,27 +391,45 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
           <h2 className="text-sm font-black text-white uppercase tracking-widest">Developer Milestones & Badges</h2>
           <span className="text-[10px] text-gray-500 uppercase tracking-widest ml-auto font-bold">Platform Achievements</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {badges.map((b) => {
-            const Icon = b.icon;
-            return (
-              <div 
-                key={b.id} 
-                className={`p-4 rounded-2xl bg-gradient-to-br ${b.color} border backdrop-blur-md transition-all hover:scale-[1.02] duration-300 shadow-lg`}
-              >
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div className="p-2 rounded-xl bg-black/40 border border-white/10 shrink-0">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-black/40 border border-white/10">
-                    {b.tier}
-                  </span>
-                </div>
-                <h3 className="text-xs font-black text-white tracking-wide truncate">{b.name}</h3>
-                <p className="text-[10px] text-gray-400 mt-1 line-clamp-2 leading-relaxed">{b.description}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {badges.map((b) => (
+            <motion.div 
+              key={b.id} 
+              whileHover={{ y: -6, scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className={`p-5 rounded-3xl bg-[#0b0e14]/90 border ${b.border} ${b.glow} backdrop-blur-xl flex flex-col items-center text-center relative overflow-hidden group`}
+            >
+              {/* Radial background highlight matching badge */}
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none group-hover:bg-white/10 transition-colors" />
+
+              {/* Tier Pill in Top-Right Corner */}
+              <div className="w-full flex items-center justify-between mb-3 relative z-10">
+                <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">{b.subtitle}</span>
+                <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${b.pillBg} shadow-sm`}>
+                  {b.tier}
+                </span>
               </div>
-            );
-          })}
+
+              {/* GitHub Official Achievement Badge Graphic */}
+              <div className="relative my-2 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center p-1 drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                  <img 
+                    src={b.badgeImg} 
+                    alt={b.name} 
+                    className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]"
+                  />
+                </div>
+              </div>
+
+              {/* Badge Title & Description */}
+              <div className="mt-2 relative z-10">
+                <h3 className="text-sm font-black text-white tracking-tight">{b.name}</h3>
+                <p className="text-[11px] text-gray-400 mt-1.5 line-clamp-2 leading-relaxed font-medium">
+                  {b.description}
+                </p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </motion.div>
 
