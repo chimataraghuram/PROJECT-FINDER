@@ -115,7 +115,7 @@ const TrendingCard: React.FC<{
             exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -8 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="group relative bg-[#090b10] p-6 md:p-7 flex flex-col h-full rounded-[2.5rem] overflow-hidden border border-red-500/30 shadow-[0_0_50px_rgba(0,0,0,0.8),inset_0_0_20px_rgba(239,68,68,0.06)] hover:border-red-500/60 transition-all duration-500"
+            className="group relative bg-[#090b10] p-5 sm:p-6 flex flex-col h-full rounded-3xl overflow-hidden border border-red-500/30 shadow-[0_10px_35px_rgba(0,0,0,0.8),inset_0_0_20px_rgba(239,68,68,0.06)] hover:border-red-500/60 transition-all duration-500"
         >
             {/* Ambient Neon Red Edge Glow */}
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-red-600/15 rounded-full blur-3xl pointer-events-none group-hover:bg-red-600/25 transition-all duration-700" />
@@ -192,7 +192,7 @@ const TrendingCard: React.FC<{
             <div className="flex items-center justify-between gap-3 mb-6 relative z-30">
                 <div className="flex items-center gap-3 min-w-0">
                     <div className="relative">
-                        <div className="w-14 h-14 rounded-2xl bg-[#0e121b] border-2 border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.35)] flex items-center justify-center p-2.5">
+                        <div className="w-12 h-12 rounded-xl bg-[#0e121b] border border-red-500/40 shadow-[0_0_20px_rgba(239,68,68,0.35)] flex items-center justify-center p-2.5">
                             {getPlatformAvatar()}
                         </div>
                         {(project.platform?.toLowerCase() === 'github' || !project.platform) && (
@@ -247,7 +247,7 @@ const TrendingCard: React.FC<{
                 </div>
 
                 {/* 3D Glowing Red Squircle Tile with Lightning */}
-                <div className="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a0e14] via-[#2a1017] to-[#12090d] border border-red-500/40 flex items-center justify-center shadow-[0_10px_30px_rgba(239,68,68,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)] rotate-6 group-hover:rotate-12 transition-transform duration-500">
+                <div className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1a0e14] via-[#2a1017] to-[#12090d] border border-red-500/40 flex items-center justify-center shadow-[0_10px_30px_rgba(239,68,68,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)] rotate-6 group-hover:rotate-12 transition-transform duration-500">
                     <svg className="w-8 h-8 text-red-500 fill-red-500" style={{ filter: 'drop-shadow(0 0 12px rgba(239,68,68,1))' }} viewBox="0 0 24 24">
                         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                     </svg>
@@ -283,7 +283,7 @@ const TrendingCard: React.FC<{
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={(e) => { e.stopPropagation(); openSafe(project.url); }}
-                    className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-red-600 via-red-500 to-rose-600 text-white text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(239,68,68,0.45)] hover:shadow-red-500/70 hover:brightness-110"
+                    className="py-3 px-3.5 rounded-xl bg-gradient-to-r from-red-600 via-red-500 to-rose-600 text-white text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(239,68,68,0.45)] hover:shadow-red-500/70 hover:brightness-110"
                 >
                     <config.icon size={15} /> 
                     {config.label} &rarr;
@@ -300,7 +300,7 @@ const TrendingCard: React.FC<{
                         if (project.liveUrl && project.liveUrl !== '#') openSafe(project.liveUrl);
                         else e.preventDefault();
                     }}
-                    className={`py-3.5 px-4 rounded-2xl border-2 ${project.liveUrl && project.liveUrl !== '#' ? 'border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner`}
+                    className={`py-3 px-3.5 rounded-xl border ${project.liveUrl && project.liveUrl !== '#' ? 'border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner`}
                 >
                     <ExternalLink size={14} /> 
                     LIVE DEMO
@@ -511,7 +511,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[9px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1">Discovery</span>
-                                            <span className="text-xs md:text-sm font-bold text-white uppercase tracking-wider leading-none">{projects.length} Repositories</span>
+                                            <span className="text-xs md:text-sm font-bold text-white uppercase tracking-wider leading-none">{projects.length} {activePlatform.toLowerCase().includes("hugging") ? "Models" : activePlatform.toLowerCase().includes("kaggle") ? "Datasets" : activePlatform.toLowerCase().includes("linkedin") ? "Posts" : "Repositories"}</span>
                                         </div>
                                     </div>
 
@@ -542,20 +542,20 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
                 {loading ? (
                     <div className="col-span-full">
-                        <div className="flex flex-col items-center justify-center py-20 bg-white/[0.02] rounded-[2.5rem] border border-dashed border-white/5 mb-12 animate-pulse">
+                        <div className="flex flex-col items-center justify-center py-20 bg-white/[0.02] rounded-3xl border border-dashed border-white/5 mb-12 animate-pulse">
                             <Loader2 className="w-10 h-10 text-orange-500 animate-spin mb-6" />
-                            <h3 className="text-xl font-black text-white uppercase tracking-widest">Fetching projects from GitHub...</h3>
-                            <p className="text-gray-500 text-xs mt-2 uppercase tracking-[0.2em]">Accessing live repository data</p>
+                            <h3 className="text-xl font-black text-white uppercase tracking-widest">Fetching items from {activePlatform}...</h3>
+                            <p className="text-gray-500 text-xs mt-2 uppercase tracking-[0.2em]">Accessing live feed data</p>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
                             {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
                         </div>
                     </div>
                 ) : error ? (
-                    <div className="col-span-full text-center py-20 bg-red-500/5 rounded-[2.5rem] border border-dashed border-red-500/20">
+                    <div className="col-span-full text-center py-20 bg-red-500/5 rounded-3xl border border-dashed border-red-500/20">
                         <Shield size={48} className="text-red-500/30 mx-auto mb-6" />
                         <p className="text-red-500 font-bold text-xl uppercase tracking-tighter">{error}</p>
                         <button 
