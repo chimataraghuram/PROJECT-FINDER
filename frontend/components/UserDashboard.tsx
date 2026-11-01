@@ -5,7 +5,7 @@ import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
 import { Project } from '../types';
 import { auth, githubProvider } from '../services/firebase';
 import { fetchRecommendations, fetchResearchSessions, fetchResearchSession, deleteResearchSession, renameResearchSession, fetchCollections, createCollection, addProjectToCollection, fetchProjectNotes, fetchSearchHistory, fetchFirebaseSearchHistory, fetchGithubStarred } from '../services/apiService';
-import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2, Bell } from 'lucide-react';
+import { LayoutDashboard, Star, Code2, TrendingUp, Clock, Settings, Search, Sparkles, Heart, ExternalLink, LogOut, Github, History, Trash2, Bell, Plus, Share2, Check } from 'lucide-react';
 
 interface UserDashboardProps {
   user: User;
@@ -22,6 +22,17 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user, savedProject
   const [githubUpdates, setGithubUpdates] = React.useState<any[]>([]);
   const [researchSessions, setResearchSessions] = React.useState<any[]>([]);
   const [collections, setCollections] = React.useState<any[]>([]);
+  const [collectionCopiedId, setCollectionCopiedId] = React.useState<string | null>(null);
+
+  const shareCollection = (collection: any) => {
+    const projNames = (collection.projects || []).map((p: any) => typeof p === 'string' ? p : p.name).join(', ');
+    const text = `🌟 Curated Tech Stack Collection: "${collection.name}" on Project Finder!
+Projects: ${projNames || 'Curated developer repositories'}
+Explore on: https://chimataraghuram.github.io/PROJECT-FINDER/`;
+    navigator.clipboard.writeText(text);
+    setCollectionCopiedId(collection._id || collection.id);
+    setTimeout(() => setCollectionCopiedId(null), 2000);
+  };
   const [openCollection, setOpenCollection] = React.useState<any | null>(null);
   const [historyFilter, setHistoryFilter] = React.useState<'all' | 'searches' | 'research'>('all');
   const [notes, setNotes] = React.useState<any[]>([]);

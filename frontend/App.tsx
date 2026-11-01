@@ -195,6 +195,13 @@ const App: React.FC = () => {
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [restoredResearchSession, setRestoredResearchSession] = useState<any>(null);
   const [lastViewedProject, setLastViewedProject] = useState<Project | null>(null);
+  const [aiAssistantInitialPrompt, setAiAssistantInitialPrompt] = useState<string | null>(null);
+
+  const handleOpenAIAssistant = (project: Project, prompt?: string) => {
+    setLastViewedProject(project);
+    if (prompt) setAiAssistantInitialPrompt(prompt);
+    setIsAIAssistantOpen(true);
+  };
   const [showComingSoon, setShowComingSoon] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   
@@ -660,6 +667,8 @@ const App: React.FC = () => {
                               onToggleCompare={toggleComparison} 
                               isComparing={comparisonQueue.some(p => p.url === project.url)} 
                               index={idx}
+                              onView={setLastViewedProject}
+                              onAskAI={handleOpenAIAssistant}
                             />
                           );
                         }) : null}
@@ -984,6 +993,7 @@ const App: React.FC = () => {
                         onView={setLastViewedProject}
                         onToggleCompare={toggleComparison}
                         isComparing={comparisonQueue.some(p => p.id === project.id)}
+                        onAskAI={handleOpenAIAssistant}
                       />
                     ))}
                   </div>
@@ -1047,6 +1057,8 @@ const App: React.FC = () => {
               currentSearch={localStorage.getItem('last-search-query') || ""}
               lastProject={lastViewedProject}
               restoredSession={restoredResearchSession}
+              initialPrompt={aiAssistantInitialPrompt}
+              onClearInitialPrompt={() => setAiAssistantInitialPrompt(null)}
             />
 
             {/* --- MOBILE BOTTOM NAVIGATION --- */}

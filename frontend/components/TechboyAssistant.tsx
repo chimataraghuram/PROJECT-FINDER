@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw, Code2, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Trash2, Zap, Brain, Rocket, Copy, Check, RotateCcw, Code2, ThumbsUp, ThumbsDown, ShieldCheck, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Project } from '../types';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
@@ -21,6 +21,8 @@ interface TechboyAssistantProps {
     currentSearch?: string;
     lastProject?: Project | null;
     restoredSession?: { id?: string; _id?: string; messages?: Message[] } | null;
+    initialPrompt?: string | null;
+    onClearInitialPrompt?: () => void;
 }
 
 export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({ 
@@ -56,6 +58,13 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     const scrollRef = useRef<HTMLDivElement>(null);
     const abortRef = useRef<AbortController | null>(null);
     const stageTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        if (isOpen && initialPrompt) {
+            handleSend(initialPrompt, 'quick');
+            onClearInitialPrompt?.();
+        }
+    }, [isOpen, initialPrompt]);
 
     useEffect(() => {
         if (restoredSession?.messages?.length) {
@@ -192,6 +201,8 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
     };
 
     const QUICK_ACTIONS = [
+        { label: "Good First Issues", prompt: "Find good first issues, beginner starter tasks, and how to contribute to this repository.", icon: HelpCircle, mode: 'quick' as const },
+        { label: "Health Radar", prompt: "Evaluate repository maintenance health, activity level, and check if it is unmaintained or dead before investing time.", icon: ShieldCheck, mode: 'quick' as const },
         { label: "Explain Architecture", prompt: "Explain this repository's architecture and main data flow.", icon: Brain, mode: 'deep' as const },
         { label: "Analyze Tech Stack", prompt: "Analyze the technologies, frameworks, databases, and dependencies used in this repository.", icon: Zap, mode: 'deep' as const },
         { label: "How To Run", prompt: "How do I install and run this repository?", icon: Rocket, mode: 'quick' as const },
