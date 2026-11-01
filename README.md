@@ -193,6 +193,12 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 ## ✨ Features
 
 - 🤖 **TECHBOY AI + RAG**: Retrieval-Augmented Generation using repository ingestion, code/document chunk retrieval, grounded answers, source citations, Quick and Deep Research modes, streaming, formatting, copy, regenerate, feedback, and session restore.
+- 🎯 **Good First Issues Matcher**: Dedicated Techboy AI intelligence engine that scans repositories for starter bugs, documentation tasks, and beginner-friendly issues tailored to developer proficiency.
+- 🩺 **Health & Longevity Radar**: Techboy AI repository diagnostic tool analyzing maintenance cadence, commit velocity, open issue resolution rate, and unmaintained warnings before you invest time.
+- 📚 **Curated Stacks & 1-Click Sharing**: Group projects and repositories into reusable, shareable technology stacks directly from your dashboard with one-click exportable share links.
+- 🎴 **Modern Proportional Card Layout**: Clean, high-density rectangular card design with 3D glowing squircle tiles, balanced aspect ratios, and zero overflow.
+- 💊 **Unified Glassmorphic Action Capsule**: Compact, blur-backed action bar integrating one-click clipboard sharing, library saving, comparison toggling, and Techboy AI health audits.
+- 🏷️ **Context-Aware Platform Actions**: Dynamic, intelligent platform-native action triggers (VIEW REPO, VIEW MODEL, VIEW DATASET, VIEW POST) customized for GitHub, Hugging Face, Kaggle, and LinkedIn.
 - 👑 **Platform Profiles**: Professional platform-native cards with brand identity for GitHub, HF, Kaggle, and LinkedIn.
 - 📊 **Comparison Studio**: Side-by-side comparison of multiple repositories to evaluate complexity and tech stack.
 - 🌍 **Multi-Platform**: Discover projects, models, and datasets across GitHub, HF, Kaggle, and LinkedIn in one view.
