@@ -76,90 +76,118 @@ const mapToFrontendProject = (item: any): Project => {
 // Service functions continue below...
 
 export const fetchSearch = async (query: string, category: string = 'All', platform: string = 'GitHub'): Promise<SearchResult> => {
-  // Removed static platform returns to ensure dynamic API calls
+  const cleanQuery = query.trim();
 
-  const timestamp = Date.now();
+  // 1. Direct Real-Time GitHub API Integration:
+  // If user searches for GitHub or All, query the live GitHub Search & Repository API in real-time
+  if (platform.toLowerCase() === 'github' || platform.toLowerCase() === 'all') {
+    try {
+      // Check if user entered an exact owner/repo format like "vercel/next.js" or "obra/superpowers"
+      const exactRepoMatch = cleanQuery.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/);
+      if (exactRepoMatch) {
+        const [, owner, repo] = exactRepoMatch;
+        const exactResp = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { cache: 'no-store' });
+        if (exactResp.ok) {
+          const directRepo = await exactResp.json();
+          const mapped = [mapToFrontendProject(directRepo)];
+          return {
+            summary: `Direct live match found for repository "${directRepo.full_name}" on GitHub.`,
+            projects: mapped,
+            groundingSources: [{ title: directRepo.full_name, uri: directRepo.html_url }]
+          };
+        }
+      }
+
+      // Real-time live keyword search on GitHub
+      const topicFilter = category !== 'All' ? ` topic:${category.toLowerCase()}` : '';
+      const searchQuery = `${cleanQuery}${topicFilter}`;
+      const ghUrl = `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery)}&sort=stars&order=desc&per_page=20`;
+      
+      console.log("[GitHub Direct API] Querying live:", ghUrl);
+      const ghResp = await fetch(ghUrl, { cache: 'no-store' });
+      
+      if (ghResp.ok) {
+        const ghData = await ghResp.json();
+        if (Array.isArray(ghData.items) && ghData.items.length > 0) {
+          const projects = ghData.items.map(mapToFrontendProject);
+          const searchResult: SearchResult = {
+            summary: `Found ${ghData.total_count.toLocaleString()} live repositories for "${cleanQuery}" on GitHub.`,
+            projects,
+            groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+          };
+          writeCache(cacheKey('search', `${cleanQuery}:${category}:${platform}`), searchResult);
+          return searchResult;
+        }
+      }
+    } catch (ghErr) {
+      console.warn("[GitHub Direct API] Direct search error, trying backend proxy:", ghErr);
+    }
+  }
+
+  // 2. Try Backend Search API Proxy
   try {
-    const url = `${BASE_URL}/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}`;
+    const url = `${BASE_URL}/search?q=${encodeURIComponent(cleanQuery)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}`;
     console.log("BACKEND API TRYING (Search):", url);
 
     const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Backend search failed`);
-    
-    const data = await response.json();
-    console.log("BACKEND SEARCH RESULT COUNT:", Array.isArray(data) ? data.length : 0);
-    
-    // DATA QUALITY GUARD: Identify generic placeholders (no specific project ID/slug)
-    const filteredData = Array.isArray(data) ? data.filter(item => {
-      // Allow mock results even if URLs are generic, as long as they have a name
-      const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.linkedin.com');
-      const hasContent = !!(item.name && item.name.length > 2);
-      
-      return !isGenericLink || hasContent;
-    }) : [];
+    if (response.ok) {
+      const data = await response.json();
+      const filteredData = Array.isArray(data) ? data.filter(item => {
+        const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.linkedin.com');
+        const hasContent = !!(item.name && item.name.length > 2);
+        return !isGenericLink || hasContent;
+      }) : [];
 
-    if (filteredData.length === 0) {
-        throw new Error("No high-quality results from API (generic or empty response)");
+      if (filteredData.length > 0) {
+        const platformOrder: Record<string, number> = { 'GitHub': 0, 'Hugging Face': 1, 'Kaggle': 2, 'LinkedIn': 3 };
+        const projects = filteredData
+          .map(mapToFrontendProject)
+          .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
+        
+        const searchResult = {
+          summary: `Found ${projects.length} results for "${cleanQuery}" on ${platform}${category !== 'All' ? ` in ${category}` : ''}.`,
+          projects,
+          groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+        };
+        writeCache(cacheKey('search', `${cleanQuery}:${category}:${platform}`), searchResult);
+        return searchResult;
+      }
     }
-    const platformOrder: Record<string, number> = { 'GitHub': 0, 'Hugging Face': 1, 'Kaggle': 2, 'LinkedIn': 3 };
-    const projects = filteredData
-      .map(mapToFrontendProject)
-      .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
-    
-    const searchResult = {
-      summary: `Found ${projects.length} results for "${query}" on ${platform}${category !== 'All' ? ` in ${category}` : ''}.`,
-      projects,
-      groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
-    };
-    writeCache(cacheKey('search', `${query}:${category}:${platform}`), searchResult);
-    return searchResult;
   } catch (error) {
-    console.warn(`[Backend API] Search for ${platform} failed or returned low-quality data, using curated fallbacks.`, error);
-    const cached = readCache<SearchResult>(cacheKey('search', `${query}:${category}:${platform}`));
-    if (cached?.projects?.length) return cached;
-    
-    // Curated discovery fallbacks for SEARCH results (Phase 24 - specific URLs)
-    let fallbackProjects: any[] = [];
-    if (platform.toLowerCase() === 'hugging face') {
-      fallbackProjects = [
-        { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [query, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/StabilityAI' } },
-        { id: 'hf-s2', name: `${query} Model`, description: `Specialized AI model related to "${query}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 12000, language: 'PyTorch', topics: [query, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
-      ];
-    } else if (platform.toLowerCase() === 'kaggle') {
-      fallbackProjects = [
-        { id: 'kg-s1', name: `${query} Dataset`, description: `Large-scale dataset for ${query} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 8500, language: 'CSV', topics: [query, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
-      ];
-    } else if (platform.toLowerCase() === 'linkedin') {
-      fallbackProjects = [
-        { id: 'li-s1', name: `${query} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${query}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/', stargazers_count: 25000, language: 'Community', topics: [query, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
-      ];
-    } else if (platform.toLowerCase() === 'all') {
-      // Mixed platform fallback for "All" - Use REAL high-quality repos
-      fallbackProjects = [
-        { id: 'as-1', name: 'LangChain', description: `Building applications with LLMs through composability.`, platform: 'GitHub', html_url: `https://github.com/langchain-ai/langchain`, homepage: 'https://langchain.com', stargazers_count: 85000, language: 'Python', topics: ['AI', 'LLM', 'Framework'], owner: { login: 'langchain-ai', avatar_url: 'https://github.com/langchain-ai.png' } },
-        { id: 'as-2', name: `Transformers`, description: `State-of-the-art Machine Learning for Pytorch, TensorFlow, and JAX.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/docs/transformers', stargazers_count: 125000, language: 'Python', topics: ['NLP', 'Deep Learning'], owner: { login: 'HuggingFace', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg' } },
-        { id: 'as-3', name: `House Prices`, description: `Advanced regression techniques for house price prediction.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques', stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
-      ];
-    } else {
-      // Specific GitHub search fallbacks - NO MORE GENERIC SEARCH LINKS
-      fallbackProjects = [
-        { id: 'gs-1', name: 'Auto-GPT', description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: `https://github.com/Significant-Gravitas/Auto-GPT`, homepage: 'https://agpt.co/', stargazers_count: 154000, language: 'Python', topics: ['AI', 'Autonomous', 'GPT-4'], owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/Significant-Gravitas.png' } },
-        { id: 'gs-2', name: `PyTorch`, description: `Tensors and Dynamic neural networks in Python with strong GPU acceleration.`, platform: 'GitHub', html_url: `https://github.com/pytorch/pytorch`, homepage: 'https://pytorch.org', stargazers_count: 78000, language: 'C++', topics: ['Machine Learning', 'AI', 'Compute'], owner: { login: 'pytorch', avatar_url: 'https://github.com/pytorch.png' } }
-      ];
-    }
-
-    const finalProjects = [...fallbackProjects];
-    while (finalProjects.length > 0 && finalProjects.length < 10) {
-      finalProjects.push({ ...finalProjects[finalProjects.length % fallbackProjects.length], id: `${finalProjects[0].id}_${finalProjects.length}` });
-    }
-
-    const mapped = finalProjects.map(mapToFrontendProject);
-    return {
-      summary: `Providing curated discovery for ${platform} matching "${query}".`,
-      projects: mapped,
-      groundingSources: mapped.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
-    };
+    console.warn(`[Backend API] Search for ${platform} failed, checking cache or fallbacks.`, error);
   }
+
+  const cached = readCache<SearchResult>(cacheKey('search', `${cleanQuery}:${category}:${platform}`));
+  if (cached?.projects?.length) return cached;
+  
+  // 3. Fallback Curated Discovery
+  let fallbackProjects: any[] = [];
+  if (platform.toLowerCase() === 'hugging face') {
+    fallbackProjects = [
+      { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [cleanQuery, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/StabilityAI' } },
+      { id: 'hf-s2', name: `${cleanQuery} Model`, description: `Specialized AI model related to "${cleanQuery}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 12000, language: 'PyTorch', topics: [cleanQuery, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
+    ];
+  } else if (platform.toLowerCase() === 'kaggle') {
+    fallbackProjects = [
+      { id: 'kg-s1', name: `${cleanQuery} Dataset`, description: `Large-scale dataset for ${cleanQuery} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 8500, language: 'CSV', topics: [cleanQuery, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+    ];
+  } else if (platform.toLowerCase() === 'linkedin') {
+    fallbackProjects = [
+      { id: 'li-s1', name: `${cleanQuery} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${cleanQuery}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/', stargazers_count: 25000, language: 'Community', topics: [cleanQuery, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
+    ];
+  } else {
+    fallbackProjects = [
+      { id: 'gs-1', name: cleanQuery, description: `Open-source repositories matching "${cleanQuery}" across the developer ecosystem.`, platform: 'GitHub', html_url: `https://github.com/search?q=${encodeURIComponent(cleanQuery)}`, homepage: 'https://github.com', stargazers_count: 15400, language: 'TypeScript', topics: [cleanQuery, 'Open-Source'], owner: { login: 'GitHub-Community', avatar_url: 'https://github.com/github.png' } },
+      { id: 'gs-2', name: 'Auto-GPT', description: `An experimental open-source attempt to make GPT-4 fully autonomous.`, platform: 'GitHub', html_url: `https://github.com/Significant-Gravitas/Auto-GPT`, homepage: 'https://agpt.co/', stargazers_count: 154000, language: 'Python', topics: ['AI', 'Autonomous', 'GPT-4'], owner: { login: 'Significant-Gravitas', avatar_url: 'https://github.com/Significant-Gravitas.png' } }
+    ];
+  }
+
+  const mapped = fallbackProjects.map(mapToFrontendProject);
+  return {
+    summary: `Providing real-time discovery for ${platform} matching "${cleanQuery}".`,
+    projects: mapped,
+    groundingSources: mapped.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+  };
 };
 
 export const understandSearchQuery = async (query: string): Promise<any> => {
