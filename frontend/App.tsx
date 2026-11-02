@@ -377,7 +377,7 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2 py-1.5`}
+                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2.5 py-2`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <motion.div className="relative shrink-0"
@@ -385,7 +385,7 @@ const App: React.FC = () => {
                   transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
                 >
                   <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                  <img src={mascotLogo} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/20 shadow-2xl relative z-10 transition-all duration-300" alt="Mascot Logo" />
+                  <img src={mascotLogo} className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-orange-500/30 shadow-[0_0_25px_rgba(249,115,22,0.45)] relative z-10 transition-all duration-300 group-hover/logo:scale-105" alt="Mascot Logo" />
                 </motion.div>
 
                 <motion.div className="flex items-center gap-3 md:gap-4 origin-left">
@@ -510,7 +510,7 @@ const App: React.FC = () => {
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-14 h-14' : 'w-8 h-8'}`} alt="Logo" />
+                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-16 h-16' : 'w-12 h-12'}`} alt="Logo" />
                 </div>
                 <span className={`font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out whitespace-nowrap origin-left ${isCompact ? 'text-[9px] opacity-70' : 'text-xs opacity-100'}`}>Project Finder</span>
               </motion.div>
