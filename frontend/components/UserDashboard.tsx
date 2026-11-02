@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { openSafe } from '../src/utils/urlHelper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { linkWithPopup, getAdditionalUserInfo } from 'firebase/auth';
@@ -545,7 +546,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 {githubUpdates.map(project => (
                   <button 
                     key={project.url} 
-                    onClick={() => window.open(project.url, '_blank', 'noopener,noreferrer')} 
+                    onClick={() => openSafe(project.url)} 
                     className="w-full rounded-xl bg-black/20 px-3 py-2 text-left hover:bg-black/30 transition-all flex items-center justify-between"
                   >
                     <div>

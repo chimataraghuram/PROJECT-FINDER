@@ -1,4 +1,5 @@
 import { Project, SearchResult, GroundingSource } from "../types";
+import { normalizeUrl } from "../src/utils/urlHelper";
 import { db } from './firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -19,54 +20,72 @@ const githubApiError = (status: number) => status === 401
     ? new Error('GitHub API rate limit reached. Cached results will be used; please try again later.')
     : new Error(`GitHub API unavailable (${status}).`);
 
-// Mapping helper to ensure UI stability
+// Mapping helper to ensure UI stability and rock-solid repository URLs
 const mapToFrontendProject = (item: any): Project => {
-  // Defensive mapping to handle both backend and hardcoded fallback shapes
   const name = item.name || 'Unknown Project';
   const platform = item.platform || 'GitHub';
-  let repoUrl = item.html_url || item.url || '#';
-  
-  if (platform === 'GitHub') {
-    // Ensure GitHub links use html_url and are full paths
-    if (repoUrl !== '#' && !repoUrl.startsWith('http')) {
-      repoUrl = `https://github.com/${repoUrl}`;
+  const ownerLogin = item.owner?.login || (typeof item.owner === 'string' ? item.owner : '');
+
+  // 1. Resolve raw URL candidate from possible fields
+  let rawUrl = item.html_url || item.url || item.web_url || item.repoUrl || item.projectUrl || '';
+
+  // 2. Check if rawUrl is an internal GitHub API endpoint (e.g. https://api.github.com/repos/owner/name)
+  if (typeof rawUrl === 'string' && rawUrl.includes('api.github.com/repos/')) {
+    rawUrl = rawUrl.replace('https://api.github.com/repos/', 'https://github.com/').replace('http://api.github.com/repos/', 'https://github.com/');
+  }
+
+  // 3. Fallback to owner/repo or full_name if URL is missing or placeholder '#'
+  if (!rawUrl || rawUrl === '#' || rawUrl.trim() === '') {
+    if (item.full_name) {
+      rawUrl = platform === 'GitHub' ? `https://github.com/${item.full_name}` : `https://huggingface.co/${item.full_name}`;
+    } else if (ownerLogin && name && name !== 'Unknown Project') {
+      rawUrl = platform === 'GitHub' ? `https://github.com/${ownerLogin}/${name}` :
+               platform === 'Kaggle' ? `https://www.kaggle.com/${ownerLogin}/${name}` :
+               platform === 'Hugging Face' ? `https://huggingface.co/${ownerLogin}/${name}` : '';
     }
   }
 
-  // FINAL SAFETY: Hide buttons if URL is missing or invalid (no https://)
-  if (repoUrl !== '#' && !repoUrl.startsWith('https://')) {
-    repoUrl = '#';
+  // 4. Normalize URL safely
+  let repoUrl = normalizeUrl(rawUrl, platform);
+  if (repoUrl === '#' && platform === 'GitHub' && name && name !== 'Unknown Project') {
+    repoUrl = `https://github.com/search?q=${encodeURIComponent(name)}`;
   }
+
+  const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
+  const topics = item.topics || item.tags || [];
   
-    const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
-    const topics = item.topics || item.tags || [];
-    
-    // Improved Live URL extraction (prioritize official homepages)
-    const liveUrl = (item.homepage && item.homepage !== repoUrl && item.homepage !== '#') ? item.homepage : 
-                   (item.liveUrl && item.liveUrl !== repoUrl && item.liveUrl !== '#') ? item.liveUrl : 
-                   (item.demoUrl && item.demoUrl !== repoUrl && item.demoUrl !== '#') ? item.demoUrl : null;
-    
-    return {
-      id: item.id?.toString() || Math.random().toString(),
-      name,
-      description: item.description || '',
-      platform,
-      url: repoUrl,
-      liveUrl: liveUrl,
+  // 5. Improved Live URL extraction and normalization
+  let rawLive = (item.homepage && item.homepage !== repoUrl && item.homepage !== '#') ? item.homepage : 
+                (item.liveUrl && item.liveUrl !== repoUrl && item.liveUrl !== '#') ? item.liveUrl : 
+                (item.demoUrl && item.demoUrl !== repoUrl && item.demoUrl !== '#') ? item.demoUrl : null;
+  const liveUrl = rawLive ? (normalizeUrl(rawLive) !== '#' ? normalizeUrl(rawLive) : null) : null;
+
+  // 6. Safe Owner profile link
+  const rawOwnerUrl = item.owner?.html_url || item.owner?.url || '';
+  let ownerUrl = normalizeUrl(rawOwnerUrl, platform);
+  if (ownerUrl === '#' && ownerLogin) {
+    ownerUrl = platform === 'GitHub' ? `https://github.com/${ownerLogin}` :
+               platform === 'Kaggle' ? `https://www.kaggle.com/${ownerLogin}` :
+               platform === 'Hugging Face' ? `https://huggingface.co/${ownerLogin}` :
+               platform === 'LinkedIn' ? `https://www.linkedin.com/in/${ownerLogin}` : '#';
+  }
+
+  return {
+    id: item.id?.toString() || Math.random().toString(),
+    name,
+    description: item.description || '',
+    platform,
+    url: repoUrl,
+    liveUrl: liveUrl,
     stars: stars,
     language: item.language || 'Unknown',
     tags: topics,
     isPublisher: false,
-    owner: item.owner ? {
-      login: item.owner.login || 'Owner',
-      avatar_url: item.owner.avatar_url || '',
-      html_url: (item.owner.html_url && item.owner.html_url !== '#') ? item.owner.html_url : (
-        platform === 'GitHub' ? `https://github.com/${item.owner.login || 'Owner'}` :
-        platform === 'Kaggle' ? `https://www.kaggle.com/${item.owner.login || 'Owner'}` :
-        platform === 'Hugging Face' ? `https://huggingface.co/${item.owner.login || 'Owner'}` :
-        platform === 'LinkedIn' ? (item.owner.login ? `https://www.linkedin.com/in/${item.owner.login}` : 'https://www.linkedin.com') : '#'
-      )
-    } : { login: 'Community', avatar_url: '', html_url: '#' },
+    owner: {
+      login: ownerLogin || 'Community',
+      avatar_url: item.owner?.avatar_url || '',
+      html_url: ownerUrl
+    },
     slug: item.slug || null,
     image: item.owner?.avatar_url || null,
     readme: item.description || ''
@@ -165,15 +184,15 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
   if (platform.toLowerCase() === 'hugging face') {
     fallbackProjects = [
       { id: 'hf-s1', name: `Stable-Diffusion-WebUI`, description: `Browser interface based on Gradio library for Stable Diffusion.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/spaces/stabilityai/stable-diffusion', stargazers_count: 54000, language: 'Python', topics: [cleanQuery, 'AI'], owner: { login: 'StabilityAI', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co/StabilityAI' } },
-      { id: 'hf-s2', name: `${cleanQuery} Model`, description: `Specialized AI model related to "${cleanQuery}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/models', stargazers_count: 12000, language: 'PyTorch', topics: [cleanQuery, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
+      { id: 'hf-s2', name: `${cleanQuery} Model`, description: `Specialized AI model related to "${cleanQuery}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [cleanQuery, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
     ];
   } else if (platform.toLowerCase() === 'kaggle') {
     fallbackProjects = [
-      { id: 'kg-s1', name: `${cleanQuery} Dataset`, description: `Large-scale dataset for ${cleanQuery} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets', stargazers_count: 8500, language: 'CSV', topics: [cleanQuery, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+      { id: 'kg-s1', name: `${cleanQuery} Dataset`, description: `Large-scale dataset for ${cleanQuery} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets/shivamb/netflix-shows', stargazers_count: 8500, language: 'CSV', topics: [cleanQuery, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
     ];
   } else if (platform.toLowerCase() === 'linkedin') {
     fallbackProjects = [
-      { id: 'li-s1', name: `${cleanQuery} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${cleanQuery}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/', stargazers_count: 25000, language: 'Community', topics: [cleanQuery, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
+      { id: 'li-s1', name: `${cleanQuery} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${cleanQuery}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/37787/', stargazers_count: 25000, language: 'Community', topics: [cleanQuery, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
     ];
   } else {
     fallbackProjects = [
@@ -483,10 +502,28 @@ export const fetchProjectReadme = async (url: string): Promise<string> => {
   try {
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     if (!match) return '';
-    const [_, owner, repo] = match;
-    const response = await fetch(`${BASE_URL}/readme/${owner}/${repo}`);
-    if (!response.ok) return '';
-    return await response.text();
+    const [_, owner, repoRaw] = match;
+    const repo = repoRaw.replace(/\.git$/, '');
+
+    // Try backend proxy first
+    try {
+      const response = await fetch(`${BASE_URL}/readme/${owner}/${repo}`);
+      if (response.ok) {
+        const text = await response.text();
+        if (text && text.trim().length > 0) return text;
+      }
+    } catch {
+      // proxy failed, try direct github api
+    }
+
+    // Direct GitHub public API fallback
+    const directResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+      headers: { 'Accept': 'application/vnd.github.v3.raw' }
+    });
+    if (directResp.ok) {
+      return await directResp.text();
+    }
+    return '';
   } catch (error) {
     console.error('Fetch README error:', error);
     return '';
