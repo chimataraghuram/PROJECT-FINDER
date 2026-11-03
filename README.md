@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="./frontend/src/assets/logos/logo_final_v6.png" width="130"
+<img src="./frontend/src/assets/logos/logo_final_v6.png" width="145"
 style="border-radius: 50%; 
-box-shadow: 0 0 50px rgba(249,115,22,0.4); 
+box-shadow: 0 0 50px rgba(249,115,22,0.45); 
 margin-bottom: 25px;
-border: 1px solid rgba(255,255,255,0.1);" />
+border: 2px solid rgba(249,115,22,0.3);" />
 
 <h1 style="color: #ffffff; font-weight: 900; letter-spacing: -2px; margin-bottom: 5px; font-size: 3rem;">
 PROJECT FINDER
@@ -128,7 +128,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://cdn.simpleicons.org/github/white" width="20"/> GitHub (Integrated GitHub API)
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Integrated GitHub API-powered real-time trending, searchable, filterable repository discovery with GitHub results prioritized first.
+          Direct real-time GitHub Search API integration supporting keyword discovery and direct repository resolution (`owner/repo`) with zero proxy delays.
         </p>
       </div>
     </td>
@@ -138,7 +138,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://cdn.simpleicons.org/huggingface/FFD21E" width="20"/> Hugging Face
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          AI model discovery with direct model links and platform-aware project cards.
+          AI model discovery with direct model links, verified active author profiles, and platform-aware model cards.
         </p>
       </div>
     </td>
@@ -150,7 +150,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://cdn.simpleicons.org/kaggle/20BEFF" width="20"/> Kaggle
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Dataset discovery with direct dataset links and unified cross-platform results.
+          Dataset discovery with direct competition/dataset links and unified cross-platform results.
         </p>
       </div>
     </td>
@@ -160,7 +160,7 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
           <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" width="20"/> LinkedIn
         </h3>
         <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
-          Professional discovery links presented alongside technical project resources.
+          Professional developer communities and technical networking groups presented alongside code repositories.
         </p>
       </div>
     </td>
@@ -169,21 +169,28 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 
 <br/>
 
-## 🧠 Intelligent Search Experience
+## 🧠 Intelligent Search & Discovery Experience
 
 <div style="background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid #f97316; padding: 30px; border-radius: 0 20px 20px 0; margin-bottom: 40px;">
   <div style="margin-bottom: 25px;">
     <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 01</h4>
-    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Explicit Intent Triggering</h3>
+    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Direct Real-Time GitHub Discovery</h3>
     <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin: 0;">
-      Search logic is optimized for <strong>user intent</strong>—preventing automatic triggering while typing and allowing for precise controls via "Enter", the "Explore" button, or platform/category filters.
+      Instant real-time connection to the GitHub Search API and exact repository lookup (`owner/repo`), bringing live star counts, descriptions, topics, and authors directly into the interface without waiting for proxy indexing.
+    </p>
+  </div>
+  <div style="margin-bottom: 25px;">
+    <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 02</h4>
+    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Voice & Surprise Search Intelligence</h3>
+    <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin: 0;">
+      Equipped with browser speech recognition voice search (Mic) and animated "Surprise Me" cycler that picks top trending topics, combined into a clean and decluttered pill search bar.
     </p>
   </div>
   <div>
-    <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 02</h4>
-    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Contextual Discovery</h3>
+    <h4 style="color: #f97316; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; margin-bottom: 8px;">Protocol 03</h4>
+    <h3 style="color: #ffffff; margin: 0 0 12px 0; font-size: 1.4rem;">Intelligent Link Auto-Repair & Safe Navigation</h3>
     <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin: 0;">
-      The search engine correctly handles category transitions, ensuring that filters like <strong>AI/ML</strong> or <strong>Web Dev</strong> update existing search results instantly with zero latency.
+      Built-in URL normalizer and safe link resolver that intercept internal API endpoints, repair missing schemes, and prevent 404 or broken repository/demo links across all platforms.
     </p>
   </div>
 </div>
@@ -193,6 +200,12 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 ## ✨ Features
 
 - 🤖 **TECHBOY AI + RAG**: Retrieval-Augmented Generation using repository ingestion, code/document chunk retrieval, grounded answers, source citations, Quick and Deep Research modes, streaming, formatting, copy, regenerate, feedback, and session restore.
+- ⚡ **Direct Real-Time GitHub Search**: Instant search against GitHub's live database with direct `owner/repo` lookup and real-time star and topic tracking.
+- 🎙️ **Voice Search & Surprise Explorer**: Integrated Web Speech Recognition for hands-free voice discovery alongside an animated "Surprise Me" query generator.
+- 🔗 **Intelligent Link Auto-Repair**: Robust `normalizeUrl` and `openSafe` routing that fixes missing schemes, protocol-relative paths, and prevents broken or 404 repository/demo links.
+- 🛡️ **Developer Milestones & Badges**: Authentic GitHub-inspired achievement medallions including **Pull Shark**, **Starstruck**, **Galaxy Brain**, and **Arctic Vault** that level up with your contributions.
+- 🏅 **Live Profile Badges & Stats**: User profile cards featuring **Member Since** account dates, **Powered by Firebase Google** trust pill, and real-time synchronized GitHub repositories and star counters.
+- 🎨 **Enlarged Techboy Mascot Branding**: Prominent high-visibility mascot logo in desktop and mobile navigation with an ambient orange neon halo glow.
 - 🎯 **Good First Issues Matcher**: Dedicated Techboy AI intelligence engine that scans repositories for starter bugs, documentation tasks, and beginner-friendly issues tailored to developer proficiency.
 - 🩺 **Health & Longevity Radar**: Techboy AI repository diagnostic tool analyzing maintenance cadence, commit velocity, open issue resolution rate, and unmaintained warnings before you invest time.
 - 📚 **Curated Stacks & 1-Click Sharing**: Group projects and repositories into reusable, shareable technology stacks directly from your dashboard with one-click exportable share links.
@@ -205,9 +218,8 @@ Project Finder features a <strong>platform-aware Discovery Engine</strong> with 
 - ☁️ **Google Authentication**: Firebase Google Sign-In with persistent sessions and UID-based user data.
 - 🗂️ **Saved Collections**: Create named square collections, assign starred projects, open collections, rename, delete, and remove projects.
 - 🕘 **Research History**: Combined searchable history with internal scrolling and saved research conversations.
-- 🔎 **Search Filters & Integrated GitHub API**: Real-time GitHub-first results, live query parsing, repository inspection, platform, language, minimum stars, date, and sort filters via the integrated GitHub API.
 - 🔔 **GitHub Updates**: Detects changed stars and repository activity for saved GitHub projects via direct GitHub API synchronization.
-- 📴 **Resilient Discovery**: Local caching and GitHub fallback behavior when Render or public APIs are unavailable.
+- 📴 **Resilient Discovery**: Local caching and direct GitHub API fallback behavior when Render proxy is cold or unavailable.
 - 📱 **High-Density UI**: Premium glassmorphic interface with mobile-first optimizations for desktop-class research.
 - 🚀 **Live API Proxy**: Proxied requests for high-frequency, authentic discovery with zero-loop reliability.
 - 🎥 **Intro Experience**: Premium video onboarding and smooth Framer Motion transitions.
