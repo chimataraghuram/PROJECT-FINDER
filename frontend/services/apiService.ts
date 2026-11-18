@@ -40,7 +40,7 @@ const mapToFrontendProject = (item: any): Project => {
       rawUrl = platform === 'GitHub' ? `https://github.com/${item.full_name}` : `https://huggingface.co/${item.full_name}`;
     } else if (ownerLogin && name && name !== 'Unknown Project') {
       rawUrl = platform === 'GitHub' ? `https://github.com/${ownerLogin}/${name}` :
-               platform === 'Kaggle' ? `https://www.kaggle.com/${ownerLogin}/${name}` :
+               platform === 'Kaggle' ? `https://www.kaggle.com/datasets/${ownerLogin}/${name}` :
                platform === 'Hugging Face' ? `https://huggingface.co/${ownerLogin}/${name}` : '';
     }
   }
@@ -49,6 +49,8 @@ const mapToFrontendProject = (item: any): Project => {
   let repoUrl = normalizeUrl(rawUrl, platform);
   if (repoUrl === '#' && platform === 'GitHub' && name && name !== 'Unknown Project') {
     repoUrl = `https://github.com/search?q=${encodeURIComponent(name)}`;
+  } else if ((repoUrl === '#' || repoUrl === 'https://www.kaggle.com/datasets' || repoUrl === 'https://www.kaggle.com') && platform === 'Kaggle' && name && name !== 'Unknown Project') {
+    repoUrl = `https://www.kaggle.com/datasets?search=${encodeURIComponent(name)}`;
   }
 
   const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
@@ -190,6 +192,46 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     }
   }
 
+  // 1b. Direct Kaggle API Search (CORS-enabled public endpoint for verified live datasets)
+  if (platform.toLowerCase() === 'kaggle') {
+    try {
+      const kaggleUrl = `https://www.kaggle.com/api/v1/datasets/list?search=${encodeURIComponent(cleanQuery)}&sortBy=votes&pageSize=20`;
+      const response = await fetch(kaggleUrl, {
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const projects = data.map((d: any) => ({
+            id: `kaggle-${d.id || d.ref}`,
+            name: d.title || (d.ref ? d.ref.split('/')[1] : `${cleanQuery} Dataset`),
+            description: d.subtitle || d.description || `Real-world Kaggle dataset for "${cleanQuery}" with ${(d.voteCount || 0).toLocaleString()} upvotes and ${(d.downloadCount || 0).toLocaleString()} downloads.`,
+            html_url: d.url || (d.ref ? `https://www.kaggle.com/datasets/${d.ref}` : `https://www.kaggle.com/datasets?search=${encodeURIComponent(cleanQuery)}`),
+            stargazers_count: d.voteCount || 0,
+            language: 'Dataset',
+            topics: [cleanQuery, 'Dataset', 'Kaggle', ...(Array.isArray(d.tags) ? d.tags.map((t: any) => t.name) : [])].filter(Boolean).slice(0, 5),
+            owner: {
+              login: d.ownerRef || d.creatorUrl || d.ownerName || 'kaggle',
+              avatar_url: d.thumbnailImageUrl || 'https://www.kaggle.com/static/images/site-logo.svg',
+              html_url: (d.ownerRef || d.creatorUrl) ? `https://www.kaggle.com/${d.ownerRef || d.creatorUrl}` : 'https://www.kaggle.com'
+            },
+            platform: 'Kaggle'
+          })).map(mapToFrontendProject);
+
+          const searchResult: SearchResult = {
+            summary: `Found ${projects.length} verified live datasets for "${cleanQuery}" on Kaggle.`,
+            projects,
+            groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+          };
+          writeCache(cacheKey('search', `${cleanQuery}:${category}:${platform}`), searchResult);
+          return searchResult;
+        }
+      }
+    } catch (kaggleErr) {
+      console.warn('[Kaggle Direct API] Search error, falling back to backend:', kaggleErr);
+    }
+  }
+
   // 2. Try Backend Search API Proxy
   try {
     const url = `${BASE_URL}/search?q=${encodeURIComponent(cleanQuery)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}`;
@@ -199,9 +241,9 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     if (response.ok) {
       const data = await response.json();
       const filteredData = Array.isArray(data) ? data.filter(item => {
-        const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.linkedin.com');
-        const hasContent = !!(item.name && item.name.length > 2);
-        return !isGenericLink || hasContent;
+        const isGenericLink = (item.html_url === 'https://www.kaggle.com/datasets' || item.html_url === 'https://www.kaggle.com' || item.html_url === 'https://www.linkedin.com');
+        const hasDeepLink = !!(item.html_url && item.html_url.length > 30 && !item.html_url.endsWith('/datasets'));
+        return !isGenericLink || hasDeepLink;
       }) : [];
 
       if (filteredData.length > 0) {
@@ -234,8 +276,9 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
       { id: 'hf-s2', name: `${cleanQuery} Model`, description: `Specialized AI model related to "${cleanQuery}" found on Hugging Face.`, platform: 'Hugging Face', html_url: 'https://huggingface.co/meta-llama/Meta-Llama-3-8B', stargazers_count: 12000, language: 'PyTorch', topics: [cleanQuery, 'LLM'], owner: { login: 'HF-Community', avatar_url: 'https://huggingface.co/front/assets/huggingface_logo.svg', html_url: 'https://huggingface.co' } }
     ];
   } else if (platform.toLowerCase() === 'kaggle') {
+    const deepSearch = `https://www.kaggle.com/datasets?search=${encodeURIComponent(cleanQuery)}`;
     fallbackProjects = [
-      { id: 'kg-s1', name: `${cleanQuery} Dataset`, description: `Large-scale dataset for ${cleanQuery} research and analysis.`, platform: 'Kaggle', html_url: 'https://www.kaggle.com/datasets/shivamb/netflix-shows', stargazers_count: 8500, language: 'CSV', topics: [cleanQuery, 'Data'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
+      { id: 'kg-s1', name: `${cleanQuery} Datasets & Notebooks`, description: `Curated real-world datasets and analytical notebooks for "${cleanQuery}" on Kaggle.`, platform: 'Kaggle', html_url: deepSearch, stargazers_count: 8500, language: 'Dataset', topics: [cleanQuery, 'Data Science', 'Kaggle'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
     ];
   } else if (platform.toLowerCase() === 'linkedin') {
     fallbackProjects = [
@@ -510,6 +553,37 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       }
     }
 
+    // Direct Real-Time Kaggle Trending fallback
+    if (platform.toLowerCase() === 'kaggle') {
+      try {
+        const directResp = await fetch(`https://www.kaggle.com/api/v1/datasets/list?sortBy=votes&pageSize=20`, { cache: 'no-store' });
+        if (directResp.ok) {
+          const directData = await directResp.json();
+          if (Array.isArray(directData) && directData.length > 0) {
+            const projects = directData.map((d: any) => mapToFrontendProject({
+              id: `kaggle-${d.id || d.ref}`,
+              name: d.title || (d.ref ? d.ref.split('/')[1] : 'Kaggle Dataset'),
+              description: d.subtitle || d.description || `Trending Kaggle dataset with ${(d.voteCount || 0).toLocaleString()} upvotes and ${(d.downloadCount || 0).toLocaleString()} downloads.`,
+              html_url: d.url || (d.ref ? `https://www.kaggle.com/datasets/${d.ref}` : `https://www.kaggle.com/datasets`),
+              stargazers_count: d.voteCount || 0,
+              language: 'Dataset',
+              topics: ['Data Science', 'Machine Learning', ...(Array.isArray(d.tags) ? d.tags.map((t: any) => t.name) : [])].filter(Boolean).slice(0, 5),
+              owner: {
+                login: d.ownerRef || d.creatorUrl || d.ownerName || 'Kaggle',
+                avatar_url: d.thumbnailImageUrl || 'https://www.kaggle.com/static/images/site-logo.svg',
+                html_url: (d.ownerRef || d.creatorUrl) ? `https://www.kaggle.com/${d.ownerRef || d.creatorUrl}` : 'https://www.kaggle.com'
+              },
+              platform: 'Kaggle'
+            }));
+            writeCache(cacheKey('trending', `${platform}:${category}`), projects);
+            return projects;
+          }
+        }
+      } catch (err) {
+        console.warn('[Direct Kaggle Trending] Failed:', err);
+      }
+    }
+
     // Curated discovery fallbacks (No direct API calls)
     if (platform.toLowerCase() === 'hugging face') {
       return [
@@ -526,11 +600,16 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       ].map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'kaggle') {
       return [
-        { id: 'k1', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The classic ML competition to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['ML', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k2', name: "House Prices - Advanced Regression", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques", description: "Predict sales prices and practice feature engineering.", stargazers_count: 15000, language: 'Python', topics: ['Regression', 'ML'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k3', name: "MNIST Handwritten Digits Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/hojjatk/mnist-dataset", description: "The legendary computer vision dataset of handwritten digits.", stargazers_count: 12000, language: 'Images', topics: ['Computer Vision', 'Deep Learning'], owner: { login: 'HojjatK', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k4', name: "Netflix Movies and TV Shows Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "List of movies and TV shows on Netflix as of 2021.", stargazers_count: 9800, language: 'JSON', topics: ['Entertainment', 'NLP'], owner: { login: 'ShivamB', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } },
-        { id: 'k5', name: "COVID-19 Global Dataset", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/imdevskp/corona-virus-report", description: "Daily reports on global COVID-19 cases and trends.", stargazers_count: 5400, language: 'CSV', topics: ['Health', 'Data Viz'], owner: { login: 'ImDevSKP', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg' } }
+        { id: 'k1', name: "Credit Card Fraud Detection", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud", description: "Anonymized credit card transactions labeled as fraudulent or genuine.", stargazers_count: 13620, language: 'CSV / Data', topics: ['Finance', 'Fraud Detection', 'Classification'], owner: { login: 'mlg-ulb', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/mlg-ulb' } },
+        { id: 'k2', name: "Netflix Movies and TV Shows", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/shivamb/netflix-shows", description: "Comprehensive listing of movies and TV shows available on Netflix with cast and ratings.", stargazers_count: 10240, language: 'CSV', topics: ['Entertainment', 'NLP', 'Data Analysis'], owner: { login: 'shivamb', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/shivamb' } },
+        { id: 'k3', name: "Chest X-Ray Images (Pneumonia)", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia", description: "5,863 validated X-Ray images across 2 categories (Pneumonia/Normal).", stargazers_count: 7780, language: 'Images', topics: ['Healthcare', 'Deep Learning', 'Computer Vision'], owner: { login: 'paultimothymooney', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/paultimothymooney' } },
+        { id: 'k4', name: "Video Game Sales", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/gregorut/videogamesales", description: "Analyze sales data from more than 16,500 video games across global regions.", stargazers_count: 6890, language: 'CSV', topics: ['Gaming', 'Analytics', 'Visualization'], owner: { login: 'gregorut', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/gregorut' } },
+        { id: 'k5', name: "Trending YouTube Video Statistics", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/datasnaek/youtube-new", description: "Daily popular YouTube videos across multiple countries with views and likes.", stargazers_count: 6050, language: 'CSV / JSON', topics: ['Media', 'Trends', 'Social'], owner: { login: 'datasnaek', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/datasnaek' } },
+        { id: 'k6', name: "Students Performance in Exams", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/spscientist/students-performance-in-exams", description: "Marks secured by high school students in math, reading, and writing exams.", stargazers_count: 5350, language: 'CSV', topics: ['Education', 'Analysis'], owner: { login: 'spscientist', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/spscientist' } },
+        { id: 'k7', name: "Google Play Store Apps", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/lava18/google-play-store-apps", description: "Web scraped data of 10,000 Play Store apps for analyzing Android app market.", stargazers_count: 5160, language: 'CSV', topics: ['Mobile', 'Analytics'], owner: { login: 'lava18', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/lava18' } },
+        { id: 'k8', name: "Iris Species", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/uciml/iris", description: "The famous botanical benchmark dataset containing 3 species of 50 instances each.", stargazers_count: 5010, language: 'CSV', topics: ['Beginner', 'Classification'], owner: { login: 'uciml', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/uciml' } },
+        { id: 'k9', name: "Brazilian E-Commerce Public Dataset by Olist", platform: 'Kaggle', html_url: "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce", description: "100,000 anonymized real commercial orders made at Olist Store between 2016 and 2018.", stargazers_count: 4780, language: 'CSV', topics: ['E-Commerce', 'Logistics'], owner: { login: 'olistbr', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com/olistbr' } },
+        { id: 'k10', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The legendary competition dataset to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['Beginner', 'Classification', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
       ].map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'linkedin') {
       return [
