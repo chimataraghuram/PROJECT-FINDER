@@ -51,6 +51,8 @@ const mapToFrontendProject = (item: any): Project => {
     repoUrl = `https://github.com/search?q=${encodeURIComponent(name)}`;
   } else if ((repoUrl === '#' || repoUrl === 'https://www.kaggle.com/datasets' || repoUrl === 'https://www.kaggle.com') && platform === 'Kaggle' && name && name !== 'Unknown Project') {
     repoUrl = `https://www.kaggle.com/datasets?search=${encodeURIComponent(name)}`;
+  } else if ((repoUrl === '#' || repoUrl === 'https://www.linkedin.com' || repoUrl === 'https://www.linkedin.com/') && platform === 'LinkedIn' && name && name !== 'Unknown Project') {
+    repoUrl = `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(name)}`;
   }
 
   const stars = item.stargazers_count !== undefined ? item.stargazers_count : (item.stars || 0);
@@ -281,8 +283,10 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
       { id: 'kg-s1', name: `${cleanQuery} Datasets & Notebooks`, description: `Curated real-world datasets and analytical notebooks for "${cleanQuery}" on Kaggle.`, platform: 'Kaggle', html_url: deepSearch, stargazers_count: 8500, language: 'Dataset', topics: [cleanQuery, 'Data Science', 'Kaggle'], owner: { login: 'KaggleData', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
     ];
   } else if (platform.toLowerCase() === 'linkedin') {
+    const deepSearch = `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(cleanQuery)}`;
     fallbackProjects = [
-      { id: 'li-s1', name: `${cleanQuery} Professional Groups`, description: `Connect with specialized LinkedIn groups focusing on ${cleanQuery}.`, platform: 'LinkedIn', html_url: 'https://www.linkedin.com/groups/37787/', stargazers_count: 25000, language: 'Community', topics: [cleanQuery, 'Networking'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: 'https://www.linkedin.com' } }
+      { id: 'li-s1', name: `Engineering Insights: ${cleanQuery}`, description: `Trending technical discussions, architecture analyses, and engineering case studies regarding ${cleanQuery} on LinkedIn.`, platform: 'LinkedIn', html_url: deepSearch, stargazers_count: 14500, language: 'Technical Article', topics: [cleanQuery, 'Engineering', 'Tech Trends'], owner: { login: 'LinkedInTech', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: deepSearch } },
+      { id: 'li-s2', name: `Production Best Practices: ${cleanQuery}`, description: `Real-world operational patterns, system reliability, and enterprise implementation guides for ${cleanQuery}.`, platform: 'LinkedIn', html_url: deepSearch, stargazers_count: 9800, language: 'Case Study', topics: [cleanQuery, 'Production', 'Architecture'], owner: { login: 'CloudArchitects', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca', html_url: deepSearch } }
     ];
   } else {
     fallbackProjects = [
@@ -616,13 +620,162 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
         { id: 'k10', name: "Titanic - Machine Learning from Disaster", platform: 'Kaggle', html_url: "https://www.kaggle.com/competitions/titanic", description: "The legendary competition dataset to predict survival on the Titanic.", stargazers_count: 25000, language: 'CSV', topics: ['Beginner', 'Classification', 'Competition'], owner: { login: 'Kaggle', avatar_url: 'https://www.kaggle.com/static/images/site-logo.svg', html_url: 'https://www.kaggle.com' } }
       ].map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'linkedin') {
-      return [
-        { id: 'l1', name: "Explore Developer Community on LinkedIn", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/", description: "Connect with professional developer groups worldwide.", stargazers_count: 12000, language: 'Community', topics: ['Networking', 'Career'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l2', name: "Latest Tech Posts Feed", platform: 'LinkedIn', html_url: "https://www.linkedin.com/feed/", description: "Stay updated with the latest trends in the tech industry.", stargazers_count: 8500, language: 'Feed', topics: ['Tech', 'News'], owner: { login: 'LinkedIn', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
-        { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
-      ].map(mapToFrontendProject);
+      const allLinkedIn = [
+        {
+          id: 'l1',
+          name: 'The Future of AI Agents in Production',
+          description: 'Deep-dive analysis on the architectural shift from single LLM prompts to multi-agent autonomous frameworks in enterprise software.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=ai+agents+production',
+          stargazers_count: 8500,
+          language: 'Engineering Article',
+          topics: ['AI', 'AI Agents', 'LLM', 'Python', 'Architecture'],
+          owner: {
+            login: 'openai',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/openai'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l2',
+          name: 'Modern Full-Stack Engineering Roadmap (2025)',
+          description: 'Comprehensive guide covering React 19, Next.js Server Components, Rust tooling, and cloud-native backend patterns.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=full+stack+developer+roadmap+2025',
+          stargazers_count: 14200,
+          language: 'Technical Guide',
+          topics: ['Web', 'Full Stack', 'React', 'TypeScript', 'Career'],
+          owner: {
+            login: 'github',
+            avatar_url: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+            html_url: 'https://www.linkedin.com/company/github'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l3',
+          name: 'Scaling Distributed Systems to 10M Concurrent Users',
+          description: 'Architectural lessons on database sharding, Redis caching strategies, connection pooling, and message broker bottlenecks.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=system+design+scaling+10+million+users',
+          stargazers_count: 11800,
+          language: 'System Architecture',
+          topics: ['Architecture', 'System Design', 'Backend', 'Database'],
+          owner: {
+            login: 'netflix',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/netflix'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l4',
+          name: 'Container Orchestration: Kubernetes vs Docker Swarm in 2025',
+          description: 'Practical comparison of Kubernetes operators, service meshes, resource overhead, and developer velocity for mid-sized teams.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=kubernetes+docker+production+devops',
+          stargazers_count: 6700,
+          language: 'DevOps Deep Dive',
+          topics: ['DevOps', 'Docker', 'Kubernetes', 'Cloud'],
+          owner: {
+            login: 'docker',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/docker'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l5',
+          name: 'Building Production-Ready MLOps Pipelines',
+          description: 'Automating model retraining, drift detection, feature stores, and automated rollback workflows for LLMs in production.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=mlops+pipeline+machine+learning+production',
+          stargazers_count: 5300,
+          language: 'MLOps Guide',
+          topics: ['AI', 'Machine Learning', 'MLOps', 'Data Science'],
+          owner: {
+            login: 'google',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/google'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l6',
+          name: 'Python 3.13 Free-Threaded Mode & JIT Deep Dive',
+          description: 'Benchmark analysis of removing the Global Interpreter Lock (GIL) and testing real CPU concurrency in data processing.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=python+3.13+nogil+jit+compiler',
+          stargazers_count: 9100,
+          language: 'Performance Analysis',
+          topics: ['Python', 'Performance', 'Backend', 'Tools'],
+          owner: {
+            login: 'python-software-foundation',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/python-software-foundation'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l7',
+          name: 'High-Performance APIs with Go and gRPC',
+          description: 'Protocol Buffers serialization, multiplexed HTTP/2 streaming, and achieving sub-millisecond latencies under high throughput.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=golang+grpc+high+performance+microservices',
+          stargazers_count: 7300,
+          language: 'Backend Engineering',
+          topics: ['Go', 'gRPC', 'Backend', 'API'],
+          owner: {
+            login: 'uber',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/uber-com'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l8',
+          name: 'Microservices Anti-Patterns: When to Stay with a Modular Monolith',
+          description: 'Case studies analyzing distributed transaction complexity, network overhead, and when splitting services hurts development velocity.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=microservices+antipatterns+modular+monolith',
+          stargazers_count: 8900,
+          language: 'Architecture Review',
+          topics: ['Architecture', 'Web', 'Microservices'],
+          owner: {
+            login: 'aws',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/amazon-web-services'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l9',
+          name: 'Why Leading Tech Companies Are Adopting Rust',
+          description: 'Memory safety guarantees, zero-cost abstractions, and reduced cloud infrastructure spending with Rust in production.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=rust+programming+big+tech',
+          stargazers_count: 9400,
+          language: 'Analysis',
+          topics: ['Rust', 'Tools', 'Systems'],
+          owner: {
+            login: 'microsoft',
+            avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca',
+            html_url: 'https://www.linkedin.com/company/microsoft'
+          },
+          platform: 'LinkedIn'
+        },
+        {
+          id: 'l10',
+          name: 'Open Source Contribution Guide for Engineers',
+          description: 'How to make your first meaningful pull request to major open source projects and stand out in tech recruitment.',
+          html_url: 'https://www.linkedin.com/search/results/content/?keywords=open+source+contribution+developers',
+          stargazers_count: 12500,
+          language: 'Career Guide',
+          topics: ['Open Source', 'Community', 'Career'],
+          owner: {
+            login: 'github',
+            avatar_url: 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+            html_url: 'https://www.linkedin.com/company/github'
+          },
+          platform: 'LinkedIn'
+        }
+      ];
+      const filtered = category !== 'All'
+        ? allLinkedIn.filter(item => item.topics.some(t => t.toLowerCase() === category.toLowerCase()))
+        : allLinkedIn;
+      return (filtered.length > 0 ? filtered : allLinkedIn).map(mapToFrontendProject);
     } else if (platform.toLowerCase() === 'npm') {
       return [
         { id: 'npm-1', name: "react", platform: 'npm', html_url: "https://www.npmjs.com/package/react", description: "The library for web and native user interfaces.", stargazers_count: 24000000, language: 'JavaScript', topics: ['react', 'ui', 'frontend'], owner: { login: 'facebook', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/react' } },
