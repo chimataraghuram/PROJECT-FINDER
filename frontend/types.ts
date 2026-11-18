@@ -8,7 +8,7 @@ export interface Project {
   id?: string;
   name: string;
   description: string;
-  platform: 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn' | 'Other';
+  platform: 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn' | 'npm' | 'Other';
   url: string;
   tags: string[];
   stars?: string | number;

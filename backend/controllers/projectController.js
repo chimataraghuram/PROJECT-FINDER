@@ -77,6 +77,46 @@ export const getTrendingProjects = async (req, res) => {
       return res.json(items);
     }
 
+
+    if (activePlatform === 'npm' || activePlatform === 'all') {
+      try {
+        const npmSearchText = category !== 'All' ? `${category} popularity:total` : 'boost-exact:true popularity:1.0';
+        const npmUrl = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(npmSearchText)}&size=30`;
+        const response = await axios.get(npmUrl, { 
+          headers: { 'User-Agent': 'Project-Finder/1.0' },
+          timeout: 4000 
+        });
+        const objects = response.data?.objects || [];
+        const npmItems = objects.map(item => {
+          const pkg = item.package || {};
+          const downloads = item.downloads?.weekly || (item.score?.detail?.popularity ? Math.round(item.score.detail.popularity * 1000000) : 0);
+          return {
+            id: `npm-${pkg.name}`,
+            name: pkg.name,
+            description: pkg.description || `Official ${pkg.name} package on npm with ${downloads.toLocaleString()} weekly downloads.`,
+            html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
+            homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
+            stargazers_count: downloads,
+            language: 'TypeScript/JavaScript',
+            topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : ['npm', 'package'],
+            owner: {
+              login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
+              avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
+              html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
+            },
+            platform: 'npm',
+            version: pkg.version
+          };
+        });
+        if (activePlatform === 'npm') {
+          return res.json(npmItems);
+        }
+      } catch (npmErr) {
+        console.warn('[NPM Trending Proxy] Error:', npmErr.message);
+        if (activePlatform === 'npm') return res.json([]);
+      }
+    }
+
     if (platform.toLowerCase() === 'linkedin') {
       const items = [
         { id: 'l1', name: 'The Future of AI Agents', description: 'Trending discussion on the shift from LLMs to autonomous agents.', html_url: 'https://www.linkedin.com', stargazers_count: 4500, language: 'Article', topics: ['AI Agents', 'Tech Trends'], owner: { login: 'TechInsider', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' }, platform: 'LinkedIn' },
@@ -192,6 +232,53 @@ export const searchProjects = async (req, res) => {
       })());
     }
 
+
+    // npm Task (Real-time live registry search)
+    if (activePlatform === 'npm' || activePlatform === 'all') {
+      tasks.push((async () => {
+        try {
+          const cacheKey = `npm:${q}:${category}`;
+          const cached = getCachedResult(cacheKey);
+          if (cached) return cached;
+
+          const npmQuery = category !== 'All' ? `${q} ${category}` : q;
+          const npmUrl = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(npmQuery)}&size=20`;
+          const response = await axios.get(npmUrl, {
+            headers: { 'User-Agent': 'Project-Finder/1.0' },
+            timeout: 4500
+          });
+          const objects = response.data?.objects || [];
+          const npmResults = objects.map(item => {
+            const pkg = item.package || {};
+            const downloads = item.downloads?.weekly || 0;
+            return {
+              id: `npm-${pkg.name}`,
+              name: pkg.name,
+              description: pkg.description || `Official ${pkg.name} package on npm registry.`,
+              html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
+              homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
+              stargazers_count: downloads,
+              language: 'JavaScript/TypeScript',
+              topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : [q, 'npm'],
+              owner: {
+                login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
+                avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
+                html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
+              },
+              platform: 'npm',
+              version: pkg.version
+            };
+          });
+
+          setCachedResult(cacheKey, npmResults);
+          return npmResults;
+        } catch (err) {
+          console.warn('[npm Search API] Failed:', err.message);
+          return [];
+        }
+      })());
+    }
+
     // LinkedIn Task
     if (activePlatform === 'linkedin' || activePlatform === 'all') {
       tasks.push((async () => {
@@ -206,7 +293,7 @@ export const searchProjects = async (req, res) => {
 
     // 2. Execute Tasks in Parallel
     const results = await Promise.allSettled(tasks);
-    const platformOrder = { GitHub: 0, 'Hugging Face': 1, Kaggle: 2, LinkedIn: 3 };
+    const platformOrder = { GitHub: 0, 'Hugging Face': 1, Kaggle: 2, LinkedIn: 3, npm: 4 };
     let flattenedResults = results
       .filter(r => r.status === 'fulfilled')
       .map(r => r.value)

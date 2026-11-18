@@ -21,6 +21,13 @@ const KaggleIcon = ({ className }: { className?: string }) => (
 );
 
 // Official LinkedIn Icon (SimpleIcons)
+// Official npm Icon
+const NpmIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5 text-[#cb3837]"}>
+    <path d="M0 0v24h24V0H0zm20.8 20.8H16v-8h-2.7v8H3.2V3.2h17.6v17.6z"/>
+  </svg>
+);
+
 const LinkedInIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-5 h-5"}>
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -149,6 +156,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   const isHF = project.platform === 'Hugging Face';
   const isKaggle = project.platform === 'Kaggle';
   const isLinkedIn = project.platform === 'LinkedIn';
+  const isNpm = project.platform === 'npm';
 
   let icon, badgeClasses, platformName;
 
@@ -168,6 +176,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
     icon = <LinkedInIcon className="w-4 h-4" />;
     badgeClasses = 'bg-blue-600/10 text-blue-400 border-blue-600/30';
     platformName = 'LinkedIn';
+  } else if (isNpm) {
+    icon = <NpmIcon className="w-4 h-4" />;
+    badgeClasses = 'bg-red-600/10 text-red-400 border-red-500/30 shadow-[0_0_12px_rgba(203,56,55,0.2)]';
+    platformName = 'npm package';
   } else {
     icon = <Code className="w-4 h-4" />;
     badgeClasses = 'bg-gray-700/50 text-gray-200 border-gray-600';
@@ -294,7 +306,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
 
         <div className="mt-auto pt-4 flex flex-col sm:flex-row gap-3">
           {(() => {
-            const platformActionLabel = isHF ? 'VIEW MODEL' : isKaggle ? 'VIEW DATASET' : isLinkedIn ? 'VIEW POST' : 'VIEW REPO';
+            const platformActionLabel = isHF ? 'VIEW MODEL' : isKaggle ? 'VIEW DATASET' : isLinkedIn ? 'VIEW POST' : isNpm ? 'VIEW PACKAGE' : 'VIEW REPO';
             return project.liveUrl && project.liveUrl !== '#' ? (
               <>
                 <button 
