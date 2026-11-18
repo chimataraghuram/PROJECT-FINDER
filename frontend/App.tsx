@@ -13,10 +13,11 @@ import { TrendingProjects } from './components/TrendingProjects';
 import { UserDashboard } from './components/UserDashboard';
 import { saveProject, fetchFavorites, fetchTrending, fetchSearch, fetchCollections, createCollection, updateCollection, deleteCollection, removeProjectFromCollection, recordSearchHistory, recordFirebaseSearchHistory } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
+import { NotFound } from './components/NotFound';
 import { openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
-type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending';
+type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending' | '404';
 type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn' | 'npm';
 
 const NpmIcon = ({ className }: { className?: string }) => (
@@ -99,6 +100,7 @@ const getViewFromUrl = (): ViewType => {
   const basePath = getBasePath();
   const subPath = window.location.pathname.slice(basePath.length).replace(/^\/+|\/+$/g, '').toLowerCase();
   
+  if (!subPath || subPath === '') return 'search';
   if (subPath === 'trending' || subPath === 'readme') return 'readme';
   if (subPath === 'favorites' || subPath === 'starred' || subPath === 'library') return 'favorites';
   if (subPath === 'dashboard' || subPath === 'profile') return 'dashboard';
@@ -108,8 +110,10 @@ const getViewFromUrl = (): ViewType => {
   if (hash === 'trending' || hash === 'readme') return 'readme';
   if (hash === 'favorites' || hash === 'starred' || hash === 'library') return 'favorites';
   if (hash === 'dashboard' || hash === 'profile') return 'dashboard';
+  if (hash === 'search' || hash === '') return 'search';
 
-  return 'search';
+  // Unknown route
+  return '404';
 };
 
 const App: React.FC = () => {
@@ -121,7 +125,7 @@ const App: React.FC = () => {
   const navigateToView = useCallback((view: ViewType) => {
     setCurrentView(view);
     const basePath = getBasePath();
-    const segment = view === 'search' ? '' : view === 'readme' ? '/trending' : `/${view}`;
+    const segment = view === 'search' ? '' : view === 'readme' ? '/trending' : view === '404' ? '/404' : `/${view}`;
     const targetUrl = (basePath || '') + segment + (segment ? '' : '/') + window.location.search;
     window.history.pushState(null, '', targetUrl);
   }, []);
@@ -623,6 +627,14 @@ const App: React.FC = () => {
               />
             )}
 
+
+            {currentView === '404' && (
+              <NotFound 
+                onGoHome={() => navigateToView('search')} 
+                onExploreTrending={() => navigateToView('readme')} 
+                onAskAI={() => setIsAIAssistantOpen(true)}
+              />
+            )}
 
             {currentView === 'search' && (
 
