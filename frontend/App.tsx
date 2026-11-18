@@ -449,22 +449,25 @@ const App: React.FC = () => {
             {/* 3. Right Island: Action Hub */}
             <div className="pointer-events-auto shrink-0 flex justify-end">
               <div
-                className={`flex items-center transition-all duration-300 ease-out border border-white/10 ${isCompact ? 'gap-1.5 bg-[#0a0a0f]/90 rounded-full p-1.5 shadow-[0_15px_30px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 rounded-full p-2 shadow-xl'} backdrop-blur-2xl`}
+                className={`flex items-center transition-all duration-300 ease-out border border-white/10 ${isCompact ? 'gap-1 bg-[#0a0a0f]/90 rounded-full p-1 shadow-[0_15px_30px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 rounded-full p-2 shadow-xl'} backdrop-blur-2xl`}
               >
                 <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className="flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-200 gap-1.5 pr-2.5 bg-transparent cursor-pointer"
+                  className={`flex items-center rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-300 bg-transparent cursor-pointer ${isCompact ? 'p-0.5 border-orange-500/50' : 'p-1 gap-1.5 pr-2.5'}`}
+                  title="Open Techboy AI Assistant"
                 >
-                  <div className="bg-orange-500 flex items-center justify-center shadow-[0_0_12px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform duration-200 w-7 h-7 md:w-8 md:h-8 rounded-full">
-                    <Bot className="text-white w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <div className={`bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-all duration-300 rounded-full ${isCompact ? 'w-10 h-10 md:w-11 md:h-11 shadow-[0_0_20px_rgba(249,115,22,0.6)]' : 'w-7 h-7 md:w-8 md:h-8'}`}>
+                    <Bot className={`text-white transition-all duration-300 ${isCompact ? 'w-5 h-5 md:w-6 md:h-6' : 'w-3.5 h-3.5 md:w-4 md:h-4'}`} />
                   </div>
-                  <div className="hidden sm:flex items-center gap-1 font-black uppercase tracking-[0.15em] opacity-80 text-[9px]">
-                    <span className="text-white">Techboy</span>
-                    <span className="text-orange-500">AI</span>
-                  </div>
+                  {!isCompact && (
+                    <div className="hidden sm:flex items-center gap-1 font-black uppercase tracking-[0.15em] opacity-80 text-[9px]">
+                      <span className="text-white">Techboy</span>
+                      <span className="text-orange-500">AI</span>
+                    </div>
+                  )}
                 </button>
 
-                <div className="hidden sm:block w-px bg-white/10 shrink-0 h-5 mx-0.5" />
+                <div className={`transition-all duration-300 overflow-hidden ${isCompact ? 'w-0 opacity-0 m-0' : 'hidden sm:block w-px bg-white/10 shrink-0 h-5 mx-0.5 opacity-100'}`} />
 
                 <AuthButton
                   onViewDashboard={() => setCurrentView(currentView === 'dashboard' ? 'search' : 'dashboard')}
