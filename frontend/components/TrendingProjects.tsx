@@ -456,21 +456,45 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                 <div className="mt-12 flex flex-col md:flex-row items-center justify-center gap-6">
                     {/* Platform Tabs */}
                     <div className="flex flex-wrap justify-center gap-3">
-                        {PLATFORMS.map((p) => (
-                            <motion.button
-                                key={p}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => handlePlatformChange(p)}
-                                className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
-                                    activePlatform === p
-                                    ? 'bg-orange-600 text-white shadow-[0_0_20px_rgba(234,88,12,0.4)]'
-                                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
-                                }`}
-                            >
-                                {p}
-                            </motion.button>
-                        ))}
+                        {PLATFORMS.map((p) => {
+                            const isActive = activePlatform === p;
+                            const renderTabIcon = () => {
+                                const low = p.toLowerCase();
+                                if (low.includes('github')) {
+                                    return <Github className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'}`} />;
+                                }
+                                if (low.includes('hugging')) {
+                                    return <HuggingFaceEmoji className="w-4 h-4 shrink-0" />;
+                                }
+                                if (low.includes('kaggle')) {
+                                    return <KaggleIcon className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-[#20beff]'}`} />;
+                                }
+                                if (low.includes('linkedin')) {
+                                    return <LinkedInIcon className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-[#0a66c2]'}`} fill="currentColor" />;
+                                }
+                                if (low.includes('npm')) {
+                                    return <NpmIcon className={`w-4 h-4 transition-colors ${isActive ? 'text-white' : 'text-[#cb3837]'}`} />;
+                                }
+                                return null;
+                            };
+
+                            return (
+                                <motion.button
+                                    key={p}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => handlePlatformChange(p)}
+                                    className={`group flex items-center gap-2.5 px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${
+                                        isActive
+                                        ? 'bg-orange-600 text-white shadow-[0_0_20px_rgba(234,88,12,0.4)]'
+                                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5 backdrop-blur-md'
+                                    }`}
+                                >
+                                    {renderTabIcon()}
+                                    <span>{p}</span>
+                                </motion.button>
+                            );
+                        })}
                     </div>
 
                     {/* Manual Refresh Button */}
@@ -502,6 +526,11 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                             <div className="flex flex-col">
                                 <span className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-medium leading-none mb-1">Trending on</span>
                                 <div className="flex items-center gap-2">
+                                    {activePlatform.toLowerCase().includes('github') && <Github className="w-5 h-5 text-white" />}
+                                    {activePlatform.toLowerCase().includes('hugging') && <HuggingFaceEmoji className="w-5 h-5 shrink-0" />}
+                                    {activePlatform.toLowerCase().includes('kaggle') && <KaggleIcon className="w-5 h-5 text-[#20beff]" />}
+                                    {activePlatform.toLowerCase().includes('linkedin') && <LinkedInIcon className="w-5 h-5 text-[#0a66c2]" fill="currentColor" />}
+                                    {activePlatform.toLowerCase().includes('npm') && <NpmIcon className="w-5 h-5 text-[#cb3837]" />}
                                     <span className="text-lg md:text-xl font-black text-white uppercase tracking-widest leading-none">{activePlatform}</span>
                                     <TrendingUp size={16} className="text-orange-500" />
                                 </div>
