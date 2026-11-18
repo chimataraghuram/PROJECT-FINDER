@@ -94,7 +94,6 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                             >
                                 <Github className="w-5 h-5 transition-transform group-hover:rotate-[20deg]" />
                                 <span className="font-black text-sm uppercase tracking-widest">Explore Source Code</span>
-                                <ExternalLink className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                             </a>
                         </div>
                     </div>
@@ -185,7 +184,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                 target="_blank"
                                 rel="noreferrer"
                                 whileHover={{ scale: 1.02, y: -2 }}
-                                className="flex items-center justify-between p-6 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 group shadow-xl"
+                                className="flex items-center p-6 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all duration-500 group shadow-xl"
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform duration-500">
@@ -195,9 +194,6 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
                                         <h5 className="text-sm font-black text-white uppercase tracking-widest leading-none mb-1 group-hover:text-blue-200">Portfolio</h5>
                                         <p className="text-[9px] text-blue-500/60 font-black uppercase tracking-widest">Personal Site</p>
                                     </div>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <ExternalLink size={16} />
                                 </div>
                             </motion.a>
 
