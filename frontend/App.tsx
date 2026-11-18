@@ -375,39 +375,26 @@ const App: React.FC = () => {
           <div className="hidden md:flex fixed top-4 inset-x-0 px-4 xl:px-6 z-[2000] justify-between items-start pointer-events-none w-full max-w-[1920px] mx-auto gap-4">
             {/* 1. Left Island: Logo & Brand */}
             <div className="pointer-events-auto shrink-0 flex items-center">
-              <motion.div
-                layout
-                initial={{ opacity: 0, y: -20 }}
-                style={{ borderRadius: "99px" }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
-                }}
-                transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`flex items-center gap-2 md:gap-4 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-colors duration-300 pr-5 md:pr-6 pl-2.5 py-2`}
+              <div
+                className={`flex items-center gap-2 md:gap-3 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-all duration-300 pr-4 md:pr-5 pl-2 py-1.5 shadow-lg`}
                 onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
-                <motion.div className="relative shrink-0"
-                  animate={{ scale: isCompact ? 1.2 : 1 }}
-                  transition={{ duration: 0.7, type: "spring", bounce: 0.25 }}
-                >
-                  <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                  <img src={mascotLogo} className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-orange-500/30 shadow-[0_0_25px_rgba(249,115,22,0.45)] relative z-10 transition-all duration-300 group-hover/logo:scale-105" alt="Mascot Logo" />
-                </motion.div>
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
+                  <img src={mascotLogo} className="w-10 h-10 md:w-11 md:h-11 rounded-full object-cover border-2 border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.4)] relative z-10 transition-transform duration-300 group-hover/logo:scale-105" alt="Mascot Logo" />
+                </div>
 
-                <motion.div className="flex items-center gap-3 md:gap-4 origin-left">
+                <div className="flex items-center gap-2.5 origin-left">
                   <div className="relative shrink-0">
-                    <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
-                    <div className="w-8 h-8 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-xl group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
-                      <Search className="w-4 h-4 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
+                    <div className="w-7 h-7 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-center relative z-10 shadow-md group-hover/logo:border-orange-500/60 group-hover/logo:bg-orange-500/20 transition-all">
+                      <Search className="w-3.5 h-3.5 text-orange-500 transition-transform group-hover/logo:scale-110" strokeWidth={2.5} />
                     </div>
                   </div>
-                  <span className="hidden lg:inline-block text-base md:text-lg font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap origin-left">
-                      Project Finder
-                    </span>
-                </motion.div>
-              </motion.div>
+                  <span className="hidden xl:inline-block text-sm md:text-base font-black text-white tracking-tighter uppercase leading-none whitespace-nowrap">
+                    Project Finder
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* 2. Middle Island: Adaptive Navigation Pill */}
@@ -416,54 +403,44 @@ const App: React.FC = () => {
                 animate={{
                   scale: isCompact ? 0.95 : 1,
                   opacity: 1,
-                  boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
+                  boxShadow: isCompact ? "0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.2)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
-                transition={{ duration: 0.85, type: "spring", bounce: 0.15 }}
-                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-2 md:gap-3 transition-all duration-500 ease-out shrink-0`}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-1.5 md:gap-2.5 transition-all duration-300 ease-out shrink-0`}
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = currentView === item.id;
                   const Icon = item.icon;
                   return (
-                    <motion.button
+                    <button
                       key={item.id}
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.95 }}
                       onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className={`h-10 md:h-12 rounded-full flex items-center justify-center gap-2 lg:gap-3 transition-all duration-500 ease-out font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav ${
+                      className={`h-10 md:h-11 rounded-full flex items-center justify-center gap-2 lg:gap-2.5 transition-all duration-200 ease-out font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav cursor-pointer ${
                         isActive
-                          ? `bg-gradient-to-r ${item.color} text-white shadow-[0_0_25px_rgba(249,115,22,0.4)]`
+                          ? `bg-gradient-to-r ${item.color} text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]`
                           : 'text-gray-400 bg-transparent hover:text-white hover:bg-white/5'
-                      } ${isCompact ? 'px-3 md:px-4' : 'px-4 md:px-6'}`}
+                      } ${isCompact ? 'px-3 md:px-3.5' : 'px-3.5 md:px-5'}`}
                     >
-                      <motion.div className="relative z-10 flex items-center justify-center shrink-0">
-                        <Icon className={`${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-4 h-4 md:w-5 md:h-5 transition-transform duration-300`} />
-                      </motion.div>
+                      <div className="relative z-10 flex items-center justify-center shrink-0">
+                        <Icon className={`${isActive ? 'scale-105 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-4 h-4 md:w-4.5 md:h-4.5 transition-transform duration-200`} />
+                      </div>
                       
-                      <AnimatePresence initial={false}>
-                        {!isCompact && (
-                          <motion.span
-                            key="text"
-                            initial={{ width: 0, opacity: 0, filter: "blur(4px)", scale: 0.9 }}
-                            animate={{ width: "auto", opacity: 1, filter: "blur(0px)", scale: 1 }}
-                            exit={{ width: 0, opacity: 0, filter: "blur(4px)", scale: 0.9 }}
-                            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                            className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left overflow-hidden"
-                          >
-                            {item.label} {item.id === 'favorites' && `(${favorites.length})`}
-                          </motion.span>
-                        )}
-                      </AnimatePresence>
+                      {!isCompact && (
+                        <span
+                          className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left transition-opacity duration-200"
+                        >
+                          {item.label} {item.id === 'favorites' && `(${favorites.length})`}
+                        </span>
+                      )}
                       
                       {isActive && (
-                        <div className="absolute bottom-1.5 inset-x-0 flex justify-center z-20 pointer-events-none">
-                          <motion.div 
-                            layoutId="activeTabUnderline" 
-                            className="w-1/2 h-[3px] md:h-0.5 bg-white/80 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]" 
+                        <div className="absolute bottom-1 inset-x-0 flex justify-center z-20 pointer-events-none">
+                          <div 
+                            className="w-1/2 h-[2px] bg-white/80 rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
                           />
                         </div>
                       )}
-                    </motion.button>
+                    </button>
                   );
                 })}
               </motion.nav>
@@ -471,37 +448,29 @@ const App: React.FC = () => {
 
             {/* 3. Right Island: Action Hub */}
             <div className="pointer-events-auto shrink-0 flex justify-end">
-              <motion.div
-                animate={{
-                  scale: isCompact ? 0.9 : 1,
-                  opacity: 1,
-                  boxShadow: isCompact ? "0 25px 60px rgba(0,0,0,0.6), 0 0 30px rgba(249,115,22,0.3)" : "0 10px 30px rgba(0,0,0,0.3)"
-                }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className={`flex items-center transition-all duration-500 ease-out border border-white/10 shadow-2xl ${isCompact ? 'gap-2 bg-[#0a0a0f]/90 rounded-[2.5rem] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 rounded-[2rem] p-2'} backdrop-blur-2xl`}
+              <div
+                className={`flex items-center transition-all duration-300 ease-out border border-white/10 ${isCompact ? 'gap-1.5 bg-[#0a0a0f]/90 rounded-full p-1.5 shadow-[0_15px_30px_rgba(0,0,0,0.5)]' : 'gap-2 bg-[#0a0a0f]/40 rounded-full p-2 shadow-xl'} backdrop-blur-2xl`}
               >
-                <motion.button
+                <button
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className={`flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-500 ease-out ${isCompact ? 'gap-0 pr-1 bg-transparent' : 'gap-2 pr-3 bg-transparent'}`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center p-1 rounded-full border border-orange-500/30 hover:bg-white/[0.04] group transition-all duration-200 gap-1.5 pr-2.5 bg-transparent cursor-pointer"
                 >
-                  <div className={`bg-orange-500 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-all duration-500 ease-out ${isCompact ? 'w-12 h-12 rounded-full' : 'w-8 h-8 rounded-[0.9rem]'}`}>
-                    <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-6 h-6' : 'w-4 h-4'}`} />
+                  <div className="bg-orange-500 flex items-center justify-center shadow-[0_0_12px_rgba(249,115,22,0.4)] group-hover:scale-105 transition-transform duration-200 w-7 h-7 md:w-8 md:h-8 rounded-full">
+                    <Bot className="text-white w-3.5 h-3.5 md:w-4 md:h-4" />
                   </div>
-                  <div className={`hidden sm:flex items-center gap-1.5 font-black uppercase tracking-[0.2em] transition-all duration-500 ease-out overflow-hidden whitespace-nowrap origin-left ${isCompact ? 'max-w-0 opacity-0' : 'max-w-[80px] opacity-70 text-[9px]'}`}>
+                  <div className="hidden sm:flex items-center gap-1 font-black uppercase tracking-[0.15em] opacity-80 text-[9px]">
                     <span className="text-white">Techboy</span>
                     <span className="text-orange-500">AI</span>
                   </div>
-                </motion.button>
+                </button>
 
-                <div className={`hidden sm:block w-px bg-white/10 shrink-0 transition-all duration-500 ease-out overflow-hidden origin-center ${isCompact ? 'w-0 h-8 mx-0 opacity-0' : 'w-px h-6 mx-1 opacity-100'}`} />
+                <div className="hidden sm:block w-px bg-white/10 shrink-0 h-5 mx-0.5" />
 
                 <AuthButton
                   onViewDashboard={() => setCurrentView(currentView === 'dashboard' ? 'search' : 'dashboard')}
                   isCompact={isCompact}
                 />
-              </motion.div>
+              </div>
             </div>
           </div>
 
