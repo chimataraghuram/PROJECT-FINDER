@@ -88,11 +88,27 @@ const DEFAULT_FAVORITES: Project[] = [
 
 import { IntroVideo } from './components/IntroVideo';
 
-const getViewFromHash = (): ViewType => {
+const getBasePath = (): string => {
+  const path = window.location.pathname;
+  if (path.startsWith('/PROJECT-FINDER')) return '/PROJECT-FINDER';
+  return '';
+};
+
+const getViewFromUrl = (): ViewType => {
+  // 1. Check path-based routing (e.g. /PROJECT-FINDER/trending, /PROJECT-FINDER/dashboard)
+  const basePath = getBasePath();
+  const subPath = window.location.pathname.slice(basePath.length).replace(/^\/+|\/+$/g, '').toLowerCase();
+  
+  if (subPath === 'trending' || subPath === 'readme') return 'readme';
+  if (subPath === 'favorites' || subPath === 'starred' || subPath === 'library') return 'favorites';
+  if (subPath === 'dashboard' || subPath === 'profile') return 'dashboard';
+
+  // 2. Fallback to hash if present (e.g. /#trending, /#dashboard)
   const hash = window.location.hash.toLowerCase().replace('#', '').trim();
   if (hash === 'trending' || hash === 'readme') return 'readme';
-  if (hash === 'favorites' || hash === 'starred') return 'favorites';
-  if (hash === 'dashboard') return 'dashboard';
+  if (hash === 'favorites' || hash === 'starred' || hash === 'library') return 'favorites';
+  if (hash === 'dashboard' || hash === 'profile') return 'dashboard';
+
   return 'search';
 };
 
@@ -100,24 +116,25 @@ const App: React.FC = () => {
   const [toast, setToast] = useState<{message: string, icon?: React.ReactNode, visible: boolean}>({ message: '', visible: false });
   const showToast = (message: string, icon?: React.ReactNode) => { setToast({ message, icon, visible: true }); setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000); };
   const [showIntro, setShowIntro] = useState(true);
-  const [currentView, setCurrentView] = useState<ViewType>(() => getViewFromHash());
+  const [currentView, setCurrentView] = useState<ViewType>(() => getViewFromUrl());
 
   const navigateToView = useCallback((view: ViewType) => {
     setCurrentView(view);
-    const targetHash = view === 'search' ? '' : view === 'readme' ? '#trending' : `#${view}`;
-    const base = window.location.pathname + window.location.search;
-    window.history.pushState(null, '', targetHash ? `${base}${targetHash}` : base);
+    const basePath = getBasePath();
+    const segment = view === 'search' ? '' : view === 'readme' ? '/trending' : `/${view}`;
+    const targetUrl = (basePath || '') + segment + (segment ? '' : '/') + window.location.search;
+    window.history.pushState(null, '', targetUrl);
   }, []);
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentView(getViewFromHash());
+    const handleUrlChange = () => {
+      setCurrentView(getViewFromUrl());
     };
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
     };
   }, []);
   
