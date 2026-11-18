@@ -35,20 +35,6 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
             className={`fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-700 ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
             onClick={handleSkip}
         >
-            {/* Top Right Skip Button */}
-            <div className="absolute top-6 right-6 z-20">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleSkip();
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-orange-500/20 text-white/80 hover:text-white border border-white/10 hover:border-orange-500/40 text-xs font-bold uppercase tracking-wider backdrop-blur-md transition-all duration-300 shadow-lg cursor-pointer"
-                >
-                    <span>Skip Intro</span>
-                    <span className="text-orange-400">✕</span>
-                </button>
-            </div>
-
             {/* Clean Dark Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1a1a2e] to-[#0f172a]" />
 
