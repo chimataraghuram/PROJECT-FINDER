@@ -5,7 +5,7 @@ import Particles from './components/Particles';
 import { Project, SearchResult, SearchState } from './types';
 import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp, Play, Info, ChevronRight , Folder , ListFilter, Code, Clock, Check, ChevronDown, Settings, Trash2, MoreHorizontal } from 'lucide-react';
 import { Footer } from './components/Footer';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
 import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
@@ -17,7 +17,13 @@ import { openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
 type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending';
-type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn';
+type PlatformFilter = 'All' | 'GitHub' | 'Hugging Face' | 'Kaggle' | 'LinkedIn' | 'npm';
+
+const NpmIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className || "w-3.5 h-3.5 text-[#cb3837]"}>
+    <path d="M0 0v24h24V0H0zm20.8 20.8H16v-8h-2.7v8H3.2V3.2h17.6v17.6z"/>
+  </svg>
+);
 
 const LABELS = {
   discover: "Search Projects",
@@ -88,10 +94,6 @@ const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [currentView, setCurrentView] = useState<ViewType>('search');
   
-  // Parallax Background Logic
-  const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 5000], [0, -500]);
-  const smoothY = useSpring(yParallax, { damping: 15, stiffness: 100 });
   const [searchState, setSearchState] = useState<SearchState>({
     isLoading: false,
     error: null,
@@ -334,8 +336,17 @@ const App: React.FC = () => {
 
   const [isCompact, setIsCompact] = useState(false);
   useEffect(() => {
-    const handleScroll = () => setIsCompact(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsCompact(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -353,11 +364,8 @@ const App: React.FC = () => {
         <>
           <Particles />
           <div className="parallax-bg-container">
-            <motion.div 
-              style={{ y: smoothY }}
-              className="parallax-bg-image animate-drift"
-              animate={{ opacity: [0.12, 0.16, 0.12], scale: [1, 1.02, 1] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            <div 
+              className="parallax-bg-image"
             />
             <div className="parallax-bg-overlay" />
           </div>
@@ -618,7 +626,7 @@ const App: React.FC = () => {
                     
                     <div className="flex flex-col items-center gap-6">
                       <p className="text-gray-400 text-[11px] md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 text-center order-1">
-                        The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, and <span className="text-blue-400">LinkedIn</span>.
+                        The ultimate research engine for <br className="hidden md:block" /> <span className="text-white">GitHub</span>, <span className="text-hf-yellow">Hugging Face</span>, <span className="text-orange-400">Kaggle</span>, <span className="text-blue-400">LinkedIn</span>, and <span className="text-red-400">npm</span>.
                       </p>
 
                       <p className="hidden md:block text-gray-400 text-sm md:text-base max-w-xl mx-auto px-6 leading-relaxed font-medium opacity-60 order-3">
@@ -812,9 +820,9 @@ const App: React.FC = () => {
 
                               {/* Right side: Vertical Platforms List */}
                               <div className="bg-white/[0.02] p-1.5 rounded-2xl border border-white/5 flex flex-col gap-1 w-full lg:w-48 shrink-0 h-fit">
-                                {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'] as PlatformFilter[]).map((p) => {
+                                {(['All', 'GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn', 'npm'] as PlatformFilter[]).map((p) => {
                                   const isActive = filterPlatform === p;
-                                  const Icon = p === 'All' ? Globe : p === 'GitHub' ? Github : p === 'Hugging Face' ? Brain : p === 'Kaggle' ? BarChart3 : Linkedin;
+                                  const Icon = p === 'All' ? Globe : p === 'GitHub' ? Github : p === 'Hugging Face' ? Brain : p === 'Kaggle' ? BarChart3 : p === 'LinkedIn' ? Linkedin : NpmIcon;
                                   
                                   return (
                                     <button

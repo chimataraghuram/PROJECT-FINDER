@@ -19,6 +19,13 @@ const KaggleIcon = ({ className = "w-5 h-5" }) => (
 );
 
 // Official LinkedIn Icon (SimpleIcons)
+// Official npm Icon
+const NpmIcon = ({ className = "w-5 h-5" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M0 0v24h24V0H0zm20.8 20.8H16v-8h-2.7v8H3.2V3.2h17.6v17.6z"/>
+  </svg>
+);
+
 const LinkedInIcon = ({ className = "w-5 h-5" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -94,6 +101,7 @@ const TrendingCard: React.FC<{
         if (platform.includes('hugging')) return { label: 'View Model', icon: Bot, color: 'text-yellow-400', brandColor: 'orange' };
         if (platform.includes('kaggle')) return { label: 'View Dataset', icon: Database, color: 'text-blue-400', brandColor: 'blue' };
         if (platform.includes('linkedin')) return { label: 'View Post', icon: Linkedin, color: 'text-blue-600', brandColor: 'blue' };
+        if (platform.includes('npm')) return { label: 'View Package', icon: Box, color: 'text-red-400', brandColor: 'red' };
         return { label: 'View Repo', icon: Github, color: 'text-white', brandColor: 'orange' };
     };
 
@@ -102,6 +110,7 @@ const TrendingCard: React.FC<{
         if (platform.includes('hugging')) return <HuggingFaceEmoji className="w-7 h-7 md:w-9 md:h-9" />;
         if (platform.includes('kaggle')) return <KaggleIcon className="w-6 h-6 md:w-8 md:h-8 text-[#20beff]" />;
         if (platform.includes('linkedin')) return <LinkedInIcon className="w-6 h-6 md:w-8 md:h-8 text-[#0077b5]" fill="currentColor" />;
+        if (platform.includes('npm')) return <NpmIcon className="w-6 h-6 md:w-8 md:h-8 text-[#cb3837]" />;
         return <Github className="w-6 h-6 md:w-8 md:h-8 text-white" />;
     };
 
@@ -321,7 +330,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [rotation, setRotation] = useState(0);
 
-    const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn'];
+    const PLATFORMS = ['GitHub', 'Hugging Face', 'Kaggle', 'LinkedIn', 'npm'];
     const CATEGORIES = [
       { id: 'All', label: 'All Projects', icon: Globe },
       { id: 'AI', label: 'AI', icon: Bot },

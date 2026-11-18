@@ -67,7 +67,7 @@ const mapToFrontendProject = (item: any): Project => {
     ownerUrl = platform === 'GitHub' ? `https://github.com/${ownerLogin}` :
                platform === 'Kaggle' ? `https://www.kaggle.com/${ownerLogin}` :
                platform === 'Hugging Face' ? `https://huggingface.co/${ownerLogin}` :
-               platform === 'LinkedIn' ? `https://www.linkedin.com/in/${ownerLogin}` : '#';
+               platform === 'LinkedIn' ? `https://www.linkedin.com/in/${ownerLogin}` : platform === 'npm' ? `https://www.npmjs.com/~${ownerLogin}` : '#';
   }
 
   return {
@@ -143,6 +143,53 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
     }
   }
 
+
+  // 1.5. Direct Real-Time NPM Registry Integration:
+  if (platform.toLowerCase() === 'npm') {
+    try {
+      const npmQuery = category !== 'All' ? `${cleanQuery} ${category}` : cleanQuery;
+      const npmUrl = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(npmQuery)}&size=25`;
+      const npmResp = await fetch(npmUrl, { cache: 'no-store' });
+      if (npmResp.ok) {
+        const npmData = await npmResp.json();
+        const objects = npmData.objects || [];
+        if (objects.length > 0) {
+          const projects = objects.map((item: any) => {
+            const pkg = item.package || {};
+            const downloads = item.downloads?.weekly || (item.score?.detail?.popularity ? Math.round(item.score.detail.popularity * 1000000) : 0);
+            return mapToFrontendProject({
+              id: `npm-${pkg.name}`,
+              name: pkg.name,
+              description: pkg.description || `Official ${pkg.name} package on npm with ${downloads.toLocaleString()} weekly downloads.`,
+              html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
+              homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
+              stargazers_count: downloads,
+              language: 'TypeScript',
+              topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : [cleanQuery, 'npm'],
+              owner: {
+                login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
+                avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
+                html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
+              },
+              platform: 'npm',
+              version: pkg.version
+            });
+          });
+
+          const searchResult: SearchResult = {
+            summary: `Found ${npmData.total || projects.length} live packages for "${cleanQuery}" on npm registry.`,
+            projects,
+            groundingSources: projects.slice(0, 5).map(p => ({ title: p.name, uri: p.url }))
+          };
+          writeCache(cacheKey('search', `${cleanQuery}:${category}:${platform}`), searchResult);
+          return searchResult;
+        }
+      }
+    } catch (npmErr) {
+      console.warn('[NPM Direct API] Search error, falling back to backend:', npmErr);
+    }
+  }
+
   // 2. Try Backend Search API Proxy
   try {
     const url = `${BASE_URL}/search?q=${encodeURIComponent(cleanQuery)}&category=${encodeURIComponent(category)}&platform=${encodeURIComponent(platform)}`;
@@ -158,7 +205,7 @@ export const fetchSearch = async (query: string, category: string = 'All', platf
       }) : [];
 
       if (filteredData.length > 0) {
-        const platformOrder: Record<string, number> = { 'GitHub': 0, 'Hugging Face': 1, 'Kaggle': 2, 'LinkedIn': 3 };
+        const platformOrder: Record<string, number> = { 'GitHub': 0, 'Hugging Face': 1, 'Kaggle': 2, 'LinkedIn': 3, 'npm': 4 };
         const projects = filteredData
           .map(mapToFrontendProject)
           .sort((a, b) => (platformOrder[a.platform] ?? 99) - (platformOrder[b.platform] ?? 99));
@@ -426,6 +473,43 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
       return (directData.items || []).map(mapToFrontendProject);
     }
     
+
+    // Direct Real-Time NPM Trending fallback
+    if (platform.toLowerCase() === 'npm') {
+      try {
+        const npmSearchText = category !== 'All' ? `${category} popularity:total` : 'popularity:1.0';
+        const npmUrl = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(npmSearchText)}&size=30`;
+        const directResp = await fetch(npmUrl, { cache: 'no-store' });
+        if (directResp.ok) {
+          const directData = await directResp.json();
+          const objects = directData.objects || [];
+          return objects.map((item: any) => {
+            const pkg = item.package || {};
+            const downloads = item.downloads?.weekly || (item.score?.detail?.popularity ? Math.round(item.score.detail.popularity * 1000000) : 0);
+            return mapToFrontendProject({
+              id: `npm-${pkg.name}`,
+              name: pkg.name,
+              description: pkg.description || `Official ${pkg.name} package on npm with ${downloads.toLocaleString()} weekly downloads.`,
+              html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
+              homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
+              stargazers_count: downloads,
+              language: 'TypeScript',
+              topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : ['npm', 'package'],
+              owner: {
+                login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
+                avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
+                html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
+              },
+              platform: 'npm',
+              version: pkg.version
+            });
+          });
+        }
+      } catch (err) {
+        console.warn('[Direct NPM Trending] Failed:', err);
+      }
+    }
+
     // Curated discovery fallbacks (No direct API calls)
     if (platform.toLowerCase() === 'hugging face') {
       return [

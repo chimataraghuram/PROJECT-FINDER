@@ -25,9 +25,10 @@ h1, h2, h3, h4, .font-display {
     z-index: -2;
     overflow: hidden;
     background: #020617;
-    filter: blur(80px);
+    filter: blur(40px);
     opacity: 0.6;
     pointer-events: none;
+    transform: translateZ(0);
 }
 
 .aurora-blob {
@@ -35,7 +36,7 @@ h1, h2, h3, h4, .font-display {
     width: 60vw;
     height: 60vw;
     border-radius: 50%;
-    filter: blur(60px);
+    filter: blur(30px);
     mix-blend-mode: screen;
     will-change: transform;
     transform: translateZ(0);

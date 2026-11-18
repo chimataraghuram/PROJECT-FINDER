@@ -38,6 +38,9 @@ export function normalizeUrl(url: string | undefined | null, fallbackPlatform: s
   if (trimmed.startsWith('linkedin.com/') || trimmed.startsWith('www.linkedin.com/')) {
     return `https://${trimmed.replace(/^www\./i, '')}`;
   }
+  if (trimmed.startsWith('npmjs.com/') || trimmed.startsWith('www.npmjs.com/')) {
+    return `https://${trimmed.replace(/^www\./i, '')}`;
+  }
 
   // Handle owner/repo format like "morluto/rea" or "Significant-Gravitas/Auto-GPT"
   if (/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(trimmed)) {
