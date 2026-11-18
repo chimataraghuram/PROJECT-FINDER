@@ -70,6 +70,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', async (req, res) => res.json({ status: 'ok', uptime: process.uptime(), redis: await redisHealth(), timestamp: new Date().toISOString() }));
+app.get('/api/health', async (req, res) => res.json({ status: 'ok', uptime: process.uptime(), redis: await redisHealth(), timestamp: new Date().toISOString() }));
 
 app.use((error, req, res, next) => {
   console.error('Unhandled API error:', error);

@@ -5,11 +5,15 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/project-finder');
+    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/project-finder', {
+      serverSelectionTimeoutMS: 2000
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     if (process.env.NODE_ENV === 'production') throw error;
     console.warn(`MongoDB Connection Warning: ${error.message} (continuing for local API proxy testing)`);
+    // Prevent unhandled buffering timeouts in development when MongoDB is offline
+    mongoose.set('bufferCommands', false);
   }
 };
 
