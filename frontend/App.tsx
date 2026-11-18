@@ -119,8 +119,9 @@ const getViewFromUrl = (): ViewType => {
 const App: React.FC = () => {
   const [toast, setToast] = useState<{message: string, icon?: React.ReactNode, visible: boolean}>({ message: '', visible: false });
   const showToast = (message: string, icon?: React.ReactNode) => { setToast({ message, icon, visible: true }); setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000); };
-  const [showIntro, setShowIntro] = useState(true);
-  const [currentView, setCurrentView] = useState<ViewType>(() => getViewFromUrl());
+  const initialView = useMemo(() => getViewFromUrl(), []);
+  const [showIntro, setShowIntro] = useState(() => initialView === 'search');
+  const [currentView, setCurrentView] = useState<ViewType>(initialView);
 
   const navigateToView = useCallback((view: ViewType) => {
     setCurrentView(view);

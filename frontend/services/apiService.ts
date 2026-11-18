@@ -563,7 +563,8 @@ export const searchGitHubReadmes = async (category: string = 'All'): Promise<Pro
     const response = await fetch(`${BASE_URL}/search/readmes?category=${encodeURIComponent(category)}`);
     if (!response.ok) throw new Error('README search failed');
     const data = await response.json();
-    return data.map(mapToFrontendProject);
+    const list = Array.isArray(data) ? data : (Array.isArray(data?.favorites) ? data.favorites : []);
+    return list.map(mapToFrontendProject);
   } catch (error) {
     console.error('README search error:', error);
     return [];
@@ -575,7 +576,8 @@ export const searchGitHubUsers = async (query: string): Promise<Project[]> => {
     const response = await fetch(`${BASE_URL}/search/users?q=${encodeURIComponent(query)}`);
     if (!response.ok) throw new Error('User search failed');
     const data = await response.json();
-    return data.map(mapToFrontendProject);
+    const list = Array.isArray(data) ? data : (Array.isArray(data?.favorites) ? data.favorites : []);
+    return list.map(mapToFrontendProject);
   } catch (error) {
     console.error('User search error:', error);
     return [];
@@ -710,7 +712,8 @@ export const fetchFavorites = async (token: string): Promise<Project[]> => {
     });
     if (!response.ok) throw new Error('Favorites fetch failed');
     const data = await response.json();
-    return data.map(mapToFrontendProject);
+    const list = Array.isArray(data) ? data : (Array.isArray(data?.favorites) ? data.favorites : []);
+    return list.map(mapToFrontendProject);
   } catch (error) {
     console.error('Favorites fetch error:', error);
     return [];
