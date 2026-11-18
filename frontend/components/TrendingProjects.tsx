@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Github, Check, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2, Folder, Activity, TrendingUp } from 'lucide-react';
+import { Star, Github, Check, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2, Folder, Activity, TrendingUp, Box } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrending } from '../services/apiService';
 import { openSafe } from '../src/utils/urlHelper';
@@ -26,8 +26,8 @@ const NpmIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-const LinkedInIcon = ({ className = "w-5 h-5" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+const LinkedInIcon = ({ className = "w-5 h-5", fill = "currentColor" }: { className?: string; fill?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={fill} className={className}>
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
   </svg>
 );;
@@ -520,7 +520,7 @@ export const TrendingProjects: React.FC<TrendingProjectsProps> = ({ favorites, o
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[9px] text-gray-500 uppercase tracking-widest font-medium leading-none mb-1">Discovery</span>
-                                            <span className="text-xs md:text-sm font-bold text-white uppercase tracking-wider leading-none">{projects.length} {activePlatform.toLowerCase().includes("hugging") ? "Models" : activePlatform.toLowerCase().includes("kaggle") ? "Datasets" : activePlatform.toLowerCase().includes("linkedin") ? "Posts" : "Repositories"}</span>
+                                            <span className="text-xs md:text-sm font-bold text-white uppercase tracking-wider leading-none">{projects.length} {activePlatform.toLowerCase().includes("hugging") ? "Models" : activePlatform.toLowerCase().includes("kaggle") ? "Datasets" : activePlatform.toLowerCase().includes("linkedin") ? "Posts" : activePlatform.toLowerCase().includes("npm") ? "Packages" : "Repositories"}</span>
                                         </div>
                                     </div>
 

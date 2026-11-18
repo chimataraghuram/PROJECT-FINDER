@@ -526,27 +526,31 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
         if (directResp.ok) {
           const directData = await directResp.json();
           const objects = directData.objects || [];
-          return objects.map((item: any) => {
-            const pkg = item.package || {};
-            const downloads = item.downloads?.weekly || (item.score?.detail?.popularity ? Math.round(item.score.detail.popularity * 1000000) : 0);
-            return mapToFrontendProject({
-              id: `npm-${pkg.name}`,
-              name: pkg.name,
-              description: pkg.description || `Official ${pkg.name} package on npm with ${downloads.toLocaleString()} weekly downloads.`,
-              html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
-              homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
-              stargazers_count: downloads,
-              language: 'TypeScript',
-              topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : ['npm', 'package'],
-              owner: {
-                login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
-                avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
-                html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
-              },
-              platform: 'npm',
-              version: pkg.version
+          if (objects.length > 0) {
+            const mapped = objects.map((item: any) => {
+              const pkg = item.package || {};
+              const downloads = item.downloads?.weekly || (item.score?.detail?.popularity ? Math.round(item.score.detail.popularity * 1000000) : 0);
+              return mapToFrontendProject({
+                id: `npm-${pkg.name}`,
+                name: pkg.name,
+                description: pkg.description || `Official ${pkg.name} package on npm with ${downloads.toLocaleString()} weekly downloads.`,
+                html_url: pkg.links?.npm || `https://www.npmjs.com/package/${pkg.name}`,
+                homepage: pkg.links?.homepage || pkg.links?.repository || pkg.links?.npm,
+                stargazers_count: downloads,
+                language: 'TypeScript',
+                topics: Array.isArray(pkg.keywords) ? pkg.keywords.slice(0, 6) : ['npm', 'package'],
+                owner: {
+                  login: pkg.publisher?.username || pkg.maintainers?.[0]?.username || 'npm-author',
+                  avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png',
+                  html_url: pkg.publisher?.username ? `https://www.npmjs.com/~${pkg.publisher.username}` : `https://www.npmjs.com/package/${pkg.name}`
+                },
+                platform: 'npm',
+                version: pkg.version
+              });
             });
-          });
+            writeCache(cacheKey('trending', `${platform}:${category}`), mapped);
+            return mapped;
+          }
         }
       } catch (err) {
         console.warn('[Direct NPM Trending] Failed:', err);
@@ -618,6 +622,17 @@ export const fetchTrending = async (platform: string = 'GitHub', category: strin
         { id: 'l3', name: "AI & ML Discussions", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/6671666/", description: "Deep dives into Artificial Intelligence and Machine Learning.", stargazers_count: 6700, language: 'Group', topics: ['AI', 'ML'], owner: { login: 'AI Professionals', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
         { id: 'l4', name: "Software Developer Network", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/37787/", description: "One of the largest groups for software engineers on LinkedIn.", stargazers_count: 21000, language: 'Group', topics: ['Software', 'Engineering'], owner: { login: 'DevNetwork', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } },
         { id: 'l5', name: "Data Science Community", platform: 'LinkedIn', html_url: "https://www.linkedin.com/groups/129459/", description: "Professional group for data scientists and analysts.", stargazers_count: 15000, language: 'Group', topics: ['Data Science', 'Big Data'], owner: { login: 'DataScience', avatar_url: 'https://static.licdn.com/aero-v1/sc/h/al2o9zrvru7aqj8e1x2rzsrca' } }
+      ].map(mapToFrontendProject);
+    } else if (platform.toLowerCase() === 'npm') {
+      return [
+        { id: 'npm-1', name: "react", platform: 'npm', html_url: "https://www.npmjs.com/package/react", description: "The library for web and native user interfaces.", stargazers_count: 24000000, language: 'JavaScript', topics: ['react', 'ui', 'frontend'], owner: { login: 'facebook', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/react' } },
+        { id: 'npm-2', name: "express", platform: 'npm', html_url: "https://www.npmjs.com/package/express", description: "Fast, unopinionated, minimalist web framework for node.", stargazers_count: 32000000, language: 'JavaScript', topics: ['express', 'framework', 'server'], owner: { login: 'expressjs', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/express' } },
+        { id: 'npm-3', name: "next", platform: 'npm', html_url: "https://www.npmjs.com/package/next", description: "The React Framework for production web applications.", stargazers_count: 6500000, language: 'TypeScript', topics: ['react', 'nextjs', 'ssr'], owner: { login: 'vercel', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/next' } },
+        { id: 'npm-4', name: "typescript", platform: 'npm', html_url: "https://www.npmjs.com/package/typescript", description: "TypeScript is a language for application scale JavaScript development.", stargazers_count: 45000000, language: 'TypeScript', topics: ['typescript', 'compiler', 'language'], owner: { login: 'microsoft', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/typescript' } },
+        { id: 'npm-5', name: "vite", platform: 'npm', html_url: "https://www.npmjs.com/package/vite", description: "Next Generation Frontend Tooling. It's fast!", stargazers_count: 14000000, language: 'TypeScript', topics: ['vite', 'bundler', 'frontend'], owner: { login: 'yyx990803', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/vite' } },
+        { id: 'npm-6', name: "axios", platform: 'npm', html_url: "https://www.npmjs.com/package/axios", description: "Promise based HTTP client for the browser and node.js.", stargazers_count: 48000000, language: 'JavaScript', topics: ['http', 'ajax', 'promise'], owner: { login: 'jasonsaayman', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/axios' } },
+        { id: 'npm-7', name: "tailwindcss", platform: 'npm', html_url: "https://www.npmjs.com/package/tailwindcss", description: "A utility-first CSS framework for rapid UI development.", stargazers_count: 10000000, language: 'JavaScript', topics: ['css', 'tailwind', 'utility'], owner: { login: 'adamwathan', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/tailwindcss' } },
+        { id: 'npm-8', name: "zod", platform: 'npm', html_url: "https://www.npmjs.com/package/zod", description: "TypeScript-first schema validation with static type inference.", stargazers_count: 12000000, language: 'TypeScript', topics: ['typescript', 'schema', 'validation'], owner: { login: 'colinhacks', avatar_url: 'https://static-production.npmjs.com/58a19602f36fa97d1a703d3e01d4d800.png', html_url: 'https://www.npmjs.com/package/zod' } }
       ].map(mapToFrontendProject);
     }
 
