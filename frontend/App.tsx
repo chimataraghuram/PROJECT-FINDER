@@ -96,32 +96,46 @@ const getBasePath = (): string => {
 };
 
 const getViewFromUrl = (): ViewType => {
-  // 1. Check path-based routing (e.g. /PROJECT-FINDER/trending, /PROJECT-FINDER/dashboard)
+  if (typeof window === 'undefined') return 'search';
+  const pathname = window.location.pathname || '';
   const basePath = getBasePath();
-  const subPath = window.location.pathname.slice(basePath.length).replace(/^\/+|\/+$/g, '').toLowerCase();
   
+  // Extract subpath after base
+  let subPath = '';
+  if (basePath && pathname.startsWith(basePath)) {
+    subPath = pathname.slice(basePath.length);
+  } else {
+    subPath = pathname;
+  }
+  subPath = subPath.replace(/^\/+|\/+$/g, '').toLowerCase();
+
+  // Root / Home
   if (!subPath || subPath === '') return 'search';
   if (subPath === 'trending' || subPath === 'readme') return 'readme';
   if (subPath === 'favorites' || subPath === 'starred' || subPath === 'library') return 'favorites';
   if (subPath === 'dashboard' || subPath === 'profile') return 'dashboard';
 
-  // 2. Fallback to hash if present (e.g. /#trending, /#dashboard)
-  const hash = window.location.hash.toLowerCase().replace('#', '').trim();
+  // 2. Hash fallback
+  const hash = (window.location.hash || '').toLowerCase().replace('#', '').trim();
   if (hash === 'trending' || hash === 'readme') return 'readme';
   if (hash === 'favorites' || hash === 'starred' || hash === 'library') return 'favorites';
   if (hash === 'dashboard' || hash === 'profile') return 'dashboard';
-  if (hash === 'search' || hash === '') return 'search';
+  if (hash === 'search') return 'search';
 
-  // Unknown route
+  // Anything else is 404
   return '404';
 };
 
 const App: React.FC = () => {
   const [toast, setToast] = useState<{message: string, icon?: React.ReactNode, visible: boolean}>({ message: '', visible: false });
   const showToast = (message: string, icon?: React.ReactNode) => { setToast({ message, icon, visible: true }); setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000); };
-  const initialView = useMemo(() => getViewFromUrl(), []);
-  const [showIntro, setShowIntro] = useState(() => initialView === 'search');
-  const [currentView, setCurrentView] = useState<ViewType>(initialView);
+  
+  // Detect current route immediately from URL
+  const [currentView, setCurrentView] = useState<ViewType>(() => getViewFromUrl());
+  const [showIntro, setShowIntro] = useState(() => {
+    // Only show intro animation when specifically on the home root route
+    return getViewFromUrl() === 'search';
+  });
 
   const navigateToView = useCallback((view: ViewType) => {
     setCurrentView(view);
