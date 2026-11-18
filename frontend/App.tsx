@@ -88,11 +88,38 @@ const DEFAULT_FAVORITES: Project[] = [
 
 import { IntroVideo } from './components/IntroVideo';
 
+const getViewFromHash = (): ViewType => {
+  const hash = window.location.hash.toLowerCase().replace('#', '').trim();
+  if (hash === 'trending' || hash === 'readme') return 'readme';
+  if (hash === 'favorites' || hash === 'starred') return 'favorites';
+  if (hash === 'dashboard') return 'dashboard';
+  return 'search';
+};
+
 const App: React.FC = () => {
   const [toast, setToast] = useState<{message: string, icon?: React.ReactNode, visible: boolean}>({ message: '', visible: false });
   const showToast = (message: string, icon?: React.ReactNode) => { setToast({ message, icon, visible: true }); setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000); };
   const [showIntro, setShowIntro] = useState(true);
-  const [currentView, setCurrentView] = useState<ViewType>('search');
+  const [currentView, setCurrentView] = useState<ViewType>(() => getViewFromHash());
+
+  const navigateToView = useCallback((view: ViewType) => {
+    setCurrentView(view);
+    const targetHash = view === 'search' ? '' : view === 'readme' ? '#trending' : `#${view}`;
+    const base = window.location.pathname + window.location.search;
+    window.history.pushState(null, '', targetHash ? `${base}${targetHash}` : base);
+  }, []);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentView(getViewFromHash());
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, []);
   
   const [searchState, setSearchState] = useState<SearchState>({
     isLoading: false,
@@ -377,7 +404,7 @@ const App: React.FC = () => {
             <div className="pointer-events-auto shrink-0 flex items-center">
               <div
                 className={`flex items-center gap-2 md:gap-3 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-all duration-300 pr-4 md:pr-5 pl-2 py-1.5 shadow-lg`}
-                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onClick={() => { navigateToView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-20 group-hover/logo:opacity-40 transition-opacity" />
@@ -414,7 +441,7 @@ const App: React.FC = () => {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      onClick={() => { navigateToView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className={`h-10 md:h-11 rounded-full flex items-center justify-center gap-2 lg:gap-2.5 transition-all duration-200 ease-out font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav cursor-pointer ${
                         isActive
                           ? `bg-gradient-to-r ${item.color} text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]`
@@ -470,7 +497,7 @@ const App: React.FC = () => {
                 <div className={`transition-all duration-300 overflow-hidden ${isCompact ? 'w-0 opacity-0 m-0' : 'hidden sm:block w-px bg-white/10 shrink-0 h-5 mx-0.5 opacity-100'}`} />
 
                 <AuthButton
-                  onViewDashboard={() => setCurrentView(currentView === 'dashboard' ? 'search' : 'dashboard')}
+                  onViewDashboard={() => navigateToView(currentView === 'dashboard' ? 'search' : 'dashboard')}
                   isCompact={isCompact}
                 />
               </div>
@@ -486,7 +513,7 @@ const App: React.FC = () => {
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2 }}
                 whileTap={{ scale: 0.95 }}
                 className={`pointer-events-auto flex items-center cursor-pointer bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full py-1.5 shadow-xl group/moblogo transition-all duration-500 ease-out ${isCompact ? 'gap-2 pr-4 pl-1.5' : 'gap-2 pr-4 pl-1.5'}`}
-                onClick={() => { setCurrentView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onClick={() => { navigateToView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
@@ -511,7 +538,7 @@ const App: React.FC = () => {
                 </motion.button>
                 {!currentUser && (
                   <div className="transition-all duration-500 ease-out">
-                    <AuthButton minimal isCompact={isCompact} onViewDashboard={() => setCurrentView('dashboard')} />
+                    <AuthButton minimal isCompact={isCompact} onViewDashboard={() => navigateToView('dashboard')} />
                   </div>
                 )}
               </motion.div>
@@ -549,7 +576,7 @@ const App: React.FC = () => {
                 onToggleComparison={toggleComparison}
                 comparisonQueue={comparisonQueue}
                 onSummarize={(projectName) => {
-                  setCurrentView('search');
+                  navigateToView('search');
                   handleSearch(`Summarize ${projectName}`);
                 }}
                 onAskAI={handleOpenAIAssistant}
@@ -560,9 +587,9 @@ const App: React.FC = () => {
               <UserDashboard 
                 user={currentUser}
                 savedProjects={favorites}
-                onNavigateToDiscover={() => setCurrentView('search')}
+                onNavigateToDiscover={() => navigateToView('search')}
                 onSearch={(query) => {
-                  setCurrentView('search');
+                  navigateToView('search');
                   handleSearch(query);
                 }}
                 onOpenResearchSession={(session) => {
@@ -988,7 +1015,7 @@ const App: React.FC = () => {
                       <p className="text-gray-500 max-w-xs">Start exploring projects and heart the ones you love to see them here in your saved collection.</p>
                     </div>
                     <button
-                      onClick={() => setCurrentView('search')}
+                      onClick={() => navigateToView('search')}
                       className="px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition-all active:scale-95 shadow-xl shadow-white/5 uppercase tracking-widest text-[10px]"
                     >
                       {LABELS.discover}
@@ -1063,7 +1090,7 @@ const App: React.FC = () => {
                     <motion.button
                       key={item.id}
                       whileTap={{ scale: 0.85 }}
-                      onClick={() => { setCurrentView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      onClick={() => { navigateToView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className={`relative p-2.5 rounded-full transition-colors duration-300 ${
                         isActive 
                           ? `bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]` 
