@@ -109,25 +109,35 @@ const Particles: React.FC = () => {
 
     const init = () => {
       particles = [];
-      const densityMultiplier = isMobile ? 15000 : 8000;
-      const numberOfParticles = (canvas.width * canvas.height) / densityMultiplier;
+      const densityMultiplier = isMobile ? 35000 : 20000;
+      const numberOfParticles = Math.min(Math.floor((canvas.width * canvas.height) / densityMultiplier), isMobile ? 25 : 50);
       for (let i = 0; i < numberOfParticles; i++) {
         particles.push(new Particle());
       }
     };
 
-    const animate = () => {
+    let lastDrawTime = 0;
+    const targetFps = isMobile ? 30 : 60;
+    const interval = 1000 / targetFps;
+
+    const animate = (timestamp: number) => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      // Throttle rendering to target frame rate to save CPU/GPU cycles
+      const elapsed = timestamp - lastDrawTime;
+      if (elapsed < interval) return;
+      lastDrawTime = timestamp - (elapsed % interval);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         particles[i].draw();
       }
-      animationFrameId = requestAnimationFrame(animate);
     };
 
     resize();
     init();
-    animate();
+    animationFrameId = requestAnimationFrame(animate);
 
     const handleMouseMove = (event: MouseEvent) => {
       mouse.x = event.x;

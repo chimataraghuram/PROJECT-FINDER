@@ -5,7 +5,7 @@ import Particles from './components/Particles';
 import { Project, SearchResult, SearchState } from './types';
 import { Search, Sparkles, Heart, Chrome, Bot, X, Send, FileCode, Github, ExternalLink, Linkedin, User, Globe, MessageCircle, Flame, Loader2, Rocket, ArrowRight, Layout, Shield, Brain, Share2, BarChart3, Star, TrendingUp, Play, Info, ChevronRight , Folder , ListFilter, Code, Clock, Check, ChevronDown, Settings, Trash2, MoreHorizontal } from 'lucide-react';
 import { Footer } from './components/Footer';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SkeletonCard } from './components/SkeletonCard';
 import { TechboyAssistant } from './components/TechboyAssistant';
 import { AuthButton } from './components/AuthButton';
@@ -94,10 +94,6 @@ const App: React.FC = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [currentView, setCurrentView] = useState<ViewType>('search');
   
-  // Parallax Background Logic
-  const { scrollY } = useScroll();
-  const yParallax = useTransform(scrollY, [0, 5000], [0, -500]);
-  const smoothY = useSpring(yParallax, { damping: 15, stiffness: 100 });
   const [searchState, setSearchState] = useState<SearchState>({
     isLoading: false,
     error: null,
@@ -340,8 +336,17 @@ const App: React.FC = () => {
 
   const [isCompact, setIsCompact] = useState(false);
   useEffect(() => {
-    const handleScroll = () => setIsCompact(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsCompact(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -359,11 +364,8 @@ const App: React.FC = () => {
         <>
           <Particles />
           <div className="parallax-bg-container">
-            <motion.div 
-              style={{ y: smoothY }}
-              className="parallax-bg-image animate-drift"
-              animate={{ opacity: [0.12, 0.16, 0.12], scale: [1, 1.02, 1] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            <div 
+              className="parallax-bg-image"
             />
             <div className="parallax-bg-overlay" />
           </div>

@@ -196,16 +196,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
   };
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0, 
-      scale: 1,
       transition: { 
-        duration: 0.5, 
-        ease: [0.23, 1, 0.32, 1], // beautiful spring ease out
-        delay: index * 0.1, // Stagger based on index
-        staggerChildren: 0.1
+        duration: 0.35, 
+        ease: "easeOut",
+        delay: Math.min(index * 0.05, 0.3)
       }
     }
   };
@@ -219,15 +217,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
     
     return (
     <motion.div
-      layout
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      viewport={{ once: true, margin: "50px" }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={handleMouseEnter}
-      className={`group relative bg-[#0a0a0f] border p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-700 ${isGlowing ? 'border-orange-500 shadow-[0_0_40px_rgba(249,115,22,0.4)]' : 'border-white/5 hover:border-orange-500/20'}`}
+      className={`group relative bg-[#0a0a0f] border p-5 md:p-6 flex flex-col h-full rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300 ${isGlowing ? 'border-orange-500 shadow-[0_0_20px_rgba(249,115,22,0.3)]' : 'border-white/5 hover:border-orange-500/20'}`}
     >
       {/* Top Header: Platform Pill + Star Pill + Glass Action Bar */}
       <div className="flex items-center justify-between gap-2 mb-6 relative z-20">
