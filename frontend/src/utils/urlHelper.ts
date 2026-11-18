@@ -46,7 +46,12 @@ export function normalizeUrl(url: string | undefined | null, fallbackPlatform: s
   if (/^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(trimmed)) {
     const plat = fallbackPlatform.toLowerCase();
     if (plat.includes('hugging')) return `https://huggingface.co/${trimmed}`;
-    if (plat.includes('kaggle')) return `https://www.kaggle.com/${trimmed}`;
+    if (plat.includes('kaggle')) {
+      if (trimmed.startsWith('datasets/') || trimmed.startsWith('competitions/')) {
+        return `https://www.kaggle.com/${trimmed}`;
+      }
+      return `https://www.kaggle.com/datasets/${trimmed}`;
+    }
     return `https://github.com/${trimmed}`;
   }
 
