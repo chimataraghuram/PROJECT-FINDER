@@ -7,6 +7,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      // SPA fallback: serve index.html for ALL unmatched routes so React handles 404s
+      historyApiFallback: true,
       proxy: {
         '/api': {
           target: 'http://localhost:5000',
