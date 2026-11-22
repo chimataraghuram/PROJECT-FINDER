@@ -1,6 +1,19 @@
+import fs from 'fs';
 import path from 'path';
-import { defineConfig } from 'vite';
+import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+
+const copy404Plugin = (): Plugin => ({
+  name: 'copy-404-html',
+  closeBundle() {
+    const distDir = path.resolve(__dirname, 'dist');
+    const indexPath = path.join(distDir, 'index.html');
+    const notFoundPath = path.join(distDir, '404.html');
+    if (fs.existsSync(indexPath)) {
+      fs.copyFileSync(indexPath, notFoundPath);
+    }
+  }
+});
 
 export default defineConfig(({ mode }) => {
   return {
@@ -18,7 +31,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     base: '/PROJECT-FINDER/', // Ensure absolute paths for correct asset loading on GitHub Pages
-    plugins: [react()],
+    plugins: [react(), copy404Plugin()],
     build: {
       rollupOptions: {
         output: {
