@@ -1100,7 +1100,9 @@ const App: React.FC = () => {
               </div>
             )}
 
-            <Footer onComingSoonClick={triggerComingSoon} labels={LABELS} />
+            {currentView !== '404' && (
+              <Footer onComingSoonClick={triggerComingSoon} labels={LABELS} />
+            )}
 
             {/* Controlled autonomous TECHBOY AI Assistant */}
             <TechboyAssistant 
