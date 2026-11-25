@@ -35,7 +35,7 @@ export const deepSearch = async (req, res) => {
       whyMatches: reasons,
       evidence: { sourceTypes: ['metadata', 'readme', 'tree'].filter(type => JSON.stringify(repo).toLowerCase().includes(type)) }
     };
-  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, Math.min(Number(req.query.limit) || 20, 50));
+  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, Math.max(1, Math.min(Number(req.query.limit) || 20, 50)));
   res.json({ query, intent, retrieval: 'lexical', filters: { language: requestedLanguage || null, framework: requestedFramework || null, hasTests: requiresTests, hasDocumentation: requiresDocs }, total: results.length, results });
 };
 
@@ -45,7 +45,9 @@ export const searchChunks = async (req, res) => {
   const tokens = terms(query);
   const chunks = await DocumentChunk.find({ $text: { $search: query } }).limit(20).lean().catch(() => []);
   const safePattern = tokens.map(token => token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-  const fallback = chunks.length ? chunks : await DocumentChunk.find({ content: { $regex: safePattern, $options: 'i' } }).limit(20).lean();
+  const fallback = chunks.length
+    ? chunks
+    : (safePattern ? await DocumentChunk.find({ content: { $regex: safePattern, $options: 'i' } }).limit(20).lean() : []);
   const ranked = rankChunksSemantically(query, fallback);
   res.json({ query, retrieval: 'semantic-local-baseline', chunks: ranked.map(chunk => ({ id: chunk._id, repositoryId: chunk.repositoryId, sourceType: chunk.sourceType, filePath: chunk.filePath, section: chunk.section, content: chunk.content, semanticScore: Number(chunk.semanticScore.toFixed(4)) })) });
 };
@@ -71,6 +73,6 @@ export const hybridSearch = async (req, res) => {
     if (!lexical && !semanticScore) return null;
     const fused = lexical * 0.55 + semanticScore * 0.45;
     return { repository: { id: repo._id, owner: repo.owner, name: repo.name, url: repo.url }, score: Number((fused * 100).toFixed(2)), scoreComponents: { lexical: Number((lexical * 100).toFixed(2)), semantic: Number((semanticScore * 100).toFixed(2)) }, matchedTerms: tokens.filter(token => text.includes(token)) };
-  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, Math.min(Number(req.query.limit) || 20, 50));
+  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, Math.max(1, Math.min(Number(req.query.limit) || 20, 50)));
   res.json({ query, retrieval: 'hybrid-fusion', weights: { lexical: 0.55, semantic: 0.45 }, total: results.length, results });
 };

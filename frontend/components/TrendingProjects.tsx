@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Github, Check, ExternalLink, RefreshCw, Flame, User, Globe, Code, Search, Rocket, Shield, Brain, Share2, BarChart3, Database, Linkedin, Bot, Heart, X, Sparkles, Loader2, Folder, Activity, TrendingUp, Box } from 'lucide-react';
 import { Project } from '../types';
 import { fetchTrending } from '../services/apiService';
-import { openSafe } from '../src/utils/urlHelper';
+import { normalizeUrl, openSafe } from '../src/utils/urlHelper';
 
 // Custom SVG for Hugging Face logo
 // Official Hugging Face Icon (SimpleIcons)
@@ -218,11 +218,11 @@ const TrendingCard: React.FC<{
                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">By Author</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                             <a 
-                                href={project.owner?.html_url || '#'} 
+                                href={normalizeUrl(project.owner?.html_url, project.platform)} 
                                 target="_blank" 
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                                 className="text-base font-black text-white hover:text-red-400 transition-colors tracking-tight truncate"
-                                onClick={(e) => { e.stopPropagation(); openSafe(project.owner?.html_url); }}
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSafe(project.owner?.html_url, project.platform); }}
                             >
                                 @{project.owner?.login || 'unknown'}
                             </a>
@@ -286,34 +286,41 @@ const TrendingCard: React.FC<{
             {/* Row 5: Bottom CTA Action Buttons (View Repo with glowing red gradient & Outline Live Demo) */}
             <div className="grid grid-cols-2 gap-3 mt-auto relative z-20">
                 <motion.a 
-                    href={project.url}
+                    href={normalizeUrl(project.url, project.platform)}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={(e) => { e.stopPropagation(); openSafe(project.url); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); openSafe(project.url, project.platform); }}
                     className="py-3 px-3.5 rounded-xl bg-gradient-to-r from-red-600 via-red-500 to-rose-600 text-white text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-[0_8px_25px_rgba(239,68,68,0.45)] hover:shadow-red-500/70 hover:brightness-110"
                 >
                     <config.icon size={15} /> 
                     {config.label} &rarr;
                 </motion.a>
 
-                <motion.a 
-                    href={project.liveUrl || '#'}
-                    target={project.liveUrl ? "_blank" : "_self"}
-                    rel="noreferrer"
-                    whileHover={{ scale: project.liveUrl ? 1.02 : 1 }}
-                    whileTap={{ scale: project.liveUrl ? 0.98 : 1 }}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (project.liveUrl && project.liveUrl !== '#') openSafe(project.liveUrl);
-                        else e.preventDefault();
-                    }}
-                    className={`py-3 px-3.5 rounded-xl border ${project.liveUrl && project.liveUrl !== '#' ? 'border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70' : 'border-white/10 text-gray-500 cursor-not-allowed'} text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner`}
-                >
-                    <ExternalLink size={14} /> 
-                    LIVE DEMO
-                </motion.a>
+                {project.liveUrl && project.liveUrl !== '#' ? (
+                    <motion.a 
+                        href={normalizeUrl(project.liveUrl, project.platform)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openSafe(project.liveUrl, project.platform);
+                        }}
+                        className="py-3 px-3.5 rounded-xl border border-red-500/40 text-red-300 hover:bg-red-500/10 hover:border-red-500/70 text-[11px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-inner"
+                    >
+                        <ExternalLink size={14} /> 
+                        LIVE DEMO
+                    </motion.a>
+                ) : (
+                    <span className="py-3 px-3.5 rounded-xl border border-white/10 text-gray-500 cursor-not-allowed text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-inner opacity-60">
+                        <ExternalLink size={14} /> 
+                        NO DEMO
+                    </span>
+                )}
             </div>
         </motion.div>
     );

@@ -17,15 +17,16 @@ const getGitHubTopic = (category) => {
 
 // Proxy Multi-Platform Trending
 export const getTrendingProjects = async (req, res) => {
-  const { platform = 'GitHub', category = 'All', timestamp } = req.query;
+  const platform = String(req.query.platform || 'GitHub');
+  const category = String(req.query.category || 'All');
   
   try {
     const activePlatform = platform.toLowerCase();
     if (activePlatform === 'github' || activePlatform === 'all') {
-      const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
+      const topic = category !== 'All' ? `topic:${getGitHubTopic(category)}` : '';
       const q = `stars:>500 created:>2024-01-01${topic ? ` ${topic}` : ''}`;
       const response = await axios.get(
-        `https://api.github.com/search/repositories?q=${q}&sort=stars&order=desc&per_page=30`,
+        `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=30`,
         { 
           headers: { 
             'Accept': 'application/vnd.github+json'
@@ -335,7 +336,9 @@ export const clearSearchCache = () => searchCache.clear();
 
 // Proxy Multi-Platform Search
 export const searchProjects = async (req, res) => {
-  const { q, platform = 'GitHub', category = 'All' } = req.query;
+  const q = String(req.query.q || '').trim();
+  const platform = String(req.query.platform || 'GitHub');
+  const category = String(req.query.category || 'All');
   if (!q) return res.status(400).json({ message: "Query is required" });
 
   try {
@@ -351,9 +354,9 @@ export const searchProjects = async (req, res) => {
         const cached = getCachedResult(cacheKey);
         if (cached) return cached;
 
-        const topic = category !== 'All' ? `+topic:${getGitHubTopic(category)}` : '';
+        const topic = category !== 'All' ? `topic:${getGitHubTopic(category)}` : '';
         const query = `${q} in:name,description${topic ? ` ${topic}` : ''}`;
-        const url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc&per_page=${activePlatform === 'all' ? 10 : 30}`;
+        const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${activePlatform === 'all' ? 10 : 30}`;
         
         const response = await axios.get(url, { 
           headers: { 
@@ -535,22 +538,32 @@ export const searchProjects = async (req, res) => {
 
 // Save Project
 export const saveProject = async (req, res) => {
-  const { projectName, repoUrl, stars, language, description, platform, tags } = req.body;
+  const { projectName, repoUrl, stars, language, description, platform, tags } = req.body || {};
+  if (typeof repoUrl !== 'string' || !/^https?:\/\//i.test(repoUrl.trim())) {
+    return res.status(400).json({ message: 'Valid http/https repoUrl is required' });
+  }
+  const normalizedRepoUrl = repoUrl.trim();
   try {
-    const favorite = new FavoriteProject({
-      userId: req.user._id,
-      projectName,
-      repoUrl,
-      stars,
-      language,
-      description,
-      platform,
-      tags
-    });
-    const saved = await favorite.save();
+    const saved = await FavoriteProject.findOneAndUpdate(
+      { userId: req.user._id, repoUrl: normalizedRepoUrl },
+      {
+        $set: {
+          projectName: String(projectName || 'Untitled Project').slice(0, 200),
+          repoUrl: normalizedRepoUrl,
+          stars,
+          language,
+          description: typeof description === 'string' ? description.slice(0, 2000) : '',
+          platform,
+          tags: Array.isArray(tags) ? tags.slice(0, 20) : []
+        },
+        $setOnInsert: { userId: req.user._id }
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
     res.status(201).json(saved);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('SAVE PROJECT ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to save project' });
   }
 };
 
@@ -560,7 +573,21 @@ export const getFavorites = async (req, res) => {
     const favorites = await FavoriteProject.find({ userId: req.user._id });
     res.json(favorites);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('GET FAVORITES ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to load favorites' });
+  }
+};
+
+// Delete Favorite
+export const deleteFavorite = async (req, res) => {
+  const repoUrl = String(req.body?.repoUrl || req.query?.repoUrl || '').trim();
+  if (!repoUrl) return res.status(400).json({ message: 'repoUrl is required' });
+  try {
+    await FavoriteProject.findOneAndDelete({ userId: req.user._id, repoUrl });
+    res.json({ removed: true, repoUrl });
+  } catch (error) {
+    console.error('DELETE FAVORITE ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to remove favorite' });
   }
 };
 
@@ -590,13 +617,15 @@ export const searchReadmes = async (req, res) => {
     );
     res.json(response.data.items);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('README SEARCH ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to search READMEs' });
   }
 };
 
 // Proxy GitHub User Search
 export const searchUsers = async (req, res) => {
-  const { q } = req.query;
+  const q = String(req.query.q || '').trim();
+  if (!q) return res.status(400).json({ message: 'Query is required' });
   try {
     const response = await axios.get(
       `https://api.github.com/search/users?q=${encodeURIComponent(q)}&per_page=12`,
@@ -609,16 +638,21 @@ export const searchUsers = async (req, res) => {
     );
     res.json(response.data.items);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('USER SEARCH ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to search users' });
   }
 };
 
 // Proxy GitHub README Content
 export const getProjectReadme = async (req, res) => {
-  const { owner, repo } = req.params;
+  const owner = String(req.params.owner || '').trim();
+  const repo = String(req.params.repo || '').trim();
+  if (!/^[a-zA-Z0-9_.-]+$/.test(owner) || !/^[a-zA-Z0-9_.-]+$/.test(repo)) {
+    return res.status(400).json({ message: 'Invalid repository owner or name' });
+  }
   try {
     const response = await axios.get(
-      `https://api.github.com/repos/${owner}/${repo}/readme`,
+      `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/readme`,
       { 
         headers: { 
           'Accept': 'application/vnd.github.v3.raw',
@@ -628,16 +662,20 @@ export const getProjectReadme = async (req, res) => {
     );
     res.send(response.data);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('README FETCH ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to load repository README' });
   }
 };
 
 // Proxy GitHub User Profile
 export const getUserProfile = async (req, res) => {
-  const { username } = req.params;
+  const username = String(req.params.username || '').trim();
+  if (!/^[a-zA-Z0-9-]+$/.test(username)) {
+    return res.status(400).json({ message: 'Invalid GitHub username' });
+  }
   try {
     const response = await axios.get(
-      `https://api.github.com/users/${username}`,
+      `https://api.github.com/users/${encodeURIComponent(username)}`,
       { 
         headers: { 
           'Accept': 'application/vnd.github.v3+json',
@@ -647,7 +685,8 @@ export const getUserProfile = async (req, res) => {
     );
     res.json(response.data);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('USER PROFILE ERROR:', error.message);
+    res.status(500).json({ message: 'Failed to load GitHub profile' });
   }
 };
 

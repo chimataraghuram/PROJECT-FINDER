@@ -14,7 +14,7 @@ import { UserDashboard } from './components/UserDashboard';
 import { saveProject, fetchFavorites, fetchTrending, fetchSearch, fetchCollections, createCollection, updateCollection, deleteCollection, removeProjectFromCollection, recordSearchHistory, recordFirebaseSearchHistory } from './services/apiService';
 import { ComparisonStudio } from './components/ComparisonStudio';
 import { NotFound } from './components/NotFound';
-import { openSafe } from './src/utils/urlHelper';
+import { normalizeUrl, openSafe } from './src/utils/urlHelper';
 import mascotLogo from './src/assets/logos/logo_final_v6.png';
 
 type ViewType = 'search' | 'favorites' | 'readme' | 'dashboard' | 'trending' | '404';
@@ -175,8 +175,16 @@ const App: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<'all' | 'week' | 'month' | 'year'>('all');
 
   const [favorites, setFavorites] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('project-finder-favorites');
-    let current = saved ? JSON.parse(saved) : DEFAULT_FAVORITES;
+    let current: Project[] = DEFAULT_FAVORITES;
+    try {
+      const saved = localStorage.getItem('project-finder-favorites');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) current = parsed;
+      }
+    } catch {
+      current = DEFAULT_FAVORITES;
+    }
     
     // Merge defaults to ensure requested projects are always available initially
     const merged = [...current];
@@ -225,7 +233,8 @@ const App: React.FC = () => {
       const token = localStorage.getItem('project-finder-token');
       if (token) recordSearchHistory(token, trimmedQuery, platform, data.projects?.length || 0).catch(() => {});
       const storedUser = localStorage.getItem('project-finder-user');
-      const firebaseUid = storedUser ? JSON.parse(storedUser).uid : null;
+      let firebaseUid: string | null = null;
+      try { firebaseUid = storedUser ? JSON.parse(storedUser).uid : null; } catch { firebaseUid = null; }
       if (firebaseUid) recordFirebaseSearchHistory(firebaseUid, trimmedQuery, platform, data.projects?.length || 0).catch(() => {});
       setResult(data);
       setSearchState({ isLoading: false, error: null, hasSearched: true });
@@ -254,8 +263,12 @@ const App: React.FC = () => {
   }, [handleSearch]);
 
   const [currentUser, setCurrentUser] = useState<any>(() => {
-    const savedUser = localStorage.getItem('project-finder-user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('project-finder-user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
   });
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [restoredResearchSession, setRestoredResearchSession] = useState<any>(null);
@@ -435,11 +448,11 @@ const App: React.FC = () => {
 
           {/* --- DESKTOP NAVIGATION (Fixed Islands) --- */}
           {/* DESKTOP HEADER */}
-          <div className="hidden md:flex fixed top-4 inset-x-0 px-4 xl:px-6 z-[2000] justify-between items-start pointer-events-none w-full max-w-[1920px] mx-auto gap-4">
+          <div className="hidden md:flex fixed top-4 inset-x-0 px-4 xl:px-6 z-[2000] justify-between items-center pointer-events-none w-full max-w-[1920px] mx-auto gap-3">
             {/* 1. Left Island: Logo & Brand */}
             <div className="pointer-events-auto shrink-0 flex items-center">
               <div
-                className={`flex items-center gap-2 md:gap-3 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-all duration-300 pr-4 md:pr-5 pl-2 py-1.5 shadow-lg`}
+                className={`flex items-center gap-2 md:gap-3 ${isCompact ? 'bg-[#0f172a]/90' : 'bg-[#0f172a]/40'} backdrop-blur-2xl border border-white/10 rounded-full cursor-pointer group/logo transition-all duration-300 pr-3 lg:pr-5 pl-2 py-1.5 shadow-lg`}
                 onClick={() => { navigateToView('search'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               >
                 <div className="relative shrink-0">
@@ -461,7 +474,7 @@ const App: React.FC = () => {
             </div>
 
             {/* 2. Middle Island: Adaptive Navigation Pill */}
-            <div className="pointer-events-auto absolute left-1/2 -translate-x-1/2 shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
+            <div className="pointer-events-auto shrink-1 min-w-0 flex justify-center overflow-x-auto no-scrollbar">
               <motion.nav
                 animate={{
                   scale: isCompact ? 0.95 : 1,
@@ -469,20 +482,21 @@ const App: React.FC = () => {
                   boxShadow: isCompact ? "0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.2)" : "0 10px 30px rgba(0,0,0,0.3)"
                 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className={`p-1.5 md:p-2 bg-[#0f172a]/${isCompact ? '90' : '40'} backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-1.5 md:gap-2.5 transition-all duration-300 ease-out shrink-0`}
+                className={`p-1.5 md:p-2 ${isCompact ? 'bg-[#0f172a]/90' : 'bg-[#0f172a]/40'} backdrop-blur-2xl border border-white/10 rounded-full flex items-center gap-1.5 md:gap-2 transition-all duration-300 ease-out shrink-0`}
               >
                 {NAV_ITEMS.map((item) => {
-                  const isActive = currentView === item.id;
+                  const isActive = currentView === item.id || (item.id === 'readme' && currentView === 'trending');
                   const Icon = item.icon;
                   return (
                     <button
                       key={item.id}
+                      aria-label={item.label}
                       onClick={() => { navigateToView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className={`h-10 md:h-11 rounded-full flex items-center justify-center gap-2 lg:gap-2.5 transition-all duration-200 ease-out font-bold text-[11px] md:text-xs tracking-widest uppercase relative overflow-hidden group/nav cursor-pointer ${
                         isActive
                           ? `bg-gradient-to-r ${item.color} text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]`
                           : 'text-gray-400 bg-transparent hover:text-white hover:bg-white/5'
-                      } ${isCompact ? 'px-3 md:px-3.5' : 'px-3.5 md:px-5'}`}
+                      } ${isCompact ? 'px-3 md:px-3.5' : 'px-3.5 lg:px-5'}`}
                     >
                       <div className="relative z-10 flex items-center justify-center shrink-0">
                         <Icon className={`${isActive ? 'scale-105 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'opacity-70'} w-4 h-4 md:w-4.5 md:h-4.5 transition-transform duration-200`} />
@@ -490,7 +504,7 @@ const App: React.FC = () => {
                       
                       {!isCompact && (
                         <span
-                          className="hidden sm:inline-block whitespace-nowrap relative z-10 origin-left transition-opacity duration-200"
+                          className="hidden lg:inline-block whitespace-nowrap relative z-10 origin-left transition-opacity duration-200"
                         >
                           {item.label} {item.id === 'favorites' && `(${favorites.length})`}
                         </span>
@@ -553,9 +567,9 @@ const App: React.FC = () => {
               >
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-orange-500 blur-xl opacity-30 group-hover/moblogo:opacity-50 transition-opacity" />
-                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-500 ease-out ${isCompact ? 'w-16 h-16' : 'w-12 h-12'}`} alt="Logo" />
+                  <img src={mascotLogo} className={`rounded-full border border-white/20 shadow-lg relative z-10 transition-all duration-300 ease-out ${isCompact ? 'w-9 h-9' : 'w-11 h-11'}`} alt="Logo" />
                 </div>
-                <span className={`font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-500 ease-out whitespace-nowrap origin-left ${isCompact ? 'text-[9px] opacity-70' : 'text-xs opacity-100'}`}>Project Finder</span>
+                <span className={`font-black text-white tracking-tighter uppercase mt-0.5 transition-all duration-300 ease-out whitespace-nowrap origin-left ${isCompact ? 'text-[10px] opacity-80' : 'text-xs opacity-100'}`}>Project Finder</span>
               </motion.div>
 
               {/* Actions Pill (Right) */}
@@ -563,14 +577,15 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.2, delay: 0.1 }}
-                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full shadow-xl transition-all duration-500 ease-out ${(!currentUser || isCompact) ? 'gap-1 p-1' : 'gap-2 p-1.5'}`}
+                className={`pointer-events-auto flex items-center bg-[#0f172a]/80 backdrop-blur-3xl border border-white/10 rounded-full shadow-xl transition-all duration-300 ease-out ${(!currentUser || isCompact) ? 'gap-1 p-1' : 'gap-2 p-1.5'}`}
               >
                 <motion.button
                   whileTap={{ scale: 0.85 }}
+                  aria-label="Open Techboy AI Assistant"
                   onClick={() => setIsAIAssistantOpen(true)}
-                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-500 ease-out ${isCompact ? 'w-14 h-14' : 'w-8 h-8'}`}
+                  className={`rounded-full bg-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.4)] flex items-center justify-center transition-all duration-300 ease-out ${isCompact ? 'w-9 h-9' : 'w-10 h-10'}`}
                 >
-                  <Bot className={`text-white transition-all duration-500 ease-out ${isCompact ? 'w-7 h-7' : 'w-4 h-4'}`} />
+                  <Bot className={`text-white transition-all duration-300 ease-out ${isCompact ? 'w-4 h-4' : 'w-5 h-5'}`} />
                 </motion.button>
                 {!currentUser && (
                   <div className="transition-all duration-500 ease-out">
@@ -617,6 +632,19 @@ const App: React.FC = () => {
                 }}
                 onAskAI={handleOpenAIAssistant}
               />
+            )}
+
+            {currentView === 'dashboard' && !currentUser && (
+              <div className="max-w-md mx-auto px-4 py-28 text-center space-y-6">
+                <h2 className="text-2xl font-black text-white uppercase tracking-tight">Sign in to view Dashboard</h2>
+                <p className="text-sm text-gray-400">Connect your account using the top-right sign-in button to access saved projects, collections, and research history.</p>
+                <button
+                  onClick={() => navigateToView('search')}
+                  className="px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-black text-xs uppercase tracking-widest cursor-pointer"
+                >
+                  Return to Search
+                </button>
+              </div>
             )}
 
             {currentView === 'dashboard' && currentUser && (
@@ -983,7 +1011,7 @@ const App: React.FC = () => {
                                           <ExternalLink className="w-3.5 h-3.5" />
                                         </div>
                                         <span className="text-xs text-gray-400 group-hover/source:text-gray-200 truncate font-bold tracking-wide">
-                                          {source.title || new URL(source.uri).hostname}
+                                          {source.title || (() => { try { return new URL(source.uri).hostname; } catch { return source.uri; } })()}
                                         </span>
                                       </a>
                                     ))}
@@ -1083,12 +1111,8 @@ const App: React.FC = () => {
             )}
 
 
-                {openCollection && <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setOpenCollection(null)}><div className="glass-card w-full max-w-lg rounded-[2rem] p-6" onClick={event => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black uppercase tracking-widest text-white">{openCollection.name}</h2><button onClick={() => setOpenCollection(null)} className="rounded-lg px-3 py-2 text-xs text-gray-400 hover:bg-white/10">CLOSE</button></div><div className="max-h-80 space-y-2 overflow-y-auto custom-scrollbar">{openCollection.projects?.length ? openCollection.projects.map((project: any, index: number) => <div key={project._id || project.id || index} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-3"><a href={project.url || project.html_url || '#'} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-white">{project.name || project.title || 'Saved project'}</span><span className="text-[10px] text-gray-500">{project.platform || 'GitHub'} · Open repository ↗</span></a><button aria-label="Remove project from collection" onClick={() => handleRemoveCollectionProject(openCollection, project)} className="text-gray-500 hover:text-red-400"><Trash2 size={14}/></button></div>) : <p className="py-8 text-center text-xs italic text-gray-500">No projects in this collection yet.</p>}</div></div></div>}
-
-            {/* Coming Soon Notification */}
-            {showCreateCollection && <div className="fixed inset-0 z-[310] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setShowCreateCollection(false)}><form onSubmit={event => { event.preventDefault(); handleCreateCollection(); }} onClick={event => event.stopPropagation()} className="glass-card w-full max-w-md rounded-[2rem] p-6"><h2 className="text-lg font-black uppercase tracking-widest text-white">Create Collection</h2><p className="mt-2 text-xs text-gray-500">Give your saved projects a name.</p><input autoFocus value={newCollectionName} onChange={event => setNewCollectionName(event.target.value)} placeholder="Collection name" className="mt-5 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-orange-500/50" /><div className="mt-5 flex justify-end gap-3"><button type="button" onClick={() => setShowCreateCollection(false)} className="rounded-xl px-4 py-2 text-xs text-gray-400 hover:bg-white/10">Cancel</button><button type="submit" disabled={!newCollectionName.trim()} className="rounded-xl bg-orange-500 px-5 py-2 text-xs font-black uppercase tracking-widest text-white disabled:opacity-40">Create</button></div></form></div>}
             {showComingSoon && (
-              <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] animate-liquid-drop">
+              <div className="fixed bottom-24 md:bottom-10 left-1/2 -translate-x-1/2 z-[2200] animate-liquid-drop">
                 <div className="bg-[#0f172a] border border-orange-500/30 px-8 py-4 rounded-2xl shadow-[0_0_40px_rgba(249,115,22,0.3)] backdrop-blur-xl flex items-center gap-4">
                   <div className="bg-orange-500 p-2 rounded-full">
                     <Sparkles className="w-4 h-4 text-white" />
@@ -1122,19 +1146,20 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, type: "spring", bounce: 0.25, delay: 0.2 }}
-                className="inline-flex p-1 bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-6 px-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-auto"
+                className="inline-flex p-1 bg-[#0f172a]/90 backdrop-blur-3xl border border-white/10 rounded-full items-center gap-3 sm:gap-6 px-5 sm:px-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] pointer-events-auto"
               >
                 {[
-                  { id: 'search', icon: Search },
-                  { id: 'trending', icon: TrendingUp },
-                  { id: 'favorites', icon: Heart },
-                  ...(currentUser ? [{ id: 'dashboard', isProfile: true }] : [])
+                  { id: 'search', icon: Search, label: 'Search Projects' },
+                  { id: 'trending', icon: TrendingUp, label: 'Trending Projects' },
+                  { id: 'favorites', icon: Heart, label: 'Starred Projects' },
+                  ...(currentUser ? [{ id: 'dashboard', isProfile: true, label: 'User Dashboard' }] : [])
                 ].map((item) => {
-                  const isActive = currentView === item.id;
+                  const isActive = currentView === item.id || (item.id === 'trending' && currentView === 'readme');
                   const Icon = item.icon as any;
                   return (
                     <motion.button
                       key={item.id}
+                      aria-label={item.label}
                       whileTap={{ scale: 0.85 }}
                       onClick={() => { navigateToView(item.id as ViewType); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className={`relative p-2.5 rounded-full transition-colors duration-300 ${
@@ -1168,6 +1193,10 @@ const App: React.FC = () => {
 
           </main>
 
+          {openCollection && <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2500] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setOpenCollection(null)}><div className="glass-card w-full max-w-lg rounded-[2rem] p-6" onClick={event => event.stopPropagation()}><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black uppercase tracking-widest text-white">{openCollection.name}</h2><button onClick={() => setOpenCollection(null)} className="rounded-lg px-3 py-2 text-xs text-gray-400 hover:bg-white/10">CLOSE</button></div><div className="max-h-80 space-y-2 overflow-y-auto custom-scrollbar">{openCollection.projects?.length ? openCollection.projects.map((project: any, index: number) => <div key={project._id || project.id || index} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] p-3"><a href={normalizeUrl(project.url || project.html_url, project.platform)} onClick={(e) => { e.preventDefault(); openSafe(project.url || project.html_url, project.platform); }} target="_blank" rel="noopener noreferrer" className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-white">{project.name || project.title || 'Saved project'}</span><span className="text-[10px] text-gray-500">{project.platform || 'GitHub'} · Open repository ↗</span></a><button aria-label="Remove project from collection" onClick={() => handleRemoveCollectionProject(openCollection, project)} className="text-gray-500 hover:text-red-400"><Trash2 size={14}/></button></div>) : <p className="py-8 text-center text-xs italic text-gray-500">No projects in this collection yet.</p>}</div></div></div>}
+
+          {showCreateCollection && <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2500] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={() => setShowCreateCollection(false)}><form onSubmit={event => { event.preventDefault(); handleCreateCollection(); }} onClick={event => event.stopPropagation()} className="glass-card w-full max-w-md rounded-[2rem] p-6"><h2 className="text-lg font-black uppercase tracking-widest text-white">Create Collection</h2><p className="mt-2 text-xs text-gray-500">Give your saved projects a name.</p><input autoFocus value={newCollectionName} onChange={event => setNewCollectionName(event.target.value)} placeholder="Collection name" className="mt-5 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-orange-500/50" /><div className="mt-5 flex justify-end gap-3"><button type="button" onClick={() => setShowCreateCollection(false)} className="rounded-xl px-4 py-2 text-xs text-gray-400 hover:bg-white/10">Cancel</button><button type="submit" disabled={!newCollectionName.trim()} className="rounded-xl bg-orange-500 px-5 py-2 text-xs font-black uppercase tracking-widest text-white disabled:opacity-40">Create</button></div></form></div>}
+
           {/* Comparison Studio Modal */}
           <ComparisonStudio 
             isOpen={isComparisonOpen}
@@ -1183,7 +1212,7 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 100 }}
-                className="fixed bottom-32 md:bottom-8 right-8 z-[2100]"
+                className="fixed bottom-32 md:bottom-8 right-8 z-[1900]"
               >
                 <button 
                   onClick={() => setIsComparisonOpen(true)}

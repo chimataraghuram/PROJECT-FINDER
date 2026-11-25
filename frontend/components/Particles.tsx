@@ -117,11 +117,15 @@ const Particles: React.FC = () => {
     };
 
     let lastDrawTime = 0;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     const targetFps = isMobile ? 30 : 60;
     const interval = 1000 / targetFps;
 
     const animate = (timestamp: number) => {
       animationFrameId = requestAnimationFrame(animate);
+      if (document.hidden) return;
 
       // Throttle rendering to target frame rate to save CPU/GPU cycles
       const elapsed = timestamp - lastDrawTime;

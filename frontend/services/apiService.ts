@@ -22,7 +22,7 @@ const githubApiError = (status: number) => status === 401
 
 // Mapping helper to ensure UI stability and rock-solid repository URLs
 const mapToFrontendProject = (item: any): Project => {
-  const name = item.name || 'Unknown Project';
+  const name = item.name || item.projectName || 'Unknown Project';
   const platform = item.platform || 'GitHub';
   const ownerLogin = item.owner?.login || (typeof item.owner === 'string' ? item.owner : '');
 
@@ -75,7 +75,7 @@ const mapToFrontendProject = (item: any): Project => {
   }
 
   return {
-    id: item.id?.toString() || Math.random().toString(),
+    id: (item.id || item._id)?.toString() || Math.random().toString(),
     name,
     description: item.description || '',
     platform,
@@ -1083,8 +1083,8 @@ export const createChatStream = async function* (history: any[], message: string
 };
 
 
-const AI_API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5000/api/ai' 
+const AI_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? '/api/ai' 
   : 'https://project-finder-api.onrender.com/api/ai';
 
 export const fetchAIResponse = async (prompt: string, context: any): Promise<string> => {

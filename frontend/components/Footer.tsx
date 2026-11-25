@@ -199,7 +199,7 @@ export const Footer: React.FC<FooterProps> = ({ onComingSoonClick, isCompact, la
 
                             {/* Social Media Pill Buttons - Minimal and Centered */}
                             <div className="flex flex-col items-center gap-6 pt-10 border-t border-white/5 w-full mt-10">
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
                                     {[
                                         { icon: <Linkedin size={18} />, url: 'https://linkedin.com/in/chimataraghuram', label: 'LinkedIn' },
                                         { icon: <Github size={18} />, url: 'https://github.com/chimataraghuram', label: 'GitHub' },
