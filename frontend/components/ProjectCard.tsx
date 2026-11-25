@@ -351,20 +351,28 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
             </div>
             <div className="prose prose-invert prose-sm max-w-none">
               <div className="mb-6">
-                <h5 className="text-orange-400 font-bold mb-2 uppercase tracking-wider text-xs">The TL;DR</h5>
-                <p className="text-gray-300 leading-relaxed bg-orange-500/5 p-4 rounded-xl border border-orange-500/10">{summaryData.tldr}</p>
+                <h5 className="text-orange-400 font-bold mb-2 uppercase tracking-wider text-xs">Overview</h5>
+                <p className="text-gray-300 leading-relaxed bg-orange-500/5 p-4 rounded-xl border border-orange-500/10">{summaryData.overview}</p>
               </div>
-              <div className="mb-6">
-                <h5 className="text-blue-400 font-bold mb-2 uppercase tracking-wider text-xs">Core Features</h5>
-                <ul className="space-y-2">
-                  {summaryData.features.map((feat, i) => (
-                    <li key={i} className="flex items-start gap-2 text-gray-300">
-                      <Zap size={14} className="text-blue-500 mt-1 shrink-0" />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {summaryData.useCase && (
+                <div className="mb-6">
+                  <h5 className="text-purple-400 font-bold mb-2 uppercase tracking-wider text-xs">Use Case</h5>
+                  <p className="text-gray-300 leading-relaxed bg-purple-500/5 p-4 rounded-xl border border-purple-500/10">{summaryData.useCase}</p>
+                </div>
+              )}
+              {Array.isArray(summaryData.techStack) && summaryData.techStack.length > 0 && (
+                <div className="mb-6">
+                  <h5 className="text-blue-400 font-bold mb-2 uppercase tracking-wider text-xs">Tech Stack</h5>
+                  <ul className="space-y-2">
+                    {summaryData.techStack.map((tech, i) => (
+                      <li key={i} className="flex items-start gap-2 text-gray-300">
+                        <Zap size={14} className="text-blue-500 mt-1 shrink-0" />
+                        <span>{tech}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -389,12 +397,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
               <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                 <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Overall Score</h5>
                 <div className="flex items-center gap-4">
-                  <div className={`text-4xl font-black ${analysisData.score >= 80 ? 'text-green-400' : analysisData.score >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-                    {analysisData.score}
+                  <div className={`text-4xl font-black ${(analysisData.overallScore ?? 0) >= 8 ? 'text-green-400' : (analysisData.overallScore ?? 0) >= 6 ? 'text-yellow-400' : 'text-red-400'}`}>
+                    {analysisData.overallScore ?? 0}/10
                   </div>
                   <div className="flex-1">
                     <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className={`h-full ${analysisData.score >= 80 ? 'bg-green-400' : analysisData.score >= 60 ? 'bg-yellow-400' : 'bg-red-400'}`} style={{ width: `${analysisData.score}%` }} />
+                      <div className={`h-full ${(analysisData.overallScore ?? 0) >= 8 ? 'bg-green-400' : (analysisData.overallScore ?? 0) >= 6 ? 'bg-yellow-400' : 'bg-red-400'}`} style={{ width: `${Math.min(100, (analysisData.overallScore ?? 0) * 10)}%` }} />
                     </div>
                   </div>
                 </div>
@@ -443,12 +451,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, isFavorite, o
                 type="text"
                 value={researchQuestion}
                 onChange={(e) => setResearchQuestion(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') submitResearch(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleResearch(); }}
                 placeholder="Ask a question..."
                 className="w-full bg-[#0f172a] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/50 pr-12"
               />
               <button 
-                onClick={submitResearch}
+                onClick={handleResearch}
                 disabled={isResearching || !researchQuestion.trim()}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-colors disabled:opacity-50"
               >

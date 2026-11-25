@@ -8,21 +8,23 @@
  */
 export function normalizeUrl(url: string | undefined | null, fallbackPlatform: string = 'GitHub'): string {
   if (!url || typeof url !== 'string') return '#';
-  let trimmed = url.trim();
-  if (trimmed === '' || trimmed === '#' || trimmed.startsWith('javascript:') || trimmed.startsWith('data:')) {
+  const trimmed = url.trim();
+  const lower = trimmed.toLowerCase();
+  if (trimmed === '' || trimmed === '#' || lower.startsWith('javascript:') || lower.startsWith('data:') || lower.startsWith('vbscript:')) {
     return '#';
   }
 
-  // If already full HTTP/HTTPS URL
-  if (trimmed.startsWith('https://')) return trimmed;
-  if (trimmed.startsWith('http://')) {
-    // Upgrade http to https for security
-    return trimmed.replace(/^http:\/\//i, 'https://');
+  // If already full HTTP/HTTPS URL (case-insensitive)
+  if (lower.startsWith('https://')) {
+    try { return new URL(trimmed).toString(); } catch { return '#'; }
+  }
+  if (lower.startsWith('http://')) {
+    try { return new URL(trimmed.replace(/^http:\/\//i, 'https://')).toString(); } catch { return '#'; }
   }
 
-  // Protocol-relative URLs (e.g. //github.com/foo/bar)
-  if (trimmed.startsWith('//')) {
-    return `https:${trimmed}`;
+  // Protocol-relative URLs (e.g. //github.com/foo/bar, reject ///foo)
+  if (trimmed.startsWith('//') && !trimmed.startsWith('///')) {
+    try { return new URL(`https:${trimmed}`).toString(); } catch { return '#'; }
   }
 
   // Plain domains like github.com/... or huggingface.co/...

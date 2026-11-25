@@ -13,15 +13,17 @@ export const IntroVideo: React.FC<IntroVideoProps> = ({ onComplete }) => {
 
     useEffect(() => {
         // Fallback timeout in case video fails to load or play
+        let innerTimer: ReturnType<typeof setTimeout> | null = null;
         const fallbackTimeout = setTimeout(() => {
-            if (!isFading) {
-                setIsFading(true);
-                setTimeout(onComplete, 1000);
-            }
+            setIsFading(true);
+            innerTimer = setTimeout(onComplete, 800);
         }, 8000); // 8 seconds fallback
 
-        return () => clearTimeout(fallbackTimeout);
-    }, [onComplete, isFading]);
+        return () => {
+            clearTimeout(fallbackTimeout);
+            if (innerTimer) clearTimeout(innerTimer);
+        };
+    }, [onComplete]);
 
     const handleSkip = () => {
         if (!isFading) {

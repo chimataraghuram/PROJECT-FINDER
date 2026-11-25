@@ -31,9 +31,10 @@ connectDB().catch(error => { console.error('Database startup failed:', error.mes
 
 const app = express();
 
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
-const allowedOrigins = (process.env.FRONTEND_ORIGINS || 'http://localhost:5173,https://chimataraghuram.github.io')
+const allowedOrigins = (process.env.FRONTEND_ORIGINS || 'http://localhost:3000,http://localhost:5173,https://chimataraghuram.github.io')
   .split(',').map(origin => origin.trim()).filter(Boolean);
 
 app.use(cors({
@@ -41,7 +42,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error('Origin not allowed by CORS'));
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '256kb' }));

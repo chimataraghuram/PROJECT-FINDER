@@ -6,6 +6,7 @@ import { auth, db, isFirebaseConfigured } from '../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getLocalAIResponse } from '../services/aiLogic';
 import { fetchAIResponse, askResearchQuestion, askQuickResearchQuestion, streamResearchQuestion } from '../services/apiService';
+import { normalizeUrl, openSafe } from '../src/utils/urlHelper';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -81,15 +82,29 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
         if (!user || !isFirebaseConfigured || !db) return;
 
         const loadHistory = async () => {
-            const chatRef = doc(db, 'chats', user.uid);
-            const docSnap = await getDoc(chatRef);
-            if (docSnap.exists()) {
-                setMessages(docSnap.data().messages);
+            try {
+                const chatRef = doc(db, 'chats', user.uid);
+                const docSnap = await getDoc(chatRef);
+                if (docSnap.exists()) {
+                    setMessages(docSnap.data().messages);
+                }
+            } catch {
+                // Firestore may be offline; keep local messages
             }
         };
 
         loadHistory();
     }, [isOpen]);
+
+    // Close on Escape key
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsOpen(false);
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [isOpen, setIsOpen]);
 
     // 💾 Save Chat History
     useEffect(() => {
@@ -260,7 +275,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 <button onClick={clearChat} className="flex items-center gap-1 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-red-400 transition-colors" title="Start a new chat">
                                     <Trash2 size={14} /> <span className="hidden sm:inline">New Chat</span>
                                 </button>
-                                <button onClick={() => setIsOpen(false)} className="p-2 text-white/20 hover:text-white transition-colors">
+                                <button onClick={() => setIsOpen(false)} aria-label="Close Techboy AI" className="p-2 text-white/40 hover:text-white transition-colors">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -284,7 +299,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                     }`}>
                                         {msg.role === 'assistant' && <div className="mb-2 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-orange-400"><Bot size={13} /> TECHBOY AI <span className="text-white/30">· Research Assistant</span></div>}
                                         <div dangerouslySetInnerHTML={{ __html: safeHtml(msg.content) }} />
-                                        {msg.role === 'assistant' && msg.citations?.length ? <div className="mt-4 border-t border-white/10 pt-3"><div className="mb-2 text-[9px] font-black uppercase tracking-widest text-gray-500">Sources</div><div className="flex flex-wrap gap-2">{msg.citations.slice(0, 5).map((source: any, sourceIndex: number) => source.url ? <a key={source.id || sourceIndex} href={source.url} target="_blank" rel="noopener noreferrer" className="max-w-full truncate rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] text-orange-300 hover:border-orange-500/40">{source.filePath || source.section || source.repository?.name || `Source ${sourceIndex + 1}`} ↗</a> : null)}</div></div> : null}
+                                        {msg.role === 'assistant' && msg.citations?.length ? <div className="mt-4 border-t border-white/10 pt-3"><div className="mb-2 text-[9px] font-black uppercase tracking-widest text-gray-500">Sources</div><div className="flex flex-wrap gap-2">{msg.citations.slice(0, 5).map((source: any, sourceIndex: number) => source.url ? <a key={source.id || sourceIndex} href={normalizeUrl(source.url)} onClick={(e) => { e.preventDefault(); openSafe(source.url); }} target="_blank" rel="noopener noreferrer" className="max-w-full truncate rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-[10px] text-orange-300 hover:border-orange-500/40">{source.filePath || source.section || source.repository?.name || `Source ${sourceIndex + 1}`} ↗</a> : null)}</div></div> : null}
                                         {msg.role === 'assistant' && msg.content && <div className="mt-3 flex items-center gap-3 border-t border-white/5 pt-2"><button onClick={() => { navigator.clipboard.writeText(msg.content); setCopiedIndex(i); setTimeout(() => setCopiedIndex(null), 1500); }} className="text-gray-500 hover:text-white" title="Copy answer">{copiedIndex === i ? <Check size={13} /> : <Copy size={13} />}</button><button onClick={() => { const previous = messages[i - 1]; if (previous?.role === 'user') handleSend(previous.content); }} className="text-gray-500 hover:text-white" title="Regenerate answer"><RotateCcw size={13} /></button><span className="ml-auto text-[9px] uppercase tracking-widest text-gray-600">Helpful?</span><button onClick={() => setFeedback(current => ({ ...current, [i]: 'up' }))} className={feedback[i] === 'up' ? 'text-green-400' : 'text-gray-500 hover:text-green-400'} title="Helpful"><ThumbsUp size={13} /></button><button onClick={() => setFeedback(current => ({ ...current, [i]: 'down' }))} className={feedback[i] === 'down' ? 'text-red-400' : 'text-gray-500 hover:text-red-400'} title="Not helpful"><ThumbsDown size={13} /></button></div>}
                                         <div className={`text-[9px] mt-1 opacity-40 font-bold ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
                                             {msg.timestamp}
@@ -335,6 +350,7 @@ export const TechboyAssistant: React.FC<TechboyAssistantProps> = ({
                                 <button
                                     onClick={() => isTyping ? abortRef.current?.abort() : handleSend()}
                                     disabled={!isTyping && !input.trim()}
+                                    aria-label={isTyping ? 'Stop generating' : 'Send message'}
                                     className="absolute right-2 p-2.5 rounded-full bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 transition-all disabled:opacity-30"
                                 >
                                     {isTyping ? <X size={18} /> : <Send size={16} />}
